@@ -1,0 +1,59 @@
+
+#Query to check active sessions
+set lines 300 pages 3000 time on
+col username for a18
+col event for a33
+col inst_id for 9
+col sid for 99999
+col ET for 9999999
+col module for a10 trunc
+col BS for 9999
+col FBS for 9999
+select systimestamp from dual;
+select inst_id ,sid,username,sql_id,event,p1,p2,module,last_call_et as et, row_wait_obj# as obj,ROW_WAIT_ROW# as rr, BLOCKING_SESSION BS, FINAL_BLOCKING_SESSION FBS
+from gv$session
+where wait_class !='Idle' and event not like 'SQL*Net message%'
+order by inst_id,event
+/ 
+
+#Query to check active/inactive count by instance and username
+col username for a20
+col status for a20
+select inst_id,username,status,count(*) from gv$session where username is not null and event not like 'SQL*Net message%' group by inst_id,username,status order by 1,2;
+
+#Query to check active/inactive count by username
+col username for a20
+col status for a20
+select username,status,count(*) from gv$session where username is not null and event not like 'SQL*Net message%' group by username,status order by 1;
+
+#Query to check active session count by instance, event,  and sql_id
+col username for a20
+col event for a36
+select inst_id,username,event,sql_id,count(*) from gv$session where username is not null and event not like 'SQL*Net message%' and status='ACTIVE' group by inst_id,username,event,sql_id order by 1,2,3,4;
+
+#Query to check active session count by event and sql_id
+col username for a20
+col event for a36
+select username,event,sql_id,count(*) from gv$session where username is not null and event not like 'SQL*Net message%' and status='ACTIVE' group by username,event,sql_id order by 1,2,3,4;
+
+#Query to check session history in past order by timestamp
+set lines 300 pages 3000
+col event for a37
+col owner for a18
+col object_name for a35
+-- begin_sample_time e.g. 21-FEB-2023 20:00
+-- end_sample_time   e.g. 21-FEB-2023 20:30
+select instance_number,to_char(sample_time,'DD-MON-YYYY HH24:MI:SS'),sql_id, event ,COUNT(1) from dba_hist_active_sess_history
+where sample_time BETWEEN to_date('&begin_sample_time','DD-MON-YYYY HH24:MI') AND to_date('&end_sample_time','DD-MON-YYYY HH24:MI')  and event is not null
+GROUP BY instance_number,to_char(sample_time,'DD-MON-YYYY HH24:MI:SS'), event,sql_id   having count(1)>5 order by 2;
+
+#Query to check session history in past order by count
+set lines 300 pages 3000
+col event for a37
+col owner for a18
+col object_name for a35
+-- begin_sample_time e.g. 21-FEB-2023 20:00
+-- end_sample_time   e.g. 21-FEB-2023 20:30
+select instance_number,to_char(sample_time,'DD-MON-YYYY HH24:MI:SS'),sql_id, event ,COUNT(1) from dba_hist_active_sess_history
+where sample_time BETWEEN to_date('&begin_sample_time','DD-MON-YYYY HH24:MI') AND to_date('&end_sample_time','DD-MON-YYYY HH24:MI')  and event is not null
+GROUP BY instance_number,to_char(sample_time,'DD-MON-YYYY HH24:MI:SS'), event,sql_id   having count(1)>5 order by 5;
