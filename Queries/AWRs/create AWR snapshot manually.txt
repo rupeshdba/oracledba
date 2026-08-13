@@ -1,0 +1,174 @@
+CREATE_SNAPSHOT() function is used to create AWR snapshot manually. Below parameters can be passed in the function to capture the snapshots.
+- flush_level (BESTFIT | LITE | TYPICAL | ALL)
+- dbid
+- source_name
+
+Below are the flush levels:
+BESTFIT :- Uses the default value depending on the type of snapshot being taken.
+LITE or Lightweight:- Only the most important statistics are collected. This is default for a pluggable database (PDB) and application container.
+TYPICAL or Regular :- Most of the statistics are collected. This is default for a container database root (CDB root) and non-CDB database.
+ALL or Heavyweight :- All the possible statistics are collected. This consumes a considerable amount of disk space and takes a longer time to create.
+
+
+#Check the existing snapshots from the view DBA_HIST_SNAPSHOT.
+SQL> set lines 300 pages 3000
+SQL> col BEGIN_INTERVAL_TIME for a25
+SQL> col END_INTERVAL_TIME for a25
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.09.24.000 AM 09-JUN-24 10.20.16.998 AM     623
+       1 09-JUN-24 10.20.16.998 AM 09-JUN-24 10.30.18.310 AM     624
+       1 09-JUN-24 10.30.18.310 AM 09-JUN-24 10.45.19.884 AM     625
+
+#Execute below query to create AWR snapshot with default settings i.e. without passing any parameter.
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT();
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+  INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME            SNAP_ID
+---------- ------------------------- ------------------------- ----------
+         1 09-JUN-24 10.45.19.884 AM 09-JUN-24 10.49.03.717 AM        626
+
+
+
+#Execute below query to create AWR snapshot with flush_level "ALL".
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT('ALL');
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.49.03.717 AM 09-JUN-24 10.50.29.639 AM     627
+
+
+
+#Execute below query to create AWR snapshot with flush_level "BESTFIT".
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'BESTFIT');
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.50.29.639 AM 09-JUN-24 10.51.20.076 AM     628
+
+
+
+#Execute below query to create AWR snapshot with flush_level "LITE".
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'LITE');
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.51.20.076 AM 09-JUN-24 10.51.56.307 AM     629
+
+
+
+#Execute below query to create AWR snapshot with flush_level "TYPICAL".
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'TYPICAL');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+      1 09-JUN-24 10.51.56.307 AM 09-JUN-24 10.52.23.040 AM     630
+
+
+
+#Execute below query to create AWR snapshot with flush_level "ALL".
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'ALL');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.52.23.040 AM 09-JUN-24 10.54.30.038 AM     631
+
+
+
+#Execute below query to create AWR snapshot by passing dbid.
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(dbid=>2447257321);
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.54.30.038 AM 09-JUN-24 10.55.00.484 AM     632
+
+
+
+#Execute below query to create AWR snapshot by passing source_name.
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(source_name=>'test');
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.55.00.484 AM 09-JUN-24 10.55.29.008 AM     633
+
+
+
+#Execute below query to create AWR snapshot by passing all three parameters i.e. flush_level, dbid, and source_name. You will face below error message. You cannot pass both dbid and source_name together.
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'ALL',dbid=>2447257321,source_name=>'test');
+BEGIN DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'ALL',dbid=>2447257321,source_name=>'test'); END;
+
+*
+ERROR at line 1:
+ORA-00600: internal error code, arguments: [kewrpcs_1: cannot specify both DBID and Source Name], [2447257321], [test], [], [], [], [], [], [], [], [], []
+ORA-06512: at "SYS.DBMS_WORKLOAD_REPOSITORY", line 99
+ORA-06512: at "SYS.DBMS_WORKLOAD_REPOSITORY", line 145
+ORA-06512: at line 1
+
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'ALL',source_name=>'test');
+
+PL/SQL procedure successfully completed.
+
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.55.29.008 AM 09-JUN-24 10.56.59.750 AM     634
+
+                            OR
+
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT(flush_level=>'ALL',dbid=>2447257321);
+
+PL/SQL procedure successfully completed.
+
+SQL> select INSTANCE_NUMBER INST_NUM ,BEGIN_INTERVAL_TIME,END_INTERVAL_TIME,SNAP_ID from DBA_HIST_SNAPSHOT order by 4;
+
+INST_NUM BEGIN_INTERVAL_TIME       END_INTERVAL_TIME         SNAP_ID
+-------- ------------------------- ------------------------- -------
+       1 09-JUN-24 10.56.59.750 AM 09-JUN-24 10.57.35.224 AM     635

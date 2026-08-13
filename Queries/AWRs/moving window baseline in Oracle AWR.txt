@@ -1,0 +1,34 @@
+Moving Window Baseline
+Oracle 11g introduced a moving window baseline concept. This is useful when using adaptive thresholds, because the database can use AWR data in the entire AWR retention period to calculate the metric threshold values. Oracle Database automatically maintains a system-defined moving window baseline. The default window size for the system-defined moving window baseline is the current AWR retention period i.e. 8 days. You can resize the moving window baseline by changing the number of days in the moving window baseline to a value that is equal to or less than the number of days in the AWR retention period. Therefore, to increase the size of a moving window, you must first increase the AWR retention period accordingly. You can not set the AWR retention period to less than moving window size. 
+
+#Query to check existing moving window size.
+SQL> COL BASELINE_NAME FORMAT A22
+SQL> SELECT DBID, BASELINE_NAME, BASELINE_TYPE, MOVING_WINDOW_SIZE FROM DBA_HIST_BASELINE WHERE BASELINE_NAME='SYSTEM_MOVING_WINDOW';
+
+      DBID BASELINE_NAME          BASELINE_TYPE MOVING_WINDOW_SIZE
+
+---------- ---------------------- ------------- ------------------
+2447257321 SYSTEM_MOVING_WINDOW   MOVING_WINDOW                  8 
+
+
+Note: The window size must be set to a value that is equal to or less than the value of the AWR retention setting. 
+
+#Execute below query to check existing AWR retention period (15 days).
+SQL> set lines 300 pages 3000
+SQL> col SNAP_INTERVAL for a22
+SQL> col RETENTION for a22
+SQL> col TOPNSQL for a20
+SQL> col SRC_DBNAME for a22
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL    CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ---------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00015 00:00:00.0         50      0 2447257321 test
+
+#Execute below query to modify the Moving Window Size to 12 days.
+SQL> COL BASELINE_NAME FORMAT A22
+SQL> SELECT DBID, BASELINE_NAME, BASELINE_TYPE, MOVING_WINDOW_SIZE FROM DBA_HIST_BASELINE WHERE BASELINE_NAME='SYSTEM_MOVING_WINDOW';
+
+      DBID BASELINE_NAME          BASELINE_TYPE MOVING_WINDOW_SIZE
+---------- ---------------------- ------------- ------------------
+2447257321 SYSTEM_MOVING_WINDOW   MOVING_WINDOW                 12

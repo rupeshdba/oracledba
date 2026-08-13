@@ -1,0 +1,64 @@
+DBMS_WORKLOAD_REPOSITORY.CONTROL_RESTRICTED_SNAPSHOT
+
+By default, AWR snapshots cannot be created for a database in the restricted session mode. If you try to create AWR snapshots then, you will face error message "ORA-13516: AWR Operation failed: database in restricted mode".
+
+This procedure controls the AWR snapshot creation for a database in the restricted session mode. To enable AWR snapshot creation for an Oracle RAC in the restricted session mode, this procedure must be executed on every database instance in case of Oracle RAC.
+
+The allow parameter has two values:
+1) TRUE: If the value is TRUE then, AWR snapshots can be created for the database in the restricted session mode.
+2) FALSE: If the value is FALSE then, AWR snapshots cannot be created for the database in the restricted session mode.
+
+Let's demonstrate the same....
+
+#Shut down the database instance and start the instance in restricted mode.
+SQL> shut immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup restrict
+ORACLE instance started.
+Total System Global Area 5066718192 bytes
+Fixed Size                  9038832 bytes
+Variable Size            3405774848 bytes
+Database Buffers         1644167168 bytes
+Redo Buffers                7737344 bytes
+Database mounted.
+Database opened.
+
+#Ensure the database instance is open in restricted mode.
+SQL> set lines 300 pages 3000
+SQL> select INSTANCE_NAME,STATUS,LOGINS,INSTANCE_ROLE,DATABASE_TYPE from v$instance;
+
+INSTANCE_NAME STATUS  LOGINS     INSTANCE_ROLE    DATABASE_TYPE
+------------- ------- ---------- ---------------- -------------
+test          OPEN    RESTRICTED PRIMARY_INSTANCE SINGLE
+
+#Execute create snapshot procedure to create AWR snap manually in restricted mode.
+SQL> exec DBMS_WORKLOAD_REPOSITORY.create_snapshot();
+BEGIN DBMS_WORKLOAD_REPOSITORY.create_snapshot(); END;
+
+*
+ERROR at line 1:
+ORA-13516: AWR Operation failed: database in restricted mode
+ORA-06512: at "SYS.DBMS_WORKLOAD_REPOSITORY", line 99
+ORA-06512: at "SYS.DBMS_WORKLOAD_REPOSITORY", line 145
+ORA-06512: at line 1
+
+Here, you can see the error message while creating AWR snap in restricted mode.
+
+#Now execute below procedure to enable AWR snap creation in restricted mode.
+SQL> exec DBMS_WORKLOAD_REPOSITORY.CONTROL_RESTRICTED_SNAPSHOT(TRUE);
+
+PL/SQL procedure successfully completed.
+
+#Now try to create AWR snap in restricted mode.
+SQL> exec DBMS_WORKLOAD_REPOSITORY.create_snapshot();
+
+PL/SQL procedure successfully completed.
+
+Here, you can see the AWR snap is created in restricted mode.
+
+SQL> exec DBMS_WORKLOAD_REPOSITORY.CONTROL_RESTRICTED_SNAPSHOT(FALSE);
+
+PL/SQL procedure successfully completed.

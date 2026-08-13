@@ -1,0 +1,404 @@
+awrrpt.sql - Standalone database report or RAC database for local instance
+ashrpt.sql - Active Session History report for standalone or local instance in case of RAC
+addmrpt.sql - Automatic Database Diagnostic Monitor in text format for standalone DB.
+awrddrpt.sql - AWR Difference report - Compare two periods
+awrrpti.sql - Single instance report or any instance local report from any instance in case of RAC
+ashrpti.sql - Active Session History report for Single instance or for any local instance from any instance in case of RAC.
+addmrpti.sql - Automatic Database Diagnostic Monitor in text format for Single instance or for any local instance from any instance in case of RAC.
+awrgrpt.sql - Global AWR report for standalone database or available RAC instances.
+awrgrpti.sql - Global AWR report for standalone database or for any local instance from any instance in case of RAC.
+awrgdrpt.sql - Global AWR Difference report for standalone database or available RAC instances.
+awrextr.sql - AWR Extract report
+awrinfo.sql - AWR info report
+awrsqrpt.sql - AWR report for particular sql query.
+1) awrrpt.sql:
+This script is the basic script for capturing workload repository report for standalone database or local instance in case of RAC. 
+
+SQL> @?/rdbms/admin/awrrpt.sql
+
+report_type: 
+--> html - HTML format (default)
+--> text - Text format
+--> active-html - Includes Performance Hub active report
+
+Enter value for num_days:
+Entering the number of days (n) will display the most recent
+(n) days of snapshots.  If you press <ENTER> without specifying a number then it will show you the lists of all completed snapshots.
+
+Enter value for begin_snap:
+Type the begin snap id
+
+Enter value for end_snap:
+Type the end snap id
+
+Enter value for report_name:
+The default report file name will be awrrpt_<instance_number>_<begin_snap>_<end_snap>.html
+If you don't mention any report name then the report will be created as default name otherwise you have to give any name like awr_db_name.html.
+
+The report will be generated in the location where you executed sqlplus / as sysdba command or you can mention the report name with location like /u01/app/oracle/awr_db_name.html
+
+
+
+
+
+2) ashrpt.sql:
+It displays Active Session History information for a specified duration on the local database instance.
+
+SQL> @?/rdbms/admin/ashrpt.sql
+
+report_type: 
+--> html - HTML format (default)
+--> text - Text format
+
+Enter value for begin_time:
+Defaults to -15 mins
+
+To specify absolute begin time:
+  [MM/DD[/YY]] HH24:MI[:SS]
+  Examples: 02/23/03 14:30:15
+            02/23 14:30:15
+            14:30:15
+            14:30
+	
+To specify relative begin time: (start with '-' sign)
+  -[HH24:]MI
+  Examples: -1:15  (SYSDATE - 1 Hr 15 Mins)
+            -25    (SYSDATE - 25 Mins)
+
+Enter value for duration:
+Enter duration in minutes starting from begin time. Defaults to SYSDATE - begin_time.
+
+Enter value for report_name:
+The default report file name is ashrpt_<inst_num>_MMDD_DDYY.html.
+
+
+
+3) addmrpt.sql:
+Automatic Database Diagnostic Monitor(ADDM) can analyze performance issues during a particular period and provide suggestion. 
+
+SQL> @?/rdbms/admin/addmrpt.sql
+
+Enter value for begin_snap:
+Type the begin snap id
+
+Enter value for end_snap:
+Type the end snap id
+
+Enter value for report_name:
+The default report file name is addmrpt_<inst_num>_<begin_snap>_<end_snap>.txt.
+
+Note, this report will be generated in TEXT format only.
+
+
+
+4) awrddrpt.sql:
+This script generates an HTML or text report that compares detailed performance attributes and configuration settings between two selected time periods on the local database instance.
+
+SQL> @?/rdbms/admin/awrddrpt.sql
+
+Enter value for report_type:
+Enter 'html' for an HTML report, or 'text' for plain text, the default is 'html'.
+
+Enter value for num_days:
+Entering the number of days (n) will display the most recent
+(n) days of snapshots.  If you press <ENTER> without specifying a number then it will show you the lists of all completed snapshots.
+
+Enter value for begin_snap:
+Specify the First Pair of Begin Snapshot Id
+
+Enter value for end_snap:
+Specify the First Pair of Begin and End Snapshot Id
+
+Enter value for num_days2:
+This is for second snap which is to be compared with first snap.
+Entering the number of days (n) will display the most recent
+(n) days of snapshots.  If you press <ENTER> without specifying a number then it will show you the lists of all completed snapshots.
+
+Enter value for begin_snap2:
+Specify the Second Pair of Begin Snapshot Id.
+
+Enter value for end_snap2:
+Specify the Second Pair End Snapshot Id.
+
+Enter value for report_name:
+The default report file name is awrdiff_<inst_num>_<first_pair_begin_snap_id>_<inst_num>_<first_pair_begin_snap_id>.html
+
+
+
+5) awrrpti.sql:
+The awrrpti. sql SQL script generates a report (in HTML or text) that displays statistics for a range of snapshot Ids on a specified instance.
+The awrrpt.sql script will generate an AWR report for the current instance.
+
+SQL> @?/rdbms/admin/awrrpti.sql
+
+Enter value for report_type:
+--> html - HTML format (default)
+--> text - Text format
+--> active-html - Includes Performance Hub active report
+
+Enter value for dbid:
+
+
+Enter value for inst_num:
+
+Enter value for num_days:
+
+Entering the number of days (n) will display the most recent
+(n) days of snapshots.  If you press <ENTER> without specifying a number then it will show you the lists of all completed snapshots.
+
+Enter value for report_name:
+The default report file name is awrrpt_<inst_num>_<begin_snap_id>_<end_snap_id>.html.
+
+
+
+6) ashrpti.sql:
+This script generates an HTML or text report that displays ASH information for a specified duration on a specified database and instance. 
+SQL> @?/rdbms/admin/ashrpti.sql
+
+Enter value for report_type:
+Specify the Report Type
+Enter html for an HTML report, or text for plain text. Defaults to html.
+
+Enter value for dbid:
+Defaults to current database
+
+Enter value for inst_num:
+Enter instance numbers. Enter ALL for all instances in a
+RAC cluster or explicitly specify list of instances (e.g., 1,2,3). Defaults to current instance.
+
+Enter value for begin_time:
+Defaults to -15 mins. Specify the timeframe to generate the ASH report
+
+Valid input formats:
+To specify absolute begin time:
+[MM/DD[/YY]] HH24:MI[:SS]
+Examples: 02/23/03 14:30:15
+02/23 14:30:15
+14:30:15
+14:30
+
+To specify relative begin time: (start with - sign)
+-[HH24:]MI
+Examples: -1:15  (SYSDATE - 1 Hr 15 Mins)
+-25    (SYSDATE - 25 Mins)
+
+Enter value for begin_time:
+Defaults to -15 mins
+
+Enter value for duration:
+Defaults to SYSDATE - begin_time. Enter duration in minutes starting from begin time
+
+Enter value for slot_width:
+Specify Slot Width in seconds to use in the Activity Over Time section. In the Activity Over Time section of the ASH report, the analysis period is divided into smaller slots and top wait events are reported in each of those slots.
+
+Default:
+The analysis period will be automatically split up to 10 slots complying to a minimum slot width of  1 minute,  if the source is V$ACTIVE_SESSION_HISTORY or 5 minutes, if the source is AWR_(PDB/ROOT)_ACTIVE_SESS_HISTORY.
+
+Enter value for target_session_id:
+Specify SESSION_ID (eg: from V$SESSION.SID) report target. Defaults to NULL.
+ASH Report can accept "Report Targets",  like a particular SQL statement, or a particular SESSION,  to generate the report on. If one or more report targets are specified, then the data used to generate the report will only be the ASH samples that pertain to ALL the specified report targets.
+Default:
+If none of the report targets are specified,   then the target defaults to all activity in the database instance.
+
+Enter value for target_sql_id:
+Specify SQL_ID (eg: from V$SQL.SQL_ID) report target. Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_wait_class:
+Specify WAIT_CLASS name (eg: from V$EVENT_NAME.WAIT_CLASS) report target:
+[Enter CPU to investigate CPU usage]. Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_service_hash:
+Specify SERVICE_HASH (eg: from V$ACTIVE_SERVICES.NAME_HASH) report target.
+Defaults to NULL.
+
+Enter value for target_module_name:
+Specify MODULE name (eg: from V$SESSION.MODULE) report target. Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_action_name:
+Specify ACTION name (eg: from V$SESSION.ACTION) report target. Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_client_id:
+Specify CLIENT_ID (eg: from V$SESSION.CLIENT_IDENTIFIER) report target:
+Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_plsql_entry:
+Specify PLSQL_ENTRY name (eg: "SYS.DBMS_LOB.*") report target. Defaults to NULL: (% and _ wildcards allowed).
+
+Enter value for target_container:
+Specify CONTAINER name (eg: NAME from V$PDBS) report target. Defaults to NULL: (% and _ wildcards allowed).
+Enter value for report_name:
+
+Specify the Report Name. The default report file name is ashrpt_<inst_num>_<MMDD>_TT.html.  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+
+
+7) addmrpti.sql:
+This SQL*Plus script can be used to run ADDM on any two AWR snapshots provided the two snapshots were taken by the same instance.
+SQL> @?/rdbms/admin/addmrpti.sql
+
+Enter value for dbid:
+
+Enter value for inst_num: 
+
+Enter value for num_days:
+Entering the number of days (n) will display the most recent
+(n) days of snapshots.  If you press <ENTER> without specifying a number then it will show you the lists of all completed snapshots.
+
+Enter value for begin_snap:
+Specify the Begin and End Snapshot Ids
+
+Enter value for end_snap:
+
+Enter value for report_name:
+Specify the Report Name. The default report file name is addmrpt_1_172_173.txt.  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+
+8) awrgrpt.sql:
+This script generates Global AWR report for all available instances in an Oracle Real Application Clusters (RAC) environment.
+SQL> @?/rdbms/admin/awrgrpt.sql
+
+Enter value for report_type:
+Specify the Report Type AWR reports can be generated in the following formats.  Please enter the name of the format at the prompt.  Default value is html.
+--> html          HTML format (default)
+--> text          Text format
+--> active-html   Includes Performance Hub active report
+
+Enter value for num_days:
+Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap:
+Specify the Begin and End Snapshot Ids
+
+Enter value for end_snap:
+
+Enter value for report_name:
+Specify the Report Name. The default report file name is awrrpt_rac_172_173.html.  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+
+9) awrgrpti.sql:
+This generates Global AWR report for available instances in RAC environment. It does this for a specified database and instances either one instance, a comma delimited list of some instances or all instances.
+
+SQL> @?/rdbms/admin/awrgrpti.sql
+
+Enter value for report_type:
+Specify the Report Type AWR reports can be generated in the following formats.  Please enter the name of the format at the prompt. Default value is html.
+--> html          HTML format (default)
+--> text          Text format
+--> active-html   Includes Performance Hub active report
+
+Enter value for dbid:
+
+Enter value for instance_numbers_or_all:
+
+Enter value for num_days:
+Using instances 1 (default ALL). Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap:
+Specify the Begin and End Snapshot Ids.
+
+Enter value for end_snap:
+
+Enter value for report_name:
+Specify the Report Name. The default report file name is awrrpt_rac_172_173.html.  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+
+10) awrgdrpt.sql:
+This script generates an HTML or text report that compares detailed performance attributes and configuration settings between two selected time periods on the local database instance.
+SQL> @?/rdbms/admin/awrgdrpt.sql
+
+Enter value for report_type:
+Specify the Report Type. Enter html for an HTML report, or text for plain text. Defaults to html.
+
+Enter value for num_days:
+Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap:
+Specify the First Pair of Begin and End Snapshot Ids
+
+Enter value for end_snap:
+
+Enter value for num_days2:
+Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap2:
+Specify the Second Pair of Begin and End Snapshot Ids
+
+Enter value for end_snap2:
+
+
+Enter value for report_name:
+Specify the Report Name The default report file name is awrracdiff_1st_170_2nd_172.html  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+11) awrextr.sql:
+This script extracts data from the AWR of provided snap range which can be later imported into any other testing DB to diagnose performance issues or can capture reports from there.
+SQL> @?/rdbms/admin/awrextr.sql
+
+Enter value for dbid:
+The default database id is the local one: '2972374659'.  To use this database id, press <return> to continue, otherwise enter an alternative.
+
+Enter value for num_days:
+Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap:
+Specify the Begin and End Snapshot Ids. 
+Enter value for end_snap:
+
+Enter value for directory_name:
+Specify the Directory Name. Choose a Directory Name from the above list (case-sensitive). This would be your logical directory from database i.e. from DBA_DIRECTORIES.
+
+Enter value for file_name:
+Specify the Name of the Extract Dump File. The prefix for the default dump file name is awrdat_<begin_snap_id>_<end_snap_id>. To use this name, press <return> to continue, otherwise enter an alternative. Do not give extension *.dmp. It will automatically give *.dmp extension.
+The AWR extract dump file will be located
+|  in the following directory/file:
+|   D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml\schema
+|   awrdat_175_176.dmp
+
+This operation will take a few moments. The
+|  progress of the AWR extract operation can be
+|  monitored in the following directory/file:
+|   D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml\schema
+|   awrdat_175_176.log
+
+
+
+12) awrinfo.sql:
+This script will output general Automatic Workload Repository
+(AWR) information such as the size, data distribution, etc. in AWR
+and SYSAUX. The intended use of this script is for diagnosing
+abnormalities in AWR and not for diagnosing issues in the database
+instance.
+
+SQL> @?/rdbms/admin/awrinfo.sql
+
+Enter value for report_name:
+Specify the Report File Name. The default report file name is awrinfo.txt.  To use this name, press <return> to continue, otherwise enter an alternative.
+
+
+13) awrsqrpt.sql:
+This script to produce a Workload report for a particular sql statement.
+This is an HTML or text report that displays statistics including past execution plans of a particular SQL statement for a range of snapshot Ids.
+A good explain plan can be collected from a UAT/Performance environment having similar data but better performance.
+
+SQL> @?/rdbms/admin/awrsqrpt.sql
+
+Enter value for report_type:
+Specify the Report Type. Enter 'html' for an HTML report, or 'text' for plain text. Defaults to 'html'
+
+Enter value for num_days:
+Specify the number of days of snapshots to choose from Entering the number of days (n) will result in the most recent (n) days of snapshots being listed.  Pressing <return> without specifying a number lists all completed snapshots.
+
+Enter value for begin_snap: 
+Specify the Begin and End Snapshot Ids
+
+Enter value for end_snap:
+Specify the Begin and End Snapshot Ids
+
+Enter value for sql_id:
+Specify the SQL Id.
+
+

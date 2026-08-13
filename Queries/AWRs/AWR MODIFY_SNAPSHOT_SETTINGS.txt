@@ -1,0 +1,132 @@
+DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS
+
+You can change below AWR default snapshot settings in Oracle database.
+
+SQL> desc dba_hist_wr_control
+ Name              Null?    Type
+ ----------------- -------- ------------------------------
+ DBID              NOT NULL NUMBER
+ SNAP_INTERVAL     NOT NULL INTERVAL DAY(5) TO SECOND(1)
+ RETENTION         NOT NULL INTERVAL DAY(5) TO SECOND(1)
+ TOPNSQL                    VARCHAR2(10)
+ CON_ID                     NUMBER
+ SRC_DBID                   NUMBER
+ SRC_DBNAME                 VARCHAR2(128)
+
+INTERVAL: 
+This is specified in MINUTES. The specified value must be in the range minimum retention 10 minutes to maximum retention 1 year.
+If ZERO is specified then, automatic and manual snapshots will be disabled.
+If NULL is specified then, the current value is preserved.
+
+RETENTION: 
+This is specified in MINUTES. The specified value must be in the range of minimum retention 1 day) to maximum retention 100 years.
+If ZERO is specified then, snapshots will be retained forever. 
+If NULL is specified then, the old value for retention is preserved.
+The retention setting must be greater than or equal to the window size of the system moving window baseline(Refer DBA_HIST_BASELINE) otherwise you will face error message "ORA-13541: system moving window baseline size (691200) greater than retention (604800)". 
+
+TOPNSQL:
+If NUMBER: The number of Top SQL to flush for each SQL criteria i.e. Elapsed Time, CPU Time, Parse Calls, Shareable Memory, Version Count. 
+
+If VARCHAR2: (DEFAULT, MAXIMUM, N), where N is the number of Top SQL to flush for each SQL criteria i.e. Elapsed Time, CPU Time, Parse Calls, Shareable Memory, Version Count.  Specifying DEFAULT will revert to top 30 for statistics level TYPICAL and top 100 for statistics level ALL. 
+Specifying MAXIMUM will capture the complete set of SQL in the cursor cache. 
+Specifying the number N is equivalent to setting the Top N SQL with the NUMBER type. Specifying NULL for this argument will keep the current setting.
+
+TABLESPACE_NAME:
+By default, AWR data is stored in the SYSAUX tablespace. If you want to specify a user-defined tablespace for storing AWR snapshot data, you can modify the settings using this parameter. 
+
+#Check the existing AWR snapshot settings.
+SQL> set lines 300 pages 3000
+SQL> col SNAP_INTERVAL for a22
+SQL> col RETENTION for a22
+SQL> col TOPNSQL for a20
+SQL> col SRC_DBNAME for a22
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ------- ------ ---------- ----------
+2447257321 +00000 00:30:00.0 +00008 00:00:00.0 DEFAULT      0 2447257321 test
+
+From (@?/rdbms/admin/awrinfo.sql) output:
+Warning: Non Default AWR Setting!
+----------------------------------------------------------
+Snapshot interval is 30 minutes and Retention is 8 days
+
+#Execute below command to change the AWR snapshot generation interval to 15 minutes.
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS(INTERVAL => 15);
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL          RETENTION              TOPNSQL                  CON_ID   SRC_DBID SRC_DBNAME
+---------- ---------------------- ---------------------- -------------------- ---------- ---------- ----------------------
+2447257321 +00000 00:15:00.0      +00008 00:00:00.0      DEFAULT                       0 2447257321 test
+
+
+#Execute below command to change the AWR snapshot retention to 10. days(24*60*10=14400).
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS(RETENTION => 14400);
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL  CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- -------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0 DEFAULT       0 2447257321 test
+
+#Execute below command to change topnsql parameter to DEFAULT.
+SQL> EXECUTE  DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS (TOPNSQL => 'DEFAULT');
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0 DEFAULT      0 2447257321 test
+
+
+#Execute below command to change topnsql parameter to MAXIMUM.
+SQL> EXECUTE  DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS (TOPNSQL => 'MAXIMUM');
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0 MAXIMUM      0 2447257321 test
+
+
+#Execute below command to change topnsql parameter to NUMBER.
+SQL> EXECUTE  DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS (TOPNSQL => 40);
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL    CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ---------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0         40      0 2447257321 test
+
+
+#Execute below command to change default tablespace to store AWR snapshot data.
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS(TABLESPACE_NAME => 'TBS_TEST');
+
+PL/SQL procedure successfully completed.
+
+
+#Execute below command to change all these settings in one command.
+SQL> EXECUTE DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS(INTERVAL => 15,RETENTION => 14400,TOPNSQL => 50,TABLESPACE_NAME => 'TBS_TEST');
+
+PL/SQL procedure successfully completed.
+
+SQL> select * from dba_hist_wr_control;
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL    CON_ID   SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ---------- ------ ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0         50      0 2447257321 test
+
+      DBID SNAP_INTERVAL     RETENTION         TOPNSQL      SRC_DBID SRC_DBNAME
+---------- ----------------- ----------------- ---------- ---------- ----------
+2447257321 +00000 00:15:00.0 +00010 00:00:00.0         50 2447257321 test
