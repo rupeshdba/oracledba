@@ -1,0 +1,64 @@
+You cannot create profile without any limit parameter. Minimum one limit parameter is required to create profile.
+
+SQL> set lines 300 pages 3000
+SQL> col resource_name for a30
+SQL> col limit for a25
+SQL> select resource_name,limit from dba_profiles where profile='TEST_PROFILE';
+
+SQL> alter profile TEST_PROFILE limit &RESOURCE_NAME &LIMIT;
+
+Below are the resource names which can be assigned to profile with their limit.
+
+COMPOSITE_LIMIT:
+Specify the total resource cost for a session, expressed in service units. Oracle Database calculates the total service units as a weighted sum of CPU_PER_SESSION, CONNECT_TIME,LOGICAL_READS_PER_SESSION, and PRIVATE_SGA.
+         
+SESSIONS_PER_USER:
+Specify the number of concurrent sessions to which you want to limit the user.
+     
+CPU_PER_SESSION:
+Specify the CPU time limit for a session, expressed in hundredth of seconds.
+          
+CPU_PER_CALL:
+Specify the CPU time limit for a call (a parse, execute, or fetch), expressed in hundredths of seconds.
+             
+LOGICAL_READS_PER_SESSION: 
+Specify the permitted number of data blocks read in a session, including blocks read from memory and disk.
+
+LOGICAL_READS_PER_CALL:    
+Specify the permitted the number of data blocks read for a call to process a SQL statement (a parse, execute, or fetch).
+
+IDLE_TIME: 
+Specify the permitted periods of continuous inactive time during a session, expressed in minutes. Long-running queries and other operations are not subject to this limit.
+                
+CONNECT_TIME: 
+Specify the total elapsed time limit for a session, expressed in minutes.
+          
+PRIVATE_SGA:
+Specify the amount of private space a session can allocate in the shared pool of the system global area (SGA), expressed in bytes.
+               
+FAILED_LOGIN_ATTEMPTS:
+Maximum times the user is allowed in fail login before locking the user account
+     
+PASSWORD_LIFE_TIME:
+Number of days the password is valid before expiry
+        
+PASSWORD_REUSE_TIME:
+Number of day after the user can use the already used password
+       
+PASSWORD_REUSE_MAX:
+Number of times the user can use the already used password
+        
+PASSWORD_VERIFY_FUNCTION:
+PL/SQL that can be used for password verification
+  
+PASSWORD_LOCK_TIME:
+Number of days the user account remains locked after failed login
+       
+PASSWORD_GRACE_TIME:
+Number of grace days for user to change password
+       
+INACTIVE_ACCOUNT_TIME:
+Starting with Oracle 19.12, if users are not logged to the database for a big period of time, then they will not be locked. Instead, the count starts once an existing user successfully logs in then after the defined consecutive days without logging in, the user gets locked.
+
+PASSWORD_ROLLOVER_TIME:    
+Starting with Oracle 19.12, an application can change its database passwords without an administrator having to schedule downtime. To achieve this, DBA can associate a profile having a non-zero limit for the PASSWORD_ROLLOVER_TIME password profile parameter, with an application schema. This allows the database password of the application user to be altered while allowing the older password to remain valid for the time specified by the PASSWORD_ROLLOVER_TIME limit. During the rollover period of time, the application instance can use either the old password or the new password to connect to the database server. When the rollover time expires, only the new password is allowed.

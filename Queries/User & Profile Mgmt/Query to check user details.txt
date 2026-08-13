@@ -1,0 +1,8 @@
+#Query to check user details in Oracle database
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col profile for a27
+col default_tablespace for a25
+col temporary_tablespace for a20
+select username,account_status,to_char(created,'dd-mm-yyyy hh24:mi:ss') created,profile,default_tablespace,temporary_tablespace from dba_users order by 1;

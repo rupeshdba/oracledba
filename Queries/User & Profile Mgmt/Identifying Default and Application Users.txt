@@ -1,0 +1,11 @@
+Query to check default users or internal users in Oracle database
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+select username,account_status,ORACLE_MAINTAINED,to_char(created,'dd-mm-yyyy hh24:mi:ss') created from dba_users where ORACLE_MAINTAINED='Y' order by 1;
+
+Query to check non default users or application users in Oracle database
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+select username,account_status,ORACLE_MAINTAINED,to_char(created,'dd-mm-yyyy hh24:mi:ss') created from dba_users where ORACLE_MAINTAINED='N' order by 1;

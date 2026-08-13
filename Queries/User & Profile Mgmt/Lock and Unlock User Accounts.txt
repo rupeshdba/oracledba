@@ -1,0 +1,29 @@
+#How to unlock the user
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col object_name for a36
+select username,account_status from dba_users where account_status like '%LOCKED%' order by 1;
+
+alter user &USERNAME account unlock;
+
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col object_name for a36
+select username,account_status from dba_users where account_status not like '%LOCKED%' order by 1;
+
+#How to lock the user
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col object_name for a36
+select username,account_status from dba_users where account_status not like '%LOCKED%' order by 1;
+
+alter user &USERNAME account lock;
+
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col object_name for a36
+select username,account_status from dba_users where account_status like '%LOCKED%' order by 1;

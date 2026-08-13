@@ -1,0 +1,9 @@
+#Query to check locked users
+set lines 300 pages 3000
+col username for a23
+col account_status for a18
+col object_name for a36
+col profile for a27
+col default_tablespace for a25
+col temporary_tablespace for a20
+select username,account_status,to_char(created,'dd-mm-yyyy hh24:mi:ss') created,to_char(lock_date,'dd-mm-yyyy hh24:mi:ss') lock_date,to_char(expiry_date,'dd-mm-yyyy hh24:mi:ss') expiry_date from dba_users where account_status like '%LOCKED%' order by 1;
