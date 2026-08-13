@@ -1,0 +1,224 @@
+Step 1: Add below two entries on both source and target to create tns connectivity between them.
+
+vi tnsnames.ora
+
+CLONE =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS =
+(COMMUNITY = SAP.WORLD)
+(PROTOCOL = TCP)
+(HOST = 10.75.*.*)
+(PORT = 1521)
+)
+)
+(CONNECT_DATA =
+(SID = CLONE)
+(GLOBAL_NAME = CLONE.WORLD)
+)
+)
+
+TEST =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS =
+(COMMUNITY = SAP.WORLD)
+(PROTOCOL = TCP)
+(HOST = 10.5.*.*)
+(PORT = 1521)
+)
+)
+(CONNECT_DATA =
+(SERVICE_NAME = TEST_SRV)
+(SID = TEST)
+(GLOBAL_NAME = TEST1.WORLD)
+)
+)
+
+Step 2: Create pfile on source server from spfile and also modify the same and make it for single instance.
+
+Modified file:
+$ cat initTEST_bkp.ora
+CLONE.__db_cache_size=6408896512
+CLONE.__java_pool_size=201326592
+CLONE.__large_pool_size=234881024
+CLONE.__pga_aggregate_target=2113929216
+CLONE.__sga_target=10502537216
+CLONE.__shared_io_pool_size=0
+CLONE.__shared_pool_size=3590324224
+CLONE.__streams_pool_size=0
+*.audit_file_dest='/u01/app/oracle/admin/CLONE/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.4.0'
+*.control_files='+DATAC1/clone/controlfile/con01.ctl','+RECOC1/clone/controlfile/con02.ctl'
+*.db_block_size=8192
+*.db_create_file_dest='+DATAC1'
+*.db_create_online_log_dest_1='+DATAC1'
+*.db_create_online_log_dest_2='+RECOC1'
+*.db_domain=''
+*.db_name='CLONE'
+*.db_recovery_file_dest='+RECOC1'
+*.db_recovery_file_dest_size=214748364800
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=CLONEXDB)'
+*.instance_number=1
+*.log_archive_dest_1='LOCATION=+RECOC1'
+*.log_archive_format='clone_%t_%s_%r.arc'
+*.open_cursors=300
+*.pga_aggregate_target=2097152000
+*.processes=600
+*.remote_login_passwordfile='exclusive'
+*.sessions=665
+*.sga_target=10485760000
+CLONE.thread=1
+CLONE.undo_tablespace='UNDOTBS1'
+
+Step 3: Create password file for remote authentication on source DB.
+
+$orapwd file=orapwCLONE entries=20 password=******
+
+Step 4: Copy below two files on target server.
+initTEST_bkp.ora
+orapwCLONE
+
+Step 5: Source the environment for the database CLONE on target server.
+
+$export ORACLE_SID=CLONE
+
+$export ORACLE_HOME= /u01/app/oracle/product/11.2.0.4/db_home_11g
+
+$env | grep ORA
+
+Step 6: Move the transferred pfile as below and startup the database in nomount state:
+
+$cp /opt/rpc/scripts/backup/RMAN_TEST/initTEST_bkp.ora /u01/app/oracle/product/11.2.0.4/db_home_11g/dbs/initCLONE.ora
+
+SQL> startup nomount;
+
+Step 7: Now perform active rman database cloning from target side.
+
+$env | grep ORA
+
+$nohup rman target sys/***@TEST nocatalog auxiliary sys/***@CLONE cmdfile=rman_duplicate_17042017.rcv log= rman_duplicate_17042017.log &
+
+ 
+vi rman_duplicate_17042017.rcv
+
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+allocate channel ch5 device type disk;
+allocate channel ch6 device type disk;
+allocate channel ch7 device type disk;
+allocate channel ch8 device type disk;
+allocate channel ch9 device type disk;
+allocate channel ch10 device type disk;
+allocate channel ch11 device type disk;
+allocate channel ch12 device type disk;
+allocate channel ch13 device type disk;
+allocate channel ch14 device type disk;
+allocate channel ch15 device type disk;
+allocate channel ch16 device type disk;
+allocate channel ch17 device type disk;
+allocate channel ch18 device type disk;
+allocate channel ch19 device type disk;
+allocate channel ch20 device type disk;
+duplicate database to CLONE from active database nofilenamecheck;
+release channel ch1;
+release channel ch2;
+release channel ch3;
+release channel ch4;
+release channel ch5;
+release channel ch6;
+release channel ch7;
+release channel ch8;
+release channel ch9;
+release channel ch10;
+release channel ch11;
+release channel ch12;
+release channel ch13;
+release channel ch14;
+release channel ch15;
+release channel ch16;
+release channel ch17;
+release channel ch18;
+release channel ch19;
+release channel ch20;
+} 
+
+Step 8: Verify the duplicate command executed successfully and it ended with below output.
+
+contents of Memory Script:
+
+{
+
+Alter clone database open resetlogs;
+
+}
+
+executing Memory Script
+
+database opened
+
+Finished Duplicate
+
+Step 9: Now disable thread of other Instances and drop the associated redolog files.
+
+SQL> alter database disable thread 2;
+
+SQL> select * from gv$logfile;
+
+INST_ID GROUP# STATUS TYPE MEMBER IS_
+-- -- -- -- -- -- -- -- -- -- -- -- -- - -- -- -- - -- -- -- -- -- -- -- -- -- -- 
+2 2 ONLINE +DATAC1/test/onlinelog/group_2.927.934140781 NO
+2 2 ONLINE +RECOC1/test/onlinelog/group_2.6234.934140781 NO
+2 1 ONLINE +DATAC1/test/onlinelog/group_1.928.934140781 NO
+2 1 ONLINE +RECOC1/test/onlinelog/group_1.6427.934140781 NO
+2 3 ONLINE +DATAC1/test/onlinelog/group_3.1361.934140887 NO
+2 3 ONLINE +RECOC1/test/onlinelog/group_3.5647.934140887 NO
+2 4 ONLINE +DATAC1/test/onlinelog/group_4.1362.934140887 NO
+2 4 ONLINE +RECOC1/test/onlinelog/group_4.5646.934140887 NO
+
+SQL> select group# from v$log where THREAD#=2;
+
+GROUP#
+-- -- -- -- --
+3
+4
+
+SQL> alter database drop logfile group 3;
+
+SQL> alter database drop logfile group 4;
+
+Step 10: Drop the undo tablespaces created for other instances.
+
+SQL> select tablespace_name from dba_tablespaces where contents=UNDO;
+
+TABLESPACE_NAME
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+UNDOTBS1
+UNDOTBS2
+ 
+SQL> drop tablespace UNDOTBS2 including contents and datafiles;
+
+SQL> select tablespace_name from dba_tablespaces where contents=UNDO;
+
+
+Step 11: Now create spfile from pfile.
+
+SQL> create spfile='+DATAC1/clone/spfileclone.ora'  from pfile='/u01/app/oracle/product/11.2.0.4/db_home_11g/dbs/initCLONE.ora';
+
+Step 12: Restart the database to take effort. Modify the pfile with below entry:
+
+SQL> shut immediate;
+
+vi initCLONE.ora
+
+spfile=+DATAC1/clone/spfileclone.ora;
+
+SQL> startup;
+
+SQL> show parameter spfile;

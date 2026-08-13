@@ -1,0 +1,213 @@
+Step 1: Backup the source database including control file, spfile, and archive logs.
+(Validate if all archive logs have been backed-up and also verify backup has completed successfully without any error). 
+
+Check number of CPU cores on server and the allocate channels accordingly.
+
+vi rman_backup.rcv
+run
+{
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch5 device type disk;
+allocate channel ch6 device type disk;
+allocate channel ch7 device type disk;
+allocate channel ch8 device type disk;
+allocate channel ch9 device type disk;
+allocate channel ch10 device type disk;
+allocate channel ch11 device type disk;
+allocate channel ch12 device type disk;
+allocate channel ch13 device type disk;
+allocate channel ch14 device type disk;
+allocate channel ch15 device type disk;
+allocate channel ch16 device type disk;
+allocate channel ch17 device type disk;
+allocate channel ch18 device type disk;
+allocate channel ch19 device type disk;
+allocate channel ch20 device type disk;
+backup as compressed backupset database format='/opt/rpc/scripts/backup/RMAN_TEST/FULL_DB_TEST_24042017_%U' plus archivelog format='/opt/rpc/scripts/backup/RMAN_TEST/Arch_TEST_24042017_%U';
+backup current controlfile format='/opt/rpc/scripts/backup/RMAN_TEST/Con_TEST_24042017_%F';
+release channel ch1;
+release channel ch2;
+release channel ch3;
+release channel ch4;
+release channel ch5;
+release channel ch6;
+release channel ch7;
+release channel ch8;
+release channel ch9;
+release channel ch10;
+release channel ch11;
+release channel ch12;
+release channel ch13;
+release channel ch14;
+release channel ch15;
+release channel ch16;
+release channel ch17;
+release channel ch18;
+release channel ch19;
+release channel ch20;
+}
+
+$nohup rman target / cmdfile=rman_backup.rcv log=rman_backup.log & 
+
+Step 2: Create pfile on source server from spfile and also modify the same and make it for single instance.
+ 
+SQL> create pfile='/opt/rpc/scripts/backup/RMAN_Test/initTEST_bkp.ora' from spfile; 
+ 
+Modified file:
+ 
+$ cat initTEST_bkp.ora
+ 
+CLONE.__db_cache_size=6408896512
+CLONE.__java_pool_size=201326592
+CLONE.__large_pool_size=234881024
+CLONE.__pga_aggregate_target=2113929216
+CLONE.__sga_target=10502537216
+CLONE.__shared_io_pool_size=0
+CLONE.__shared_pool_size=3590324224
+CLONE.__streams_pool_size=0
+*.audit_file_dest='/u01/app/oracle/admin/CLONE/adump'
+*.audit_trail='db'
+*.compatible='11.2.0.4.0'
+*.control_files='+DATAC1/clone/controlfile/con01.ctl','+RECOC1/clone/controlfile/con02.ctl'
+*.db_block_size=8192
+*.db_create_file_dest='+DATAC1'
+*.db_create_online_log_dest_1='+DATAC1'
+*.db_create_online_log_dest_2='+RECOC1'
+*.db_domain=''
+*.db_name='CLONE'
+*.db_recovery_file_dest='+RECOC1'
+*.db_recovery_file_dest_size=214748364800
+*.diagnostic_dest='/u01/app/oracle'
+*.dispatchers='(PROTOCOL=TCP) (SERVICE=CLONEXDB)'
+*.instance_number=1
+*.log_archive_dest_1='LOCATION=+RECOC1'
+*.log_archive_format='clone_%t_%s_%r.arc'
+*.open_cursors=300
+*.pga_aggregate_target=2097152000
+*.processes=600
+*.remote_login_passwordfile='exclusive'
+*.sessions=665
+*.sga_target=10485760000
+CLONE.thread=1
+CLONE.undo_tablespace='UNDOTBS1'
+
+Step 3: Copy above RMAN backup pieces and newly created pfile to target server.
+(Backup Location : /opt/rpc/scripts/backup/RMAN_TEST). Verify the size of the backup on both source and target server. 
+
+Step 4: Create pfile from spfile for target CLONE database.
+
+Step 5: Startup database in nomount stage using newly created pfile.
+
+$env | grep ORA
+ 
+SQL> startup nomount pfile='$ORACLE_HOME/dbs/initCLONE.ora';
+
+Step 6: At target server connect to RMAN as auxiliary database and run RMAN duplicate command. 
+ 
+$nohup rman auxiliary / cmdfile=rman_restore.rcv  log=rman_restore.log &
+ 
+run
+{
+allocate channel ch1 device type disk;
+allocate channel ch2 device type disk;
+allocate channel ch3 device type disk;
+allocate channel ch4 device type disk;
+allocate channel ch5 device type disk;
+allocate channel ch6 device type disk;
+allocate channel ch7 device type disk;
+allocate channel ch8 device type disk;
+allocate channel ch9 device type disk;
+allocate channel ch10 device type disk;
+allocate channel ch11 device type disk;
+allocate channel ch12 device type disk;
+allocate channel ch13 device type disk;
+allocate channel ch14 device type disk;
+allocate channel ch15 device type disk;
+allocate channel ch16 device type disk;
+allocate channel ch17 device type disk;
+allocate channel ch18 device type disk;
+allocate channel ch19 device type disk;
+allocate channel ch20 device type disk;
+duplicate target database to CLONE
+backup location '/opt/rpc/scripts/backup/RMAN_TEST/' nofilenamecheck;
+release channel ch1;
+release channel ch2;
+release channel ch3;
+release channel ch4;
+release channel ch5;
+release channel ch6;
+release channel ch7;
+release channel ch8;
+release channel ch9;
+release channel ch10;
+release channel ch11;
+release channel ch12;
+release channel ch13;
+release channel ch14;
+release channel ch15;
+release channel ch16;
+release channel ch17;
+release channel ch18;
+release channel ch19;
+release channel ch20;
+}
+ 
+Step 7: Now disable thread of 2nd node and drop the associated redolog files. 
+
+SQL> alter database disable thread 2;
+
+select INST_ID,GROUP#,STATUS,MEMBER from gv$logfile;
+ 
+INST_ID GROUP# STATUS  MEMBER                                       
+------- ------ ------- ---------------------------------------------
+      2      2         +DATAC1/test/onlinelog/group_2.927.934140781 
+      2      2         +RECOC1/test/onlinelog/group_2.6234.934140781
+      2      1         +DATAC1/test/onlinelog/group_1.928.934140781 
+      2      1         +RECOC1/test/onlinelog/group_1.6427.934140781
+      2      3         +DATAC1/test/onlinelog/group_3.1361.934140887
+      2      3         +RECOC1/test/onlinelog/group_3.5647.934140887
+      2      4         +DATAC1/test/onlinelog/group_4.1362.934140887
+      2      4         +RECOC1/test/onlinelog/group_4.5646.934140887
+
+SQL> select group# from v$log where THREAD#=2;
+ 
+    GROUP#
+----------
+         3
+         4
+   
+SQL> alter database drop logfile group 3;
+ 
+SQL> alter database drop logfile group 4;
+ 
+Step 8: Drop the undo tablespaces created for 2nd node.
+
+SQL>  select tablespace_name from dba_tablespaces where contents='UNDO';
+ 
+TABLESPACE_NAME
+---------------------------------
+UNDOTBS1
+UNDOTBS2
+ 
+SQL> drop tablespace UNDOTBS2 including contents and datafiles;
+ 
+SQL> select tablespace_name from dba_tablespaces where contents='UNDO';
+
+ 
+Step 9: Create spfile from pfile for cloned database.
+
+SQL> create spfile='+DATAC1/clone/spfileclone.ora' from pfile='$ORACLE_HOME/dbs/initCLONE.ora'; 
+
+Step10 : Restart the database to take effort. 
+ 
+Modify the pfile with below entry:
+
+SQL> shut immediate; 
+ 
+$cat initCLONE.ora
+spfile='+DATAC1/clone/spfileclone.ora'
+ 
+SQL> startup;
+ 
+SQL> show parameter spfile; 
