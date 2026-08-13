@@ -1,0 +1,43 @@
+#Query to check index details
+set lines 300 pages 3000
+col INDEX_TYPE for a12
+col DEGREE for a8
+col INDEX_NAME for a35
+col STATUS for a13
+col OWNER for a12
+select OWNER,INDEX_NAME,STATUS,INDEX_TYPE,VISIBILITY,INI_TRANS,CLUSTERING_FACTOR,DEGREE,PARTITIONED from dba_indexes where index_name='&INDEX_NAME';
+
+#Query to check visibility of the index whether it is VISIBLE or INVISIBLE to the optimizer 
+set lines 300 pages 3000
+col INDEX_NAME for a35
+col OWNER for a12
+select OWNER,INDEX_NAME,VISIBILITY from dba_indexes where index_name='&INDEX_NAME';
+
+#Query to check whether index is partitioned or not
+set lines 300 pages 3000
+col DEGREE for a8
+col INDEX_NAME for a35
+col OWNER for a12
+select OWNER,INDEX_NAME,PARTITIONED from dba_indexes where index_name='&INDEX_NAME';
+
+#Query to check the degree of the index
+set lines 300 pages 3000
+col DEGREE for a8
+col INDEX_NAME for a35
+col OWNER for a12
+select OWNER,INDEX_NAME,DEGREE from dba_indexes where index_name='&INDEX_NAME';
+
+#Query to check indexes whose degree is greater than 1
+set lines 300 pages 3000
+col DEGREE for a8
+col INDEX_NAME for a35
+col OWNER for a12
+select OWNER,INDEX_NAME,DEGREE from dba_indexes where degree > 1 order by 1,2;
+
+#Query to check indexes whose degree is greater than 1
+set lines 300 pages 3000
+col DEGREE for a8
+col INDEX_NAME for a35
+col OWNER for a12
+select OWNER,INDEX_NAME,DEGREE from dba_indexes where degree > 1 order by 1,2;
+ 

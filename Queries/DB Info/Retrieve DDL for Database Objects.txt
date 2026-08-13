@@ -1,0 +1,74 @@
+#User DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('USER','&USER_NAME') USER_DDL from dual;
+
+#Table DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('TABLE','&TABLE_NAME','&TABLE_OWNER') TABLE_DDL from dual;
+
+#Index DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('INDEX','&INDEX_NAME','&INDEX_OWNER') INDEX_DDL from dual;
+
+#Synonym DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('SYNONYM','&SYNONYM_NAME','&SYNONYM_OWNER') SYNONYM_DDL from dual;
+
+#View DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('VIEW','&VIEW_NAME','&VIEW_OWNER') VIEW_DDL from dual;
+
+#MVIEW DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('MATERIALIZED_VIEW','&MVIEW_NAME','&MVIEW_OWNER') VIEW_DDL from dual;
+
+#Package DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('PACKAGE','&PACKAGE_NAME','&PACKAGE_OWNER') PACKAGE_DDL from dual;
+
+#Procedure DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('PROCEDURE','&PROCEDURE_NAME','&PROCEDURE_OWNER') PROCEDURE_DDL from dual;
+
+#Role DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('ROLE','&ROLE_NAME') ROLE_DDL from dual;
+
+#DB_LINK DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('DB_LINK','&DB_LINK_NAME','&DB_LINK_OWNER') DB_LINK_DDL from dual;
+
+#Trigger DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('TRIGGER','&TRIGGER_OWNER') TRIGGER_DDL from dual;
+
+#Tablespace DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('TABLESPACE','&TABLESPACE_NAME') TABLESPACE_DDL from dual;
+
+#Type DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('TYPE','TYPE_NAME','TYPE_OWNER') TYPE_DDL from dual;
+
+#Sequence DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('SEQUENCE','SEQUENCE_NAME','SEQUENCE_OWNER') SEQUENCE_DDL from dual;
+
+#Directory DDL/Metadata
+set lines 300 pages 3000
+set long 99999999
+select dbms_metadata.get_ddl('DIRECTORY','&DIRECTORY_NAME') DIRECTORY_DDL from dual;

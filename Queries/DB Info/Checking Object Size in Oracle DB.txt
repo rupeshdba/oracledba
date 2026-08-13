@@ -1,0 +1,12 @@
+#Query to check size of objects like Table/Index, etc.
+select sum(bytes/1024/1024/1024) SIZE_GB from dba_segments where segment_name='&OBJ_NAME' and owner='&USER';
+
+#Query to check size of multiple objects like list of Tables/Indexes, etc.
+set lines 300 pages 3000
+col segment_name for a35
+select segment_name,bytes/1024/1024/1024 SIZE_GB from dba_segments where segment_name in('&OBJ_1','&OBJ_2','&OBJ_3') and owner='&USER';
+
+#Query to check top 10 objects with maximum size
+set lines 300 pages 3000
+col segment_name for a35
+select segment_name,segment_type,bytes/1024/1024/1024 SIZE_GB from dba_segments where owner='&USER' and rownum <=10 order by 3 desc;

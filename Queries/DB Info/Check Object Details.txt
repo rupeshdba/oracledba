@@ -1,0 +1,6 @@
+set lines 300
+col object_name for a38
+col object_type for a23
+col owner for a20
+col status for a19
+select owner,object_name,object_type,status,to_char(last_ddl_time,'dd-mm-yyyy hh24:mi:ss') from dba_objects where object_name='&object_name';

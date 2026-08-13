@@ -1,0 +1,7 @@
+#Query to check indexes on column of the table
+set lines 300 pages 3000
+col table_name for a35
+col index_name for a35
+col column_name for a25
+col TABLE_OWNER for a15
+select TABLE_OWNER,TABLE_NAME,INDEX_NAME,COLUMN_NAME,COLUMN_POSITION from dba_ind_columns where table_name='&TABLE_NAME';

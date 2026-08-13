@@ -1,0 +1,17 @@
+#Query to check invalid objects
+set lines 300 pages 3000
+col owner for a23
+col object_type for a33
+col object_name for a36
+select owner,object_name,object_type,to_char(created,'dd-mm-yyyy hh24:mi:ss') created,to_char(last_ddl_time,'dd-mm-yyyy hh24:mi:ss') last_ddl_time from dba_objects where status='INVALID' order by 1;
+
+#Query to get invalid object count by owner and object type
+set lines 300 pages 3000
+col owner for a23
+col object_type for a33
+select owner,object_type,count(*) from dba_objects where status='INVALID' group by owner,object_type order by 1,2,3;
+
+#Query to get invalid object count by owner
+set lines 300 pages 3000
+col owner for a23
+select owner,count(*) from dba_objects where status='INVALID' group by owner order by 1,2;
