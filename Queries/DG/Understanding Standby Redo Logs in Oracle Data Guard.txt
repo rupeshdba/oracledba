@@ -1,0 +1,295 @@
+What is Standby Redo Log or SRLs? Why do we need Standby Redo Logs ?
+Standby redo logs or SRLs are used only when the database is running in the standby role. Standby Redo logs (SRLs) are not required if the database role is Primary, but these can be created in Primary database since these are required after switchover operation when Primary database becomes standby database. Standby redo logs can be created during standby configuration or after the standby creation. Standby Redo Logs are required to avoid data loss in case of Primary DB server outages like failover situation. From 10g onwards both Physical and Logical standby databases support Standby Redo Logs.
+
+Please note that every entry written into the Online Redo Logs of the Primary Database is transferred to the Standby Site and written into the Standby Redo Logs at the same time which reduces Data Loss in case of Primary outages.
+
+With Real-Time Apply, Redo is applied to the Standby Database from the Standby Redo Logs instead of waiting until an Archive Log is created and hence SRLs are required for Real-Time Apply. From 10g, Real-Time Apply is possible with both Physical and Logical Standby Databases. Configuring standby redo logs on primary will automatically create standby redo logs on standby if you configure DR using RMAN duplicate  method "duplicate target database for standby from active database".
+
+Standby Redo Logs will only benefit if you set LGWR as the Transport Process on the Primary Database in the LOG_ARCHIVE_DEST_n destination Parameter. 
+
+Below are the redo transport processes for SYNC and ASYNC mode.
+1) NSS - Network Server SYNC Process
+2) NSA - Network Server ASYNC Process
+3) TT - Redo Transport Slave Process
+
+In 10.2 and 11.1, LNS process was used in both SYNC and ASYNC mode. From 11.2 onwards, NSS process is used for SYNC mode and TT process for ASYNC mode, except NSA process is used for ASYNC mode in 11.2 .
+
+DB Version
+SYNC
+ASYNC
+10.2
+LNSn
+
+LNSn
+
+11.1
+LNSn
+
+LNSn
+
+11.2
+NSSn
+
+NSAn
+
+12.1
+NSSn
+
+TTnn
+
+12.2
+NSSn
+
+TTnn
+
+18.0
+NSSn
+
+TTnn
+
+19.0
+NSSn
+
+TTnn
+
+
+
+How the redo transport works from Primary to Standby with SRLs.
+
+log_archive_dest_n=LGWR SYNC AFFIRM
+
+1) Transaction generates redo in Log buffer of the SGA. 
+2) LGWR process collects the transaction redo information from log buffer and updates the online redo logs. 
+3) For each synchronous (SYNC) standby destination, LGWR passes the redo to LNS/NSS process which ships the redo directly to the RFS process on the standby database. LGWR waits for confirmation from the LNS/NSS process before acknowledging the commit where AFFIRM/NOAFFIRM comes into picture. AFFIRM specifies that a redo transport destination acknowledges received redo data after writing it to the standby redo log and NOAFFIRM specifies that a redo transport destination acknowledges received redo data before writing it to the standby redo log. If you don't specify the AFFIRM or NOAFFIRM option then, the default would be AFFIRM when the SYNC attribute is specified and NOAFFIRM when the ASYNC attribute is specified.
+4) Applying redo depends on whether Real Time Apply is enabled or not in the database. In 12c, default MRP will go to REAL TIME APPLY mode.
+If Real Time Apply is enabled then, MRP process will read the redo directly from the standby redo logs and apply the redo to the standby database. It will not wait till the SRLs get archived.
+If Real Time Apply is not enabled then, MRP process will wait for the standby redo logs to be archived. Once archiving gets completed then, MRP will apply the redo to the standby database.
+
+Guidelines to create Standby Redo Logs:
+1) Verify the number of maximum Logfile Groups and Logfile Members before you add Standby Redo Logs to your Standby Database.
+2) Create at least the same number of standby redo log groups as the online redo log groups on the primary database. It is highly recommended to have one extra standby redo log group than online redo log groups on primary database. 
+For example, 
+In case of standalone or single instance environment, you have two online redo log groups, then you create three standby redo log groups.
+Primary: Number of OLRs Groups
+Standby: Number of OLRs Groups + 1
+
+In case of RAC environment, if the total number of online redo log groups on Primary are two per thread, then create standby redo log groups at least three per thread.
+Primary: Number of OLRs Groups per thread
+Standby: Number of OLRs Groups per thread + 1 per thread
+
+3) Standby Redo Log file or member size should be the same as the primary database’s online redo logs. This means that if your online redo log member size on Primary DB is 500 MB then ensure your standby redo log file or member size is 500 MB each. If your online redo log files are of different sizes then, RFS process automatically uses the same size standby redo log as the online redo log file.
+4) The RFS process writes to an archive redo log file if any of the following conditions are met:
+- There are no standby redo logs.
+- It cannot find a standby redo log that is the same size as the incoming online redo log file.
+- All standby redo logs of the correct size have not yet been archived.
+5) Whenever a redo log group is added to a primary database, it must also be added to the standby redo log of each standby database in the configuration otherwise, the standby database may become unsynchronized after a primary log switch which could temporarily prevent a zero data loss failover or cause a primary database to shut down operating in maximum protection mode .
+
+Commands to create Standby Redo Logs:
+#Execute below query in Primary database to check the current Online Redo Log members and their size.
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP#    THREAD#  SEQUENCE#    SIZE_MB    MEMBERS ARC STATUS
+------ ---------- ---------- ---------- ---------- --- --------
+     1          1        644        200          1 YES ACTIVE
+     2          1        645        200          1 NO  CURRENT
+     3          1        643        200          1 YES ACTIVE
+
+SQL> set lines 300 pages 3000
+SQL> col member for a67
+SQL> select GROUP#,STATUS,TYPE,MEMBER from v$logfile;
+
+GROUP# STATUS TYPE    MEMBER
+------ ------ ------- -------------------------------------------
+     1        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_01.LOG
+     2        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_02.LOG
+     3        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_03.LOG
+
+#Execute below query in current standby database to create standby redo logs.
+
+SQL> alter database recover managed standby database cancel;
+
+SQL> ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='MANUAL';
+
+SQL> alter database add standby logfile group 4 'D:\RUPESH\Setups\Primary\SRLs\primary01.log' size 200m;
+SQL> alter database add standby logfile group 5 'D:\RUPESH\Setups\Primary\SRLs\primary02.log' size 200m;
+SQL> alter database add standby logfile group 6 'D:\RUPESH\Setups\Primary\SRLs\primary03.log' size 200m;
+SQL> alter database add standby logfile group 7 'D:\RUPESH\Setups\Primary\SRLs\primary04.log' size 200m;
+
+SQL> ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='AUTO';
+
+SQL> recover managed standby database disconnect from session;
+
+#Execute below query in current standby database to ensure standby redo logs are created.
+
+SQL> select GROUP#,STATUS,TYPE,MEMBER from v$logfile;
+
+GROUP# STATUS TYPE    MEMBER
+------ ------ ------- -------------------------------------------
+     1        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_01.LOG
+     2        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_02.LOG
+     3        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_03.LOG
+     4        STANDBY D:\RUPESH\SETUPS\PRIMARY\SRLS\PRIMARY01.LOG
+     5        STANDBY D:\RUPESH\SETUPS\PRIMARY\SRLS\PRIMARY02.LOG
+     6        STANDBY D:\RUPESH\SETUPS\PRIMARY\SRLS\PRIMARY03.LOG
+     7        STANDBY D:\RUPESH\SETUPS\PRIMARY\SRLS\PRIMARY04.LOG
+
+#Query to ensure standby redo logs are working fine. You can see that the column "used" is getting updated frequently which means that your standby logs are working fine.
+
+SQL> select thread#,group#,sequence#,status,used,ARCHIVED from v$standby_log;
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         572416 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES
+
+SQL> /
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         573440 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES
+
+SQL> /
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         573952 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES	
+
+Demonstration of how Standby Redo Logs work:
+
+Step1:
+#Execute below queries in Primary database to check the database and current log sequence details.
+
+Primary:
+SQL> select name,db_unique_name,open_mode,database_role from v$database;
+
+NAME  DB_UNIQUE_NAME  OPEN_MODE    DATABASE_ROLE
+----- --------------- ------------ ----------------
+PR    PR              READ WRITE   PRIMARY
+
+SQL>  select max(sequence#) from v$archived_log where RESETLOGS_CHANGE#=12155220;
+
+MAX(SEQUENCE#)
+--------------
+           674
+
+SQL> show parameter _2
+
+NAME                      VALUE
+------------------------- ---------------------------------------------
+log_archive_dest_2        SERVICE=DR LGWR SYNC AFFIRM DB_UNIQUE_NAME=DR 
+log_archive_dest_state_2  ENABLE
+
+Standby:
+I have kept the database in open read only mode to see the table details.
+
+SQL> select name,db_unique_name,open_mode,database_role from v$database;
+
+NAME  DB_UNIQUE_NAME  OPEN_MODE   DATABASE_ROLE
+----- --------------- ----------- ----------------
+PR    DR              READ ONLY   PHYSICAL STANDBY
+
+SQL> select max(sequence#) from v$archived_log where RESETLOGS_CHANGE#=12155220 and applied='YES';
+
+MAX(SEQUENCE#)
+--------------
+           674
+
+SQL> select process,status from v$managed_standby where process like '%MRP%';
+
+PROCESS   STATUS
+--------- ------------
+MRP0      APPLYING_LOG
+
+
+Step2:
+#You can see that the current log sequence number in Primary database is seq# 675 which is to be archived. Also, the same seq# 675 is in active status at Standby site.
+
+Primary:
+20:11:12 SQL>  select a.GROUP#, A.BYTES/1024/1024, b.MEMBER,a.status,a.sequence# from v$log a,v$logfile b where a.group#=b.group#;
+
+GROUP# A.BYTES/1024/1024 MEMBER                                        STATUS   SEQUENCE#
+------ ----------------- --------------------------------------------- -------- ---------
+     1               200 D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_01.LOG    ACTIVE         674
+     2               200 D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_02.LOG    CURRENT        675
+     3               200 D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_03.LOG    INACTIVE       673
+
+Standby:
+20:11:04 SQL> select thread#,group#,sequence#,status,used,ARCHIVED from v$standby_log;
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4          0 UNASSIGNED          0 NO
+         1          5        675 ACTIVE          36864 YES
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES
+
+Please note that at this stage, do not perform any switch logs.
+
+Step3:
+#Now create few tables in Primary database and see if these tables exist in standby or not without switching the log files that the concept of Standby Redo log files. I have committed the records after inserting values into T23 table, but have not committed after inserting records into T08 table. Will the committed and uncommitted  records be available in the standby or only committed  ?
+
+Primary:
+20:11:31 SQL> create table T23(id number(5));
+
+Table created.
+
+20:11:45 SQL> insert into T23 values(1);
+
+1 row created.
+
+20:12:00 SQL> insert into T23 values(2);
+
+1 row created.
+
+20:12:02 SQL> commit;
+
+Commit complete.
+
+20:12:03 SQL> create table T08(name varchar2(12));
+
+Table created.
+
+20:12:21 SQL> insert into T08 values('RUPESH');
+
+1 row created.
+
+20:12:38 SQL> select * from T23;
+
+        ID
+----------
+         1
+         2
+
+20:12:46 SQL> select * from T08;
+
+NAME
+------------
+RUPESH
+
+Standby:
+#You can see that both the tables T23 and T08 exist in the standby database, but only committed records exist in the table T23 , not uncommitted records in table T08.
+
+20:11:24 SQL> select * from T23;
+
+        ID
+----------
+         1
+         2
+
+20:12:56 SQL> select * from T08;
+
+no rows selected
+
+20:13:02 SQL> desc T08
+Name       Null?        Type
+---------- -------- --------------
+NAME				 VARCHAR2(12)

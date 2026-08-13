@@ -1,0 +1,86 @@
+Creating Standby Redo Logs or SRLs in Oracle database:
+You can create standby redo logs in Primary database as well, but these would be required when the Primary database will become physical standby after switchover. Ensure Standby redo logs size should be same as that of Online Redo Logs in Primary database. Also, you need to add one extra standby redo log group for the standby instance or per thread in case of RAC database.
+
+For detail information about Standby Redo Logs or SRLs, refer Standby redo logs in oracle dataguard.
+
+#Execute below query in Primary database to check the current Online Redo Log members and their size.
+
+Primary:
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP#    THREAD#  SEQUENCE#    SIZE_MB    MEMBERS ARC STATUS
+------ ---------- ---------- ---------- ---------- --- --------
+     1          1        644        200          1 YES ACTIVE
+     2          1        645        200          1 NO  CURRENT
+     3          1        643        200          1 YES ACTIVE
+
+
+SQL> set lines 300 pages 3000
+SQL> col member for a67
+SQL> select GROUP#,STATUS,TYPE,MEMBER from v$logfile;
+
+GROUP# STATUS TYPE    MEMBER
+------ ------ ------- -------------------------------------------
+     1        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_01.LOG
+     2        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_02.LOG
+     3        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_03.LOG
+
+Standby:
+#Execute below query in current standby database to create standby redo logs.
+
+SQL> alter database recover managed standby database cancel;
+
+SQL> ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='MANUAL';
+
+SQL> alter database add standby logfile group 4 'D:\RUPESH\Setups\standby\SRLs\stand01.log' size 200m;
+SQL> alter database add standby logfile group 5 'D:\RUPESH\Setups\standby\SRLs\stand02.log' size 200m;
+SQL> alter database add standby logfile group 6 'D:\RUPESH\Setups\standby\SRLs\stand03.log' size 200m;
+SQL> alter database add standby logfile group 7 'D:\RUPESH\Setups\standby\SRLs\stand04.log' size 200m;
+
+SQL> ALTER SYSTEM SET STANDBY_FILE_MANAGEMENT='AUTO';
+
+SQL> recover managed standby database disconnect from session;
+
+#Execute below query in current standby database to ensure standby redo logs are created.
+
+
+SQL> select GROUP#,STATUS,TYPE,MEMBER from v$logfile;
+
+GROUP# STATUS TYPE    MEMBER
+------ ------ ------- -------------------------------------------
+     1        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_01.LOG
+     2        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_02.LOG
+     3        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_03.LOG
+     4        STANDBY D:\RUPESH\Setups\standby\SRLs\stand01.LOG
+     5        STANDBY D:\RUPESH\Setups\standby\SRLs\stand02.LOG
+     6        STANDBY D:\RUPESH\Setups\standby\SRLs\stand03.LOG
+     7        STANDBY D:\RUPESH\Setups\standby\SRLs\stand04.LOG
+
+#Execute below query to ensure standby redo logs are working fine. You can see that the column "used" is getting updated frequently with status as "ACTIVE" which means that your standby logs are working fine.
+
+SQL> select thread#,group#,sequence#,status,used,ARCHIVED from v$standby_log;
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         572416 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES
+
+SQL> /
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         573440 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES
+
+SQL> /
+
+   THREAD#     GROUP#  SEQUENCE# STATUS           USED ARC
+---------- ---------- ---------- ---------- ---------- ---
+         1          4        645 ACTIVE         573952 YES
+         1          5          0 UNASSIGNED          0 NO
+         0          6          0 UNASSIGNED          0 YES
+         0          7          0 UNASSIGNED          0 YES

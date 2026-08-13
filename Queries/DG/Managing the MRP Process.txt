@@ -1,0 +1,40 @@
+Note: Execute below commands in Standby database only.
+
+#Query to check if MRP process is running
+SQL> set lines 300 pages 3000
+SQL> col group# for a10
+SQL> select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby where process like '%MRP%';
+
+no rows selected
+
+#Query to start MRP process
+SQL> recover managed standby database disconnect from session;
+Media recovery complete.
+
+OR
+
+SQL> alter database recover managed standby database disconnect from session;
+
+Database altered.
+
+#Query to check if MRP process is running
+SQL> select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby where process like '%MRP%';
+
+PROCESS   STATUS          THREAD# GROUP#      SEQUENCE#     BLOCK#
+--------- ------------ ---------- ---------- ---------- ----------
+MRP0      APPLYING_LOG          1 N/A               350        877
+
+#Query to stop/cancel MRP process
+SQL> recover managed standby database cancel;
+Media recovery complete.
+
+OR
+
+SQL> alter database recover managed standby database cancel;
+
+Database altered.
+
+#Query to check if MRP process is running
+SQL> select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby where process like '%MRP%';
+
+no rows selected

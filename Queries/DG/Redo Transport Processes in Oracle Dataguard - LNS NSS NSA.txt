@@ -1,0 +1,51 @@
+LNS, NSS, NSA, TT are the redo transport processes in Oracle Dataguard for SYNC and ASYNC mode.
+
+1) NSS - Network Server SYNC Process
+2) NSA - Network Server ASYNC Process
+3) TT - Redo Transport Slave Process
+
+1) NSSn: This transfers the redo from current online redo logs to remote standby destinations configured for SYNC transport. Here, n is 1-9 or A.
+
+2) NSA: This transfers the redo from current online redo logs to remote standby destinations configured for ASYNC transport. 
+
+3) TTnn: This ships the redo from current online and standby redo logs to remote standby destinations configured for ASYNC transport. Here, nn is 00 to ZZ.
+
+In 10.2 and 11.1, LNS process was used in both SYNC and ASYNC mode. From 11.2 onwards, NSS process is used for SYNC mode and TT process for ASYNC mode, except NSA process is used for ASYNC mode in 11.2 .
+
+DB Version
+SYNC
+ASYNC
+10.2
+LNSn
+
+LNSn
+
+11.1
+LNSn
+
+LNSn
+
+11.2
+NSSn
+
+NSAn
+
+12.1
+NSSn
+
+TTnn
+
+12.2
+NSSn
+
+TTnn
+
+18.0
+NSSn
+
+TTnn
+
+19.0
+NSSn
+
+TTnn

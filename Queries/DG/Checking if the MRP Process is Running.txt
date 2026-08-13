@@ -1,0 +1,51 @@
+#Query to check if MRP process is running
+set lines 300 pages 3000
+col group# for a10
+select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby;
+
+PROCESS   STATUS          THREAD# GROUP#      SEQUENCE#     BLOCK#
+--------- ------------ ---------- ---------- ---------- ----------
+DGRD      ALLOCATED             0 N/A                 0          0
+ARCH      CLOSING               1 4                 347     217088
+DGRD      ALLOCATED             0 N/A                 0          0
+ARCH      CONNECTED             0 N/A                 0          0
+ARCH      CLOSING               1 5                 348          1
+ARCH      CLOSING               1 4                 349          1
+RFS       IDLE                  1 N/A                 0          0
+RFS       IDLE                  1 2                 350         88
+RFS       IDLE                  0 N/A                 0          0
+
+SQL> select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby where process like '%MRP%';
+
+no rows selected
+
+In the above output, MRP process is not running. Below command is used to start the MRP process.
+
+SQL> recover managed standby database disconnect from session;
+Media recovery complete.
+
+In the below output, you can see that MRP process is running now and applying logs.
+
+SQL> select process,status,thread#,group#,SEQUENCE#,BLOCK# from v$managed_standby;
+
+PROCESS   STATUS          THREAD# GROUP#      SEQUENCE#     BLOCK#
+--------- ------------ ---------- ---------- ---------- ----------
+DGRD      ALLOCATED             0 N/A                 0          0
+ARCH      CLOSING               1 4                 347     217088
+DGRD      ALLOCATED             0 N/A                 0          0
+ARCH      CONNECTED             0 N/A                 0          0
+ARCH      CLOSING               1 5                 348          1
+ARCH      CLOSING               1 4                 349          1
+RFS       IDLE                  1 N/A                 0          0
+RFS       IDLE                  1 2                 350        163
+RFS       IDLE                  0 N/A                 0          0
+MRP0      APPLYING_LOG          1 N/A               350        163
+
+
+OR
+
+SQL> select PROCESS,STATUS,THREAD#,GROUP#,SEQUENCE#,BLOCK# from v$managed_standby where process like '%MRP%';
+
+PROCESS   STATUS          THREAD# GROUP#      SEQUENCE#     BLOCK#
+--------- ------------ ---------- ---------- ---------- ----------
+MRP0      APPLYING_LOG          1 N/A               350        423

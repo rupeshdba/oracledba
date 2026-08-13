@@ -1,0 +1,27 @@
+For Single Instance:
+
+Primary:
+set lines 300 pages 3000
+select max(sequence#) Primary from v$archived_log;
+
+You can check the sync status of standby database from Primary database also.
+
+set lines 300 pages 3000
+select max(sequence#) Standby from v$archived_log where applied='YES';
+
+where, you can check the destination for which standby database is configured.
+
+Standby:
+set lines 300 pages 3000
+select max(sequence#) Standby from v$archived_log where applied='YES';
+
+
+For RAC:
+
+Primary:
+set lines 300 pages 3000
+select thread#, max(sequence#) from v$archived_log group by thread# order by 1;
+
+Standby:
+set lines 300 pages 3000
+select thread#, max(sequence#) from v$archived_log where applied='YES' group by thread# order by 1;
