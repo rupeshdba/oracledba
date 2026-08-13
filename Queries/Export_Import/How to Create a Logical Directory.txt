@@ -1,0 +1,53 @@
+#First list the existing logical directories in the database.
+
+SQL> set lines 300 pages 3000
+SQL> col owner for a14
+SQL> col directory_name for a25
+SQL> col directory_path for a60
+SQL> select OWNER,DIRECTORY_NAME,DIRECTORY_PATH from dba_directories;
+
+OWNER  DIRECTORY_NAME            DIRECTORY_PATH
+------ ------------------------- ------------------------------------------------------------
+SYS    DBMS_OPTIM_LOGDIR         D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/cfgtoollogs
+SYS    DBMS_OPTIM_ADMINDIR       D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/rdbms/admin
+SYS    ORACLECLRDIR              D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\bin\clr
+SYS    SDO_DIR_WORK
+SYS    SDO_DIR_ADMIN             D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/md/admin
+SYS    XMLDIR                    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml
+SYS    XSDDIR                    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml\schema
+SYS    OPATCH_INST_DIR           D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\OPatch
+SYS    ORACLE_OCM_CONFIG_DIR2    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\ccr\state
+SYS    ORACLE_BASE               D:\RUPESH\app\rghubade
+SYS    ORACLE_HOME               D:\RUPESH\Setups\WINDOWS.X64_193000_db_home
+SYS    ORACLE_OCM_CONFIG_DIR     D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\ccr\state
+SYS    DATA_PUMP_DIR             D:\RUPESH\app\rghubade\admin\test\dpdump/
+SYS    OPATCH_SCRIPT_DIR         D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\QOpatch
+SYS    OPATCH_LOG_DIR            D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\log
+SYS    JAVA$JOX$CUJS$DIRECTORY$  D:\RUPESH\SETUPS\WINDOWS.X64_193000_DB_HOME\JAVAVM\ADMIN\
+
+#Create directory/folder on server which should be physically present on the server.
+
+#Create logical directory in the database using above created physical path. You can create logical directory by "create" command or "create or replace" command.
+ 
+SQL> create directory DIR_TEST as 'C:\Backup';
+
+Directory created.
+
+SQL> create or replace directory DIR_TEST as 'C:\Backup';
+
+Directory created.
+
+#Ensure directory is created in the database.
+SQL> set lines 300 pages 3000
+SQL> col owner for a14
+SQL> col directory_name for a25
+SQL> col directory_path for a60
+SQL> select OWNER,DIRECTORY_NAME,DIRECTORY_PATH from dba_directories where directory_name='DIR_TEST';
+
+OWNER   DIRECTORY_NAME   DIRECTORY_PATH
+------- ---------------- -----------------
+SYS     DIR_TEST         C:\Backup
+
+#Do not forget to give read, write permissions to the application user. If you are exporting/importing data by system user, then read, write permissions are not required.
+
+SQL> grant read, write on directory DIR_TEST to TEST;

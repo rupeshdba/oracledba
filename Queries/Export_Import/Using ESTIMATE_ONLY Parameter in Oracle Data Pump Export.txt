@@ -1,0 +1,61 @@
+Note:  Estimate_only=y parameter does not perform the export, instead it tells the data pump only estimate the export size. It will not allow dumpfile keyword with estimate_only option, but you can add directory or logfile keyword if you want to add. Suppose, you want to estimate the size of the export backup before taking actual export, then you can go ahead with this option.
+The default option is estimate_only=n, where it does not estimate the space but performs the actual export.
+      
+#Execute below command to estimate the size of the export. (estimate_only=y)
+
+C:\Windows\System32>expdp schemas=test estimate_only=y
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 9 21:37:45 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test estimate_only=y
+Estimate in progress using BLOCKS method...
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+.  estimated "TEST"."DEPT"                                  64 KB
+.  estimated "TEST"."EMP"                                   64 KB
+Total estimation using BLOCKS method: 128 KB
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 9 21:37:52 2024 elapsed 0 00:00:03
+
+ 
+#Execute below command to perform actual export without estimating the size of the export. (estimate_only=n)
+You can add dumpfile or logfile or directory keyword with this command otherwise it will create default dumpfile with default name EXPDAT.DMP  in default directory DATA_PUMP_DIR.
+
+
+C:\Windows\System32>expdp schemas=test estimate_only=n
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 9 21:52:38 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** schemas=test estimate_only=n
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  D:\RUPESH\APP\RGHUBADE\ADMIN\TEST\DPDUMP\EXPDAT.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 9 21:53:12 2024 elapsed 0 00:00:31

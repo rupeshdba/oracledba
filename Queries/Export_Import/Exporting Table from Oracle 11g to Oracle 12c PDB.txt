@@ -1,0 +1,234 @@
+Source DB Server:
+OS: OEL 7.5
+Database Name: CLONE
+DB Version: 11.2.0.4
+Schema: RUPESH
+TABLE: EMP
+Tablespace: TEST
+
+Target DB Server:
+OS: OEL 7.5
+Database Name: ORCL
+Pluggable DB Name: ORCLPDB
+DB Version: 12.2.0.1
+Schema: C##RUPESH   => Local User
+Tablespace: USERS
+
+
+Step 1: Check current versions of both source and target DBs.
+
+Source:
+[oracle@clone oracle]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Jun 10 19:47:17 2018
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select banner from v$version;
+
+BANNER
+--------------------------------------------------------------------------------
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+PL/SQL Release 11.2.0.4.0 - Production
+CORE   11.2.0.4.0        Production
+TNS for Linux: Version 11.2.0.4.0 - Production
+NLSRTL Version 11.2.0.4.0 - Production
+
+Target:
+[oracle@test oracle]$ sqlplus / as sysdba
+
+SQL*Plus: Release 12.2.0.1.0 Production on Sun Jun 10 19:47:43 2018
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL> select banner from v$version;
+
+BANNER
+--------------------------------------------------------------------------------
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+PL/SQL Release 12.2.0.1.0 - Production
+CORE   12.2.0.1.0        Production
+TNS for Linux: Version 12.2.0.1.0 - Production
+NLSRTL Version 12.2.0.1.0 - Production
+
+
+You can check whether pluggable feature is enabled or not using below command.
+
+SQL> show pdbs
+
+CON_ID CON_NAME      OPEN MODE  RESTRICTED
+------ ------------- ---------- ----------
+         2 PDB$SEED  READ ONLY  NO
+         3 ORCLPDB   READ WRITE NO
+
+Step 2: Get table metadata details from source DB.
+
+SQL> set lines 300 pages 3000
+SQL> col directory_name for a13
+SQL> col directory_path for a34
+SQL> col owner for a13
+SQL> select * from dba_directories where directory_name='DIR';
+
+OWNER                 DIRECTORY_NAM DIRECTORY_PATH
+------------- ------------- ----------------------------------
+SYS            DIR     /u01/app/oracle/
+
+SQL> select username,account_status,default_tablespace from dba_users where username='RUPESH';
+
+USERNAME    ACCOUNT_STATUS  DEFAULT_TABLESPACE
+---------- ---------------- -------------------
+RUPESH     OPEN             TEST
+
+SQL> conn rupesh
+Enter password:
+Connected.
+SQL>
+
+SQL> select * from tab;
+
+TNAME     TABTYPE  CLUSTERID
+--------- ------- ----------
+EMP       TABLE
+
+SQL> select * from emp;
+
+            ID NAME
+---------- ------------
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+
+7 rows selected.
+
+
+Step 3: Take export of the table in source DB.
+
+[oracle@clone oracle]$ expdp directory=DIR dumpfile=expdp_emp.dmp logfile=expdp_emp.log tables=rupesh.emp
+
+Export: Release 11.2.0.4.0 - Production on Sun Jun 10 20:00:01 2018
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR dumpfile=expdp_emp.dmp logfile=expdp_emp.log tables=rupesh.emp
+Estimate in progress using BLOCKS method...
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Total estimation using BLOCKS method: 64 KB
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . exported "RUPESH"."EMP"                              5.476 KB       7 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  /u01/app/oracle/expdp_emp.dmp
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sun Jun 10 20:00:12 2018 elapsed 0 00:00:06
+
+[oracle@clone oracle]$ pwd
+/u01/app/oracle
+[oracle@clone oracle]$ ls -ltr expdp*
+-rw-r----- 1 oracle oinstall 94208 Jun 10 20:00 expdp_emp.dmp
+-rw-r--r-- 1 oracle oinstall  1060 Jun 10 20:00 expdp_emp.log
+
+
+Copy exported table on target DB server.
+
+[oracle@clone oracle]$ scp expdp_emp.dmp oracle@test:/u01/app/oracle
+oracle@test's password:
+expdp_emp.dmp                                                                                                               100%   92KB  20.7MB/s   00:00   
+
+
+Step 4: Check user metadata on target DB server.
+
+SQL> select username,account_status,default_tablespace from dba_users where username='C##RUPESH';
+
+USERNAME    ACCOUNT_STATUS  DEFAULT_TABLESPACE
+----------- --------------- -------------------
+C##RUPESH     OPEN          USERS
+
+
+SQL> conn C##RUPESH
+Enter password:
+Connected.
+
+SQL> select * from tab;
+
+TNAME       TABTYPE  CLUSTERID
+-------- ----------- ---------------
+DEPT         TABLE
+
+
+Below is the tns entry for PDB datagbase ORCLPDB.
+
+[oracle@test admin]$ cat tnsnames.ora | grep -10 ORCLPDB
+ORCLPDB =
+(DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = test.localdomain)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = orcl.localdomain)
+    )
+  )
+
+
+Step 5: Start import on target DB server.
+
+[oracle@test oracle]$ impdp directory=DIR dumpfile=expdp_emp.dmp logfile=impdp_emp.log tables=rupesh.emp remap_schema=rupesh:C##RUPESH remap_tablespace=TEST:USERS
+
+Import: Release 12.2.0.1.0 - Production on Sun Jun 10 20:03:24 2018
+
+Copyright (c) 1982, 2017, Oracle and/or its affiliates.  All rights reserved.
+
+Username: system@ORCLPDB
+Password:
+
+Connected to: Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+Warning: Oracle Data Pump operations are not typically needed when connected to the root or seed of a container database.
+
+Master table "SYSTEM"."SYS_IMPORT_TABLE_01" successfully loaded/unloaded
+import done in AL32UTF8 character set and AL16UTF16 NCHAR character set
+export done in WE8MSWIN1252 character set and AL16UTF16 NCHAR character set
+Warning: possible data loss in character set conversions
+Starting "SYSTEM"."SYS_IMPORT_TABLE_01":  system/********@ORCLPDB directory=DIR dumpfile=expdp_emp.dmp logfile=impdp_emp.log tables=rupesh.emp remap_schema=rupesh:C##RUPESH remap_tablespace=TEST:USERS
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+. . imported "C##RUPESH"."EMP"                           5.476 KB       7 rows
+Job "SYSTEM"."SYS_IMPORT_TABLE_01" successfully completed at Sun Jun 10 20:03:43 2018 elapsed 0 00:00:08
+
+SQL> conn C##RUPESH
+Enter password:
+Connected.
+
+SQL> select * from tab;
+
+TNAME  TABTYPE  CLUSTERID
+----- --------- -----------
+DEPT  TABLE  
+EMP   TABLE
+
+SQL> select * from emp;
+
+            ID NAME
+---------- ------------
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+             1 Tom
+
+7 rows selected.

@@ -1,0 +1,37 @@
+#Execute below command to take export backup of entire database using <tablespaces=TBS_NAME> keyword.
+
+C:\Windows\System32>expdp directory=DIR_TEST tablespaces=USERS dumpfile=TBS.dmp logfile=TBS.log
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 9 20:36:11 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLESPACE_01":  test/******** directory=DIR_TEST tablespaces=USERS dumpfile=TBS.dmp logfile=TBS.log
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/COMMENT
+Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+. . exported "COMP"."COUNTRIES"                              0 KB       0 rows
+. . exported "COMP"."DEPARTMENT"                             0 KB       0 rows
+. . exported "COMP"."EMPLOYEE"                               0 KB       0 rows
+. . exported "COMP"."JOBS"                                   0 KB       0 rows
+. . exported "COMP"."JOB_HISTORY"                            0 KB       0 rows
+. . exported "COMP"."LOCATIONS"                              0 KB       0 rows
+. . exported "COMP"."REGIONS"                                0 KB       0 rows
+Master table "TEST"."SYS_EXPORT_TABLESPACE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLESPACE_01 is:
+  C:\BACKUP\TBS.DMP
+Job "TEST"."SYS_EXPORT_TABLESPACE_01" successfully completed at Sat Mar 9 20:37:14 2024 elapsed 0 00:00:58

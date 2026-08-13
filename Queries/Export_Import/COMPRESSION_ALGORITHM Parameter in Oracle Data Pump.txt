@@ -1,0 +1,235 @@
+COMPRESSION_ALGORITHM parameter specifies the compression algorithm that compresses the dump file data as per the algorithm. 
+
+The default algorithm is BASIC.
+
+COMPRESSION_ALGORITHM = [BASIC | LOW | MEDIUM | HIGH]
+
+BASIC :- This algorithm is a good combination of compression ratios and speed.
+
+LOW :-  This algorithm is suited for environments where CPU resources are the constraints and having less impact on export throughput. 
+
+MEDIUM :-  This is the recommended one for most of the environments. Like BASIC, this algorithm also provides a good combination of compression ratios and speed, but it uses a different algorithm than BASIC.
+
+HIGH :- This algorithm is best suited for environments where network speed is the constraint.
+
+Let's see the below examples with each of the algorithms.
+
+I have created one EMP table in TEST schema.
+
+SQL> select sum(bytes/1024) SIZE_KB from dba_segments where segment_name='EMP' and owner='TEST';
+
+   SIZE_KB
+----------
+        64
+
+#First take the export backup of the table without compression and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:43:11 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:43:26 2024 elapsed 0 00:00:13
+
+
+
+#Export the table without compression algorithm, but with COMPRESSION=DATA_ONLY  and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:41:32 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                5.101 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:41:50 2024 elapsed 0 00:00:13
+
+
+#Export the table with default compression algorithm  and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=BASIC
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:44:19 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=BASIC
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                5.101 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:44:37 2024 elapsed 0 00:00:13
+
+
+#Export the table with compression algorithm  as LOW and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=LOW
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:45:45 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=LOW
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                4.796 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:46:01 2024 elapsed 0 00:00:13
+
+
+
+#Export the table with compression algorithm  as MEDIUM and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=MEDIUM
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:46:56 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=MEDIUM
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                4.742 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:47:12 2024 elapsed 0 00:00:14
+
+
+
+
+#Export the table with compression algorithm  as HIGH and see he size of the dump file.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=HIGH
+
+Export: Release 19.0.0.0.0 - Production on Wed Apr 17 15:48:06 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log COMPRESSION=DATA_ONLY COMPRESSION_ALGORITHM=HIGH
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                4.695 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Wed Apr 17 15:48:22 2024 elapsed 0 00:00:13
+
+
+
+
+See the dump file size differences with different compression algorithms.
+
+Sr. No.
+Table Name
+Table Size (KB)
+Compression
+Algorithm
+Dump File Size(KB)
+ 
+EMP
+64
+METADATA_ONLY
+Without Algorithm
+192
+ 
+
+EMP
+64
+DATA_ONLY
+Without Algorithm
+76
+ 
+
+EMP
+64
+DATA_ONLY
+BASIC
+76
+ 
+
+EMP
+64
+DATA_ONLY
+LOW
+80
+ 
+
+EMP
+64
+DATA_ONLY
+MEDIUM
+72
+ 
+
+EMP
+64
+DATA_ONLY
+HIGH
+68

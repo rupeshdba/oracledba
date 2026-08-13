@@ -1,0 +1,171 @@
+LOGTIME is a new expdp/impdp parameter introduced in Oracle 12c. This prints the timestamp for each export operation during expdp backup. This helps to diagnose performance problems or elapsed time between each export operation. You can easily track or identify the time taken to export the specific object.
+You have to add <LOGTIME=> parameter in expdp command. If you do not specify the LOGTIME option, then the default is <LOGTIME=NONE>.
+
+Below are the values for LOGTIME parameter in expdp.
+LOGTIME=NONE ---> This is the default value which will not display timestamp in both command window and export log file.
+LOGTIME=ALL --->  This will display the timestamp in both command window and export log file.
+LOGTIME=LOGFILE --->  This will display the timestamp in only export log file, not in command window.
+LOGTIME=STATUS  ---> This will display the timestamp in only command window, not in export log file. 
+
+#Execute below command with <LOGTIME=ALL> option. You can see the timestamp is displayed in both command window as well as in log file.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=ALL
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 16 00:11:12 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+16-MAR-24 00:11:18.807: Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=ALL
+16-MAR-24 00:11:21.247: Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+16-MAR-24 00:11:21.608: Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+16-MAR-24 00:11:22.171: Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+16-MAR-24 00:11:22.515: Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+16-MAR-24 00:11:22.797: Processing object type SCHEMA_EXPORT/USER
+16-MAR-24 00:11:22.922: Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+16-MAR-24 00:11:23.016: Processing object type SCHEMA_EXPORT/ROLE_GRANT
+16-MAR-24 00:11:23.109: Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+16-MAR-24 00:11:23.281: Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+16-MAR-24 00:11:23.484: Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+16-MAR-24 00:11:26.299: Processing object type SCHEMA_EXPORT/TABLE/TABLE
+16-MAR-24 00:11:27.205: Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+16-MAR-24 00:11:30.285: Processing object type SCHEMA_EXPORT/VIEW/VIEW
+16-MAR-24 00:11:33.396: Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+16-MAR-24 00:11:33.615: Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+16-MAR-24 00:11:40.852: . . exported "TEST"."DEPT"                               6.531 KB       5 rows
+16-MAR-24 00:11:40.899: . . exported "TEST"."EMP"                                6.531 KB       5 rows
+16-MAR-24 00:11:42.244: Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+16-MAR-24 00:11:42.338: ******************************************************************************
+16-MAR-24 00:11:42.338: Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+16-MAR-24 00:11:42.338:   C:\BACKUP\SCHEMA.DMP
+16-MAR-24 00:11:42.385: Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 16 00:11:42 2024 elapsed 0 00:00:25
+
+In the above command, you can see the timestamp for each export task/activity.
+
+
+#Execute below command with <LOGTIME=LOGFILE> option. You can see the timestamp is not displayed in command window, but it is there in logfile.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=LOGFILE
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 16 00:33:05 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=LOGFILE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 16 00:33:36 2024 elapsed 0 00:00:27
+
+
+
+
+#Execute below command with <LOGTIME=STATUS> option. You can see the timestamp is displayed in command window, but it is not there in logfile.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=STATUS
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 16 00:37:38 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+16-MAR-24 00:37:43.381: Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=STATUS
+16-MAR-24 00:37:45.644: Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+16-MAR-24 00:37:46.022: Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+16-MAR-24 00:37:46.558: Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+16-MAR-24 00:37:46.905: Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+16-MAR-24 00:37:47.190: Processing object type SCHEMA_EXPORT/USER
+16-MAR-24 00:37:47.317: Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+16-MAR-24 00:37:47.411: Processing object type SCHEMA_EXPORT/ROLE_GRANT
+16-MAR-24 00:37:47.521: Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+16-MAR-24 00:37:47.710: Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+16-MAR-24 00:37:47.913: Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+16-MAR-24 00:37:50.543: Processing object type SCHEMA_EXPORT/TABLE/TABLE
+16-MAR-24 00:37:51.081: Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+16-MAR-24 00:37:53.980: Processing object type SCHEMA_EXPORT/VIEW/VIEW
+16-MAR-24 00:37:57.118: Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+16-MAR-24 00:37:57.323: Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+16-MAR-24 00:38:04.080: . . exported "TEST"."DEPT"                               6.531 KB       5 rows
+16-MAR-24 00:38:04.133: . . exported "TEST"."EMP"                                6.531 KB       5 rows
+16-MAR-24 00:38:05.379: Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+16-MAR-24 00:38:05.448: ******************************************************************************
+16-MAR-24 00:38:05.448: Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+16-MAR-24 00:38:05.448:   C:\BACKUP\SCHEMA.DMP
+16-MAR-24 00:38:05.512: Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 16 00:38:05 2024 elapsed 0 00:00:23
+
+
+
+
+
+
+
+#Execute below command with <LOGTIME=NONE> option. This is the default option. The timestamp will not be displayed in both command window as well as in log file.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=NONE
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 16 00:55:03 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log LOGTIME=NONE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 16 00:55:31 2024 elapsed 0 00:00:24
+
+
+

@@ -1,0 +1,549 @@
+Note: You can add <exclude=> parameter in Oracle's Data Pump allows to exclude specific object types or objects.
+
+Useful exclude commands:
+exclude=table
+exclude=index
+exclude=view
+exclude=function
+exclude=procedure
+exclude=package
+exclude=constraint
+exclude=role_grant
+exclude=system_grant
+exclude=TABLE:\"IN ('DEPT')\"
+exclude=TABLE:\"IN ('DEPT','EMP')\"
+exclude=INDEX:\"IN ('IDX_ID')\"
+exclude=INDEX:\"IN ('IDX_ID','IDX_DT')\"
+exclude=VIEW:\"IN ('VW_TEST')\"
+exclude=VIEW:\"IN ('VW_TEST','VW_DEMO')\"
+exclude=CONSTRAINT:\"IN ('PK_ID')\"
+exclude=CONSTRAINT:\"IN ('PK_ID','FK_ID')\"
+exclude=SCHEMA:\"IN ('TEST1')\"
+exclude=SCHEMA:\"IN ('TEST1','TEST2')\"
+
+
+#Execute below query to get the all objects of TEST schema.
+
+SQL> set lines 300 pages 3000
+SQL> col OBJECT_NAME for a20
+SQL> col OBJECT_TYPE for a20
+SQL> select owner,object_name,object_type from dba_objects where owner='TEST';
+
+OWNER          OBJECT_NAME          OBJECT_TYPE
+-------------- -------------------- --------------------
+TEST           EMP                  TABLE
+TEST           DEPT                 TABLE
+TEST           VW_TEST              VIEW
+
+#Execute below query to exclude DEPT table during expdp command. You can exclude multiple tables by adding comma separated list of tables.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  exclude=TABLE:\"IN ('DEPT')\"
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 21:17:46 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=TABLE:"IN ('DEPT')"
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Mon Mar 11 21:18:58 2024 elapsed 0 00:01:09
+
+
+#Execute below query to exclude specific index during expdp command. You can exclude multiple indexes by adding comma separated list of indexes.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  exclude=INDEX:\"IN ('IDX_ID')\"
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 21:19:52 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=INDEX:"IN ('IDX_ID')"
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Mon Mar 11 21:20:59 2024 elapsed 0 00:01:01
+
+
+#Execute below query to exclude specific view during expdp command. You can exclude multiple views by adding comma separated list of views.
+ 
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  exclude=VIEW:\"IN ('VW_TEST')\"
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 21:22:28 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=VIEW:"IN ('VW_TEST')"
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Mon Mar 11 21:23:25 2024 elapsed 0 00:00:54
+
+
+
+#Execute below query to exclude specific CONSTRAINT during expdp command. You can exclude multiple constraints by adding comma separated list of views.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  exclude=CONSTRAINT:\"IN ('PK_ID')\"
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 21:25:15 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=CONSTRAINT:"IN ('PK_ID')"
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Mon Mar 11 21:26:15 2024 elapsed 0 00:00:56
+
+
+
+#Execute below query to exclude all functions during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=function
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:11:43 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=function
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:13:06 2024 elapsed 0 00:01:20
+
+
+#Execute below query to exclude all procedures during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=procedure
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:14:01 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=procedure
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:15:19 2024 elapsed 0 00:01:14
+
+
+#Execute below query to exclude all packages during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=package
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:17:40 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=package
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:18:56 2024 elapsed 0 00:01:12
+
+
+#Execute below query to exclude all indexes during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=index
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:21:14 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=index
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:22:27 2024 elapsed 0 00:01:10
+
+
+#Execute below query to exclude all views during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=view
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:23:31 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=view
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:24:41 2024 elapsed 0 00:01:03
+
+
+#Execute below query to exclude all tables during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=table
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:26:04 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=table
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:26:27 2024 elapsed 0 00:00:19
+
+
+#Execute below query to exclude all constraints during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=constraint
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:31:05 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=constraint
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:31:37 2024 elapsed 0 00:00:28
+
+
+#Execute below query to exclude all role grants during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=role_grant
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:28:37 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=role_grant
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:29:16 2024 elapsed 0 00:00:35
+
+
+#Execute below query to exclude all system grants during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=system_grant
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:32:55 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=system_grant
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:33:30 2024 elapsed 0 00:00:25
+
+
+#Execute below query to exclude all comments during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=comment
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 00:34:36 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log exclude=comment
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 00:35:03 2024 elapsed 0 00:00:24

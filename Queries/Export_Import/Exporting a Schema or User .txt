@@ -1,0 +1,56 @@
+Note: You can export/import data by any application user or sys/system user. You need to mention <ownername>.<tablename> in expdp command.
+
+#Check if read, write permissions are granted to the user on respective logical directory or not.
+SQL> set lines 300 pages 3000
+SQL> col grantee for a14
+SQL> col owner for a14
+SQL> col table_name for a15
+SQL> select grantee,owner,table_name,privilege from dba_tab_privs where table_name='DIR_TEST';
+
+GRANTEE   OWNER  TABLE_NAME   PRIVILEGE
+--------- ------ ------------ ---------
+TEST      SYS    DIR_TEST     READ
+TEST      SYS    DIR_TEST     WRITE
+
+#Execute expdp command to export the schema or user. You need to mention the keyword <schemas=username>.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log
+
+Export: Release 19.0.0.0.0 - Production on Thu Mar 7 20:53:33 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Thu Mar 7 20:54:09 2024 elapsed 0 00:00:31
+
+#Use below query to monitor the export while running.
+
+SQL> set lines 300 pages 3000
+SQL> col OWNER_NAME for a12
+SQL> col JOB_NAME for a20
+SQL> col JOB_MODE for a12
+SQL> col STATE for a12
+SQL> col OPERATION for a16
+SQL> select OWNER_NAME,JOB_NAME,OPERATION,JOB_MODE,STATE,DEGREE from dba_datapump_jobs;
+
+OWNER_NAME  JOB_NAME             OPERATION   JOB_MODE  STATE      DEGREE
+----------- -------------------- ----------- --------- ---------- ------
+TEST        SYS_EXPORT_SCHEMA_01 EXPORT      SCHEMA    EXECUTING       1

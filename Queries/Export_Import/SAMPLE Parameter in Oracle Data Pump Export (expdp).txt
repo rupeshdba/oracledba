@@ -1,0 +1,309 @@
+SAMPLE parameter in expdp specifies a percentage of the data rows to be sampled and exported from the source database. This is required when you want to perform the testing with less data in lower environment where testing is not possible with large volume of data from production.
+The sample percentage only indicates the probability that a row will be selected as part of the sample. It does not mean that the database will retrieve exactly that amount of rows from the table.
+
+SAMPLE= <schema_name>.<table_name>:<sample_percent> 
+
+                    OR
+
+SAMPLE= <sample_percent> 
+
+Sample Percentage value can be anywhere from .000001 up to, but not including, 100. If you try to give 100% then you will face error message. Also, note that the SAMPLE parameter is not valid for network exports.
+
+Let's walk through the below examples:
+
+The table test.emp contains 5 rows.
+
+SQL> select * from test.emp;
+
+  ID NAME         ADDRESS          SALARY
+---- ------------ ------------ ----------
+   1 Rupesh       Navi Mumbai        5000
+   2 Jaideep      Navi Mumbai        6000
+   3 Prashant     Mumbai             7000
+   4 Sagar        Mumbai             8000
+   5 Jigun        Mumbai             9000
+
+#Export the table without sample parameter.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:08:04 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:08:24 2024 elapsed 0 00:00:17
+
+
+#Export the table with sample percentage 10. You can see that zero% data rows exported as 10% does not satisfy any data.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=10
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:09:21 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=10
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.398 KB       0 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:09:40 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 20. Here, only one row exported.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=20
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:08:45 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=20
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.429 KB       1 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:09:04 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 30. Here, again only 1 row exported with 30%.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=30
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:15:52 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=30
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.429 KB       1 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:16:11 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 40.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=40
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:15:18 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=40
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.453 KB       2 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:15:37 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 50.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=50
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:11:32 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=50
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.507 KB       4 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:11:51 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 60.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=60
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:21:22 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=60
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.453 KB       2 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:21:41 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 80. Here, only 3 rows exported though the sample percentage is 80%.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=80
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:12:45 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=80
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.476 KB       3 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:13:05 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 90. Here, only 3 rows exported though the sample percentage is 90%.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=90
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:13:47 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=90
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.484 KB       3 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 07:14:07 2024 elapsed 0 00:00:16
+
+
+#Export the table with sample percentage 100. Please note that 100% will not accept the value. You will face below error message if you give 100% in sample.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log sample=100
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:13:25 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+ORA-39001: invalid argument value
+ORA-39163: A sample size of 100 is invalid. 
+
+
+#Export the schema with sample percentage 40 for specific table. You can give sample percentage for specific table within the schema while taking schema export.
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=SCHEMA.dmp logfile=SCHEMA.log SAMPLE="TEST"."EMP":40
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 07:23:11 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_SCHEMA_01":  /******** AS SYSDBA directory=DIR_TEST schemas=test dumpfile=SCHEMA.dmp logfile=SCHEMA.log SAMPLE=TEST.EMP:40
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."CUSTOMERS"                              0 KB       0 rows
+. . exported "TEST"."PROMOTIONS"                             0 KB       0 rows
+. . exported "TEST"."EMP"                                6.421 KB       1 rows
+Master table "SYS"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "SYS"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Apr 13 07:23:51 2024 elapsed 0 00:00:36

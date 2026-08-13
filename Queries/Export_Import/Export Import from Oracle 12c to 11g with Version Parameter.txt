@@ -1,0 +1,176 @@
+Source DB Server:
+OS: OEL 7.5
+Database Name: ORCL
+Pluggable DB Name: ORCLPDB
+DB Version: 12.2.0.1
+Schema: C##RUPESH   => Local User
+Tablespace: USERS
+
+Target DB Server:
+OS: OEL 7.5
+Database Name: CLONE
+DB Version: 11.2.0.4
+Schema: RUPESH
+TABLE: EMP
+Tablespace: TEST
+
+
+Step 1: Check current versions of both source and target DBs.
+
+Source:
+[oracle@test oracle]$ sqlplus / as sysdba
+
+SQL*Plus: Release 12.2.0.1.0 Production on Sun Jun 10 19:47:43 2018
+
+Copyright (c) 1982, 2016, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+SQL> select banner from v$version;
+
+BANNER
+---------------------------------------------------------------------------
+Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+PL/SQL Release 12.2.0.1.0 - Production
+CORE   12.2.0.1.0        Production
+TNS for Linux: Version 12.2.0.1.0 - Production
+NLSRTL Version 12.2.0.1.0 - Production
+
+You can check whether pluggable feature is enabled or not using below command.
+
+SQL> show pdbs
+
+CON_ID CON_NAME    OPEN MODE  RESTRICTED
+------ ----------- ---------- ----------
+2      PDB$SEED    READ ONLY  NO
+3      ORCLPDB     READ WRITE NO
+
+Target:
+[oracle@clone oracle]$ sqlplus / as sysdba
+
+SQL*Plus: Release 11.2.0.4.0 Production on Sun Jun 10 19:47:17 2018
+
+Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+
+Connected to:
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+
+SQL> select banner from v$version;
+
+BANNER
+--------------------------------------------------------------------------------
+Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+PL/SQL Release 11.2.0.4.0 - Production
+CORE   11.2.0.4.0        Production
+TNS for Linux: Version 11.2.0.4.0 - Production
+NLSRTL Version 11.2.0.4.0 - Production
+
+
+Step 2: Get table metadata details from target DB.
+SQL> set lines 300 pages 3000
+SQL> col directory_name for a13
+SQL> col directory_path for a34
+SQL> col owner for a13
+SQL> select * from dba_directories where directory_name='DIR';
+
+OWNER                 DIRECTORY_NAM DIRECTORY_PATH
+------------- ------------- ----------------------------------
+SYS            DIR     /u01/app/oracle/
+
+SQL> select username,account_status,default_tablespace from dba_users where username='C##RUPESH';
+
+USERNAME    ACCOUNT_STATUS  DEFAULT_TABLESPACE
+---------- ---------------- -------------------
+C##RUPESH  OPEN             USERS
+
+SQL> conn c##rupesh
+Enter password:
+Connected.
+
+SQL> select * from dept;
+
+            ID NAME
+---------- ------------
+             1 A
+             1 A
+             1 A
+             1 A
+
+Step 3: Take export of the table in source DB. 
+
+[oracle@test oracle]$ expdp directory=DIR dumpfile=version_expdp_dept.dmp logfile=version_expdp_dept.log tables=C##RUPESH.dept version=11.2
+
+Export: Release 12.2.0.1.0 - Production on Sun Jun 10 20:14:37 2018
+
+Copyright (c) 1982, 2017, Oracle and/or its affiliates.  All rights reserved.
+
+Username: system@ORCLPDB
+Password: 
+
+Connected to: Oracle Database 12c Enterprise Edition Release 12.2.0.1.0 - 64bit Production
+
+Warning: Oracle Data Pump operations are not typically needed when connected to the root or seed of a container database.
+
+
+Warning: Oracle Data Pump is exporting from a database that supports long identifiers to a version that does not support long identifiers.
+
+Starting "SYSTEM"."SYS_EXPORT_TABLE_01":  system/********@ORCLPDB directory=DIR dumpfile=version_expdp_dept.dmp logfile=version_expdp_dept.log tables=C##RUPESH.dept version=11.2 
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/TABLE
+
+. . exported "C##RUPESH"."DEPT"                          5.507 KB       4 rows
+Master table "SYSTEM"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYSTEM.SYS_EXPORT_TABLE_01 is:
+  /u01/app/oracle/version_expdp_dept.dmp
+
+Job "SYSTEM"."SYS_EXPORT_TABLE_01" successfully completed at Sun Jun 10 20:15:12 2018 elapsed 0 00:00:22
+
+Copy exported dump file to target server.
+
+[oracle@test oracle]$ scp version_expdp_dept.dmp oracle@clone:/u01/app/oracle/
+oracle@clone's password:
+version_expdp_dept.dmp                                                                                                   100%  140KB  24.1MB/s   00:00   
+
+Import the exported dump in target db.
+
+[oracle@clone oracle]$ impdp directory=DIR dumpfile=version_expdp_dept.dmp logfile=version_impdp_dept.log tables=C##RUPESH.dept remap_schema=C##RUPESH:RUPESH remap_tablespace=USERS:TEST
+
+Import: Release 11.2.0.4.0 - Production on Sun Jun 10 20:16:32 2018
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+Master table "SYS"."SYS_IMPORT_TABLE_01" successfully loaded/unloaded
+Starting "SYS"."SYS_IMPORT_TABLE_01":  /******** AS SYSDBA directory=DIR dumpfile=version_expdp_dept.dmp logfile=version_impdp_dept.log tables=C##RUPESH.dept remap_schema=C##RUPESH:RUPESH remap_tablespace=USERS:TEST
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+. . imported "RUPESH"."DEPT"                             5.507 KB       4 rows
+Job "SYS"."SYS_IMPORT_TABLE_01" successfully completed at Sun Jun 10 20:16:38 2018 elapsed 0 00:00:02
+
+
+SQL> conn rupesh
+Enter password:
+Connected.
+
+SQL> select * from tab;
+
+TNAME   TABTYPE  CLUSTERID
+------- ------- ----------
+DEPT   	TABLE
+EMP    	TABLE
+
+
+SQL> select * from dept;
+
+            ID NAME
+---------- ------------
+             1 A
+             1 A
+             1 A
+             1 A

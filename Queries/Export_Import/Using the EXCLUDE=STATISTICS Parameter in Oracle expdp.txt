@@ -1,0 +1,101 @@
+Note: You can add <exclude=statistics> in expdp command to ignore the stats during export and to speed-up the export time.
+exclude=statistics ---> This will exclude both table and index statistics.
+exclude=table_statistics ---> This will exclude only table statistics.
+exclude=index_statistics ---> This will exclude only index statistics.
+      
+#Execute below query to export the table without excluding statistics. Below command will export the table statistics.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 20:16:34 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLE_01":  test/******** directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TEST.DMP
+Job "TEST"."SYS_EXPORT_TABLE_01" successfully completed at Mon Mar 11 20:16:55 2024 elapsed 0 00:00:17
+
+#Execute below query to export the table with excluding statistics by adding <exclude=statistics> keyword.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=statistics
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 20:15:29 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLE_01":  test/******** directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=statistics
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TEST.DMP
+Job "TEST"."SYS_EXPORT_TABLE_01" successfully completed at Mon Mar 11 20:15:52 2024 elapsed 0 00:00:18
+
+#Execute below query to export the table with excluding table statistics by adding <exclude=table_statistics> keyword.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=table_statistics
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 20:31:06 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLE_01":  test/******** directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=table_statistics
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TEST.DMP
+Job "TEST"."SYS_EXPORT_TABLE_01" successfully completed at Mon Mar 11 20:31:22 2024 elapsed 0 00:00:12
+
+
+#Execute below query to export the table with excluding index statistics by adding <exclude=index_statistics> keyword.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=index_statistics
+
+Export: Release 19.0.0.0.0 - Production on Mon Mar 11 20:31:57 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLE_01":  test/******** directory=DIR_TEST tables=test.emp dumpfile=test.dmp logfile=test.log exclude=index_statistics
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TEST.DMP
+Job "TEST"."SYS_EXPORT_TABLE_01" successfully completed at Mon Mar 11 20:32:15 2024 elapsed 0 00:00:14

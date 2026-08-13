@@ -1,0 +1,125 @@
+COMPRESSION parameter in expdp decides what to compress, only metadata, only data, or both before writing to the dump file. The default option is METADATA_ONLY.
+
+COMPRESSION=[ALL | DATA_ONLY | METADATA_ONLY | NONE]
+
+ALL:-This enables compression for the entire export operation. The ALL option requires that the Oracle Advanced Compression option is enabled.
+ 
+DATA_ONLY:-This will compress only data in a dump file, not metadata. The option also requires that the Oracle Advanced Compression option is enabled.
+
+METADATA_ONLY:-This will compress only metadata in a dump file, not data. This is the default option which means that you don't specify either of the options then by default, it will compress only metadata. 
+
+NONE:-This will disable the compression for the entire export operation.
+
+Please note that export with compression will take more time than normal export without compression since in compression, it may take time to compress the data. Compression is required when lack of storage space issue is there.
+
+There are few restrictions which need to be taken care before using COMPRESSION parameter in expdp.
+ - The COMPATIBLE initialization parameter must be set to at least 11.0.0, but the METADATA_ONLY option can be used even if the COMPATIBLE initialization parameter is set to 10.2.
+- Compression of data using ALL or DATA_ONLY is valid only in the Enterprise Edition of Oracle Database 11g or later. This requires that the Oracle Advanced Compression option is enabled.
+ 
+#Export one table without compression and see the dump file size. Here, size of the exported dump is 192 KB.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 16:49:42 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 16:50:05 2024 elapsed 0 00:00:20
+
+
+
+#Export one table with <compression=all> and see the dump file size. Here, size of the exported dump is 60 KB.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=all
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 16:51:05 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=all
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                               5.101 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 16:51:24 2024 elapsed 0 00:00:16
+
+
+
+
+#Export one table with <compression=data_only> and see the dump file size. Here, size of the exported dump is 76 KB.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=data_only
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 17:04:31 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=data_only
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                5.101 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 17:04:49 2024 elapsed 0 00:00:15
+
+
+
+
+#Export one table with <compression=none> and see the dump file size. Here, size of the exported dump is 208 KB. Since the default option is METADATA_ONLY, <compression=all> will not compress anything.
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=none
+
+Export: Release 19.0.0.0.0 - Production on Sat Apr 13 17:08:27 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "SYS"."SYS_EXPORT_TABLE_01":  /******** AS SYSDBA directory=DIR_TEST tables=test.emp dumpfile=table.dmp logfile=table.log compression=none
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type TABLE_EXPORT/TABLE/STATISTICS/MARKER
+Processing object type TABLE_EXPORT/TABLE/TABLE
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "SYS"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for SYS.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\TABLE.DMP
+Job "SYS"."SYS_EXPORT_TABLE_01" successfully completed at Sat Apr 13 17:08:44 2024 elapsed 0 00:00:14

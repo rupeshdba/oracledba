@@ -1,0 +1,142 @@
+Activity Description:
+Import table from one database to another database using Network_Link parameter over the network without taking export backup.
+
+Note: Ensure that the user mentioned in DB Link has below privileges to export/import data.
+
+DATAPUMP_EXP_FULL_DATABASE
+DATAPUMP_IMP_FULL_DATABASE
+
+If not then please grant this to this user.
+
+SQL> grant DATAPUMP_EXP_FULL_DATABASE to rupesh;
+SQL> grant DATAPUMP_IMP_FULL_DATABASE to rupesh;
+
+SQL> select * from dba_role_privs where grantee ='RUPESH';
+
+GRANTEE          GRANTED_ROLE        ADM DEF
+------------------------------ ------------------------------ --- ---
+RUPESH          DATAPUMP_EXP_FULL_DATABASE     NO  YES
+RUPESH          DATAPUMP_IMP_FULL_DATABASE     NO  YES
+RUPESH          CONNECT         NO  YES
+RUPESH          RESOURCE         NO  YES
+
+
+POA:
+Add tns and listener entry on target database. Test the tns entry.
+Create DB link in source database using target database credentials. Test db link connectivity.
+Execute import command on source DB server.
+
+DB Server details: 
+Source Database: DC
+Source DB Server: dc.localdomain
+
+Target Database: DEMO
+Target DB Server: dr.localdomain
+
+
+Step 1: Add tns and listener entry on target database. Test the tns entry.
+
+[oracle@dc admin]$ cat tnsnames.ora
+DEMO =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = dc.localdomain)(PORT = 1521))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = demo)
+    )
+  )
+
+[oracle@dc admin]$ cat listener.ora
+SID_LIST_LISTENER =
+(SID_LIST =
+(SID_DESC =
+(GLOBAL_DBNAME = dr.oracle.com)
+(ORACLE_HOME = /u01/app/oracle/product/11.2.0/dbhome_1)
+(SID_NAME = DC))
+)
+
+
+[oracle@dc admin]$ tnsping demo
+
+TNS Ping Utility for Linux: Version 11.2.0.4.0 - Production on 03-APR-2018 12:15:42
+
+Copyright (c) 1997, 2013, Oracle.  All rights reserved.
+
+Used parameter files:
+
+Used TNSNAMES adapter to resolve the alias
+Attempting to contact (DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(HOST = dc.localdomain)(PORT = 1521)) (CONNECT_DATA = (SERVER = DEDICATED) (SERVICE_NAME = demo)))
+OK (10 msec)
+
+
+Step 2: Create DB link in source database using target database credentials. Test db link connectivity.
+
+
+SQL> create public database link DR_to_DC connect to rupesh identified by rupesh using 'dc.localdomain:1521/DC';
+
+Database link created.
+
+SQL> select * from dba_db_links;
+
+OWNER      DB_LINK     USERNAME  HOST         CREATED
+------------ -------------- ------------ ----------------------------------- ---------
+PUBLIC      DR_TO_DC     RUPESH  dc.localdomain:1521/DC       03-APR-18
+
+SQL> select sysdate from dual@DR_TO_DC;
+
+SYSDATE
+---------
+03-APR-18
+
+SQL> select name from rupesh.my_test@DR_TO_DC;
+
+NAME
+----------
+Donnie
+
+
+Create new user in source DB(DEMO) as target user RUPESH doesn't exist in source database.
+
+
+SQL> create user vipul identified by vipul;
+
+User created.
+
+SQL> grant connect,resource to vipul;
+
+Grant succeeded.
+
+
+Create logical directory in the source database(DEMO):
+
+SQL> create directory BKP as '/u01/';
+
+Directory created.
+
+SQL> grant read,write on directory BKP to public;
+
+Grant succeeded.
+
+
+Step 3: Execute import command on source DB server.
+
+[oracle@dr ~]$ impdp directory=BKP tables=rupesh.V1 logfile=net_dump.log remap_schema=rupesh:vipul network_link=DR_TO_DC
+
+Import: Release 11.2.0.4.0 - Production on Tue Apr 3 12:03:07 2018
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+Username: / as sysdba
+
+Connected to: Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+Starting "SYS"."SYS_IMPORT_TABLE_01":  /******** AS SYSDBA directory=BKP tables=rupesh.V1 logfile=net_dump.log remap_schema=rupesh:vipul network_link=DR_TO_DC
+Estimate in progress using BLOCKS method...
+Processing object type TABLE_EXPORT/TABLE/TABLE_DATA
+Total estimation using BLOCKS method: 128 KB
+Processing object type TABLE_EXPORT/TABLE/TABLE
+. . imported "VIPUL"."V1"                                    10 rows
+Processing object type TABLE_EXPORT/TABLE/INDEX/INDEX
+Processing object type TABLE_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Job "SYS"."SYS_IMPORT_TABLE_01" successfully completed at Tue Apr 3 12:03:20 2018 elapsed 0 00:00:10

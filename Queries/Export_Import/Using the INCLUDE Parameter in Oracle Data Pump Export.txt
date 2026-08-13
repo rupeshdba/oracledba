@@ -1,0 +1,265 @@
+Note: You can add <include=statistics> in expdp command to export only specific data as per the requirement.
+
+Useful include commands:
+include=TABLE:\"IN ('DEPT')\"
+include=INDEX:\"IN ('IDX_ID')\"
+include=VIEW:\"IN ('VW_TEST')\"
+include=CONSTRAINT:\"IN ('PK_ID')\"
+include=table,index
+include=view
+include=table
+include=constraint
+include=role_grant
+include=system_grant
+
+
+#Execute below query to get the all objects of TEST schema.
+
+SQL> set lines 300 pages 3000
+SQL> col OBJECT_NAME for a20
+SQL> col OBJECT_TYPE for a20
+SQL> select owner,object_name,object_type from dba_objects where owner='TEST';
+
+OWNER          OBJECT_NAME          OBJECT_TYPE
+-------------- -------------------- --------------------
+TEST           EMP                  TABLE
+TEST           DEPT                 TABLE
+TEST           VW_TEST              VIEW
+
+#Execute below query to include DEPT table during expdp command. You can include multiple tables by adding comma separated list of tables.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  include=TABLE:\"IN ('DEPT')\"
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:42:03 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=TABLE:"IN ('DEPT')"
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:42:25 2024 elapsed 0 00:00:17
+
+
+#Execute below query to include specific index during expdp command. You can include multiple indexes by adding comma separated list of indexes.
+
+C:\Windows\System32>expdp directory=DIR_TEST tables=test.emp dumpfile=schema.dmp logfile=schema.log  include=INDEX:\"IN ('IDX_ID')\"
+
+Export: Release 19.0.0.0.0 - Production on Thu Mar 14 00:05:28 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_TABLE_01":  test/******** directory=DIR_TEST tables=test.emp dumpfile=schema.dmp logfile=schema.log include=INDEX:"IN ('IDX_ID')"
+Processing object type TABLE_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Master table "TEST"."SYS_EXPORT_TABLE_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_TABLE_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_TABLE_01" successfully completed at Thu Mar 14 00:05:37 2024 elapsed 0 00:00:05
+
+
+#Execute below query to include specific view during expdp command. You can include multiple views by adding comma separated list of views.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  include=VIEW:\"IN ('VW_TEST')\"
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:48:27 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=VIEW:"IN ('VW_TEST')"
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:48:41 2024 elapsed 0 00:00:10
+
+
+#Execute below query to include specific CONSTRAINT during expdp command. You can include multiple constraints by adding comma separated list of views.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log  include=CONSTRAINT:\"IN ('PK_ID')\"
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:49:09 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=CONSTRAINT:"IN ('PK_ID')"
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:49:18 2024 elapsed 0 00:00:06
+
+
+#Execute below query to include only tables and indexes during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=TEST dumpfile=schema.dmp logfile=schema.log include=table,index
+
+Export: Release 19.0.0.0.0 - Production on Thu Mar 14 00:01:44 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=TEST dumpfile=schema.dmp logfile=schema.log include=table,index
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Thu Mar 14 00:02:04 2024 elapsed 0 00:00:16
+
+
+#Execute below query to include all views during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=view
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:51:18 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=view
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:51:32 2024 elapsed 0 00:00:10
+
+
+#Execute below query to include all tables during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=table
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:51:50 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=table
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:52:39 2024 elapsed 0 00:00:42
+
+
+#Execute below query to include all constraints during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=constraint
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:53:10 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=constraint
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:53:23 2024 elapsed 0 00:00:06
+
+
+#Execute below query to include all role grants during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=role_grant
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:53:41 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=role_grant
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:53:52 2024 elapsed 0 00:00:04
+
+
+#Execute below query to include all system grants during expdp command.
+
+C:\Windows\System32>expdp directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=system_grant
+
+Export: Release 19.0.0.0.0 - Production on Wed Mar 13 23:54:06 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** directory=DIR_TEST schemas=test dumpfile=schema.dmp logfile=schema.log include=system_grant
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  C:\BACKUP\SCHEMA.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Wed Mar 13 23:54:14 2024 elapsed 0 00:00:04

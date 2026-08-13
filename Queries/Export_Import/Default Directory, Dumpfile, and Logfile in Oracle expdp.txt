@@ -1,0 +1,64 @@
+Note: If you forgot to mention directory name or dump file name in Oracle expdp command, then the default directory name would be DATA_PUMP_DIR , default dumpfile name would be EXPDAT.DMP, and default logfile name would be export.log.
+      
+#Execute below query to get directory details.
+
+SQL> set lines 300 pages 3000
+SQL> col owner for a14
+SQL> col directory_name for a25
+SQL> col directory_path for a60
+SQL> select OWNER,DIRECTORY_NAME,DIRECTORY_PATH from dba_directories;
+
+OWNER          DIRECTORY_NAME            DIRECTORY_PATH
+-------------- ------------------------- ------------------------------------------------------------
+SYS            DIR_DEMO                  D:\Backup
+SYS            DBMS_OPTIM_LOGDIR         D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/cfgtoollogs
+SYS            DIR_TEST                  C:\Backup
+SYS            DBMS_OPTIM_ADMINDIR       D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/rdbms/admin
+SYS            ORACLECLRDIR              D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\bin\clr
+SYS            SDO_DIR_WORK
+SYS            SDO_DIR_ADMIN             D:\RUPESH\Setups\WINDOWS.X64_193000_db_home/md/admin
+SYS            XMLDIR                    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml
+SYS            XSDDIR                    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\xml\schema
+SYS            OPATCH_INST_DIR           D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\OPatch
+SYS            ORACLE_OCM_CONFIG_DIR2    D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\ccr\state
+SYS            ORACLE_BASE               D:\RUPESH\app\rghubade
+SYS            ORACLE_HOME               D:\RUPESH\Setups\WINDOWS.X64_193000_db_home
+SYS            ORACLE_OCM_CONFIG_DIR     D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\ccr\state
+SYS            DATA_PUMP_DIR             D:\RUPESH\app\rghubade\admin\test\dpdump/
+SYS            OPATCH_SCRIPT_DIR         D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\QOpatch
+SYS            OPATCH_LOG_DIR            D:\RUPESH\Setups\WINDOWS.X64_193000_db_home\rdbms\log
+SYS            JAVA$JOX$CUJS$DIRECTORY$  D:\RUPESH\SETUPS\WINDOWS.X64_193000_DB_HOME\JAVAVM\ADMIN\
+
+
+C:\Windows\System32>expdp schemas=test
+
+Export: Release 19.0.0.0.0 - Production on Sat Mar 9 22:07:17 2024
+Version 19.16.0.0.0
+
+Copyright (c) 1982, 2022, Oracle and/or its affiliates.  All rights reserved.
+
+Username: test
+Password:
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "TEST"."SYS_EXPORT_SCHEMA_01":  test/******** schemas=test
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+. . exported "TEST"."DEPT"                               6.531 KB       5 rows
+. . exported "TEST"."EMP"                                6.531 KB       5 rows
+Master table "TEST"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for TEST.SYS_EXPORT_SCHEMA_01 is:
+  D:\RUPESH\APP\RGHUBADE\ADMIN\TEST\DPDUMP\EXPDAT.DMP
+Job "TEST"."SYS_EXPORT_SCHEMA_01" successfully completed at Sat Mar 9 22:07:51 2024 elapsed 0 00:00:31
