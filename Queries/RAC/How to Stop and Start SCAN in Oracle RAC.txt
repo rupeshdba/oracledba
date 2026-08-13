@@ -1,0 +1,197 @@
+Please note that scan and scan_listener can be stopped/started by oracle(rdbms software installation owner) or grid user. 
+
+This requires downtime of the entire database if the application is using SCAN for app to DB connectivity. There is no order of stopping/starting scan and scan_listener. If you try to stop the scan first before scan_listener then, you will face below error messages. In this case, you need to stop the scan with force option(-f). This will stop the scan as well as scan_listener, both.
+
+[oracle@rac1 ~]$ srvctl stop scan
+PRCR-1065 : Failed to stop resource ora.scan1.vip
+CRS-2529: Unable to act on 'ora.scan1.vip' because that would require stopping or relocating 'ora.LISTENER_SCAN1.lsnr', but the force option was not specified
+PRCR-1065 : Failed to stop resource ora.scan2.vip
+CRS-2529: Unable to act on 'ora.scan2.vip' because that would require stopping or relocating 'ora.LISTENER_SCAN2.lsnr', but the force option was not specified
+PRCR-1065 : Failed to stop resource ora.scan3.vip
+CRS-2529: Unable to act on 'ora.scan3.vip' because that would require stopping or relocating 'ora.LISTENER_SCAN3.lsnr', but the force option was not specified
+
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+grid      6182     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit
+grid      6351     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+grid      6521     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+oracle   22205  5452  0 15:57 pts/0    00:00:00 grep tns
+
+[oracle@rac1 ~]$ srvctl stop scan -f
+
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+oracle   22406  5452  0 15:58 pts/0    00:00:00 grep tns
+
+
+OR
+
+You can follow the below steps in sequential order to stop/start SCAN and SCAN LISTENER.
+
+Stopping Oracle SCAN and SCAN LISTENER
+
+#Ensure all Oracle SCAN_LISTENERs are running.  
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+grid      6182     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit
+grid      6351     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+grid      6521     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+oracle   22205  5452  0 15:57 pts/0    00:00:00 grep tns
+
+#Check status of Oracle scan.
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is running on node rac2
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is running on node rac1
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is running on node rac1
+
+#Check status of Oracle scan listener.
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is running on node rac2
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is running on node rac1
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is running on node rac1
+
+#Stop Oracle scan listener. 
+[oracle@rac1 ~]$ srvctl stop scan_listener
+
+#Ensure all Oracle SCAN_LISTENERs are stopped. 
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+oracle   26250  5452  0 16:07 pts/0    00:00:00 grep tns
+
+#Ensure Oracle scan listeners are stopped.
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is not running
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is not running
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is not running
+
+#Check the status of Oracle SCAN. Here, SCAN is still running though you stopped SCAN_LISTENER. 
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is running on node rac2
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is running on node rac1
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is running on node rac1
+
+#Stop the Oracle SCAN. 
+[oracle@rac1 ~]$ srvctl stop scan
+
+#Ensure Oracle scan is stopped. 
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is not running
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is not running
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is not running
+ 
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is not running
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is not running
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is not running
+
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+oracle   26689  5452  0 16:08 pts/0    00:00:00 grep tns
+
+
+Starting Oracle SCAN and SCAN LISTENER
+
+#Ensure Oracle scan is not running. 
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is not running
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is not running
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is not running
+
+#Ensure Oracle scan listener is not running. 
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is not running
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is not running
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is not running
+
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+oracle   26689  5452  0 16:08 pts/0    00:00:00 grep tns
+
+#Start the Oracle SCAN.
+[oracle@rac1 ~]$ srvctl start scan
+
+#Ensure Oracle scan is started.
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is running on node rac1
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is running on node rac2
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is running on node rac1
+
+#SCAN_LISTENER is still not running since you have not started it yet. 
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is not running
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is not running
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is not running
+
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+oracle   26890  5452  0 16:09 pts/0    00:00:00 grep tns
+
+#Start the Oracle SCAN_LISTENER 
+[oracle@rac1 ~]$ srvctl start scan_listener
+
+#Ensure SCAN_LISTENERs are started. 
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is running on node rac2
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is running on node rac1
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is running on node rac1
+ 
+[oracle@rac1 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+grid      6154     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid      6173     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr MGMTLSNR -no_crs_notify -inherit
+grid     27501     1  0 16:09 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN2 -no_crs_notify -inherit
+grid     27528     1  0 16:09 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN3 -no_crs_notify -inherit
+oracle   27653  5452  0 16:10 pts/0    00:00:00 grep tns
+
+[oracle@rac2 ~]$ ps -ef | grep tns
+root        15     2  0 14:29 ?        00:00:00 [netns]
+oracle    5165  5414  0 16:54 pts/0    00:00:00 grep tns
+grid      6179     1  0 14:32 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER -no_crs_notify -inherit
+grid     21965     1  0 16:13 ?        00:00:00 /u01/app/12.1.0.2/grid/bin/tnslsnr LISTENER_SCAN1 -no_crs_notify -inherit

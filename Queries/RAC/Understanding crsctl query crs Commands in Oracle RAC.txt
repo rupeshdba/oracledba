@@ -1,0 +1,43 @@
+#Check the clusterware active version
+[grid@rac1 ~]$ crsctl query crs activeversion
+grid Clusterware active version on the cluster is [19.0.0.0.0]
+
+#Check the clusterware softwareversion
+[grid@rac1 ~]$ crsctl query crs softwareversion
+grid Clusterware version on node [rac1] is [19.0.0.0.0]
+
+#Check the clusterware release version
+[grid@rac1 ~]$ crsctl query crs releaseversion
+grid High Availability Services release version on the local node is [19.0.0.0.0]
+
+#Check the list of users with Clusterware administrative privileges.
+[grid@rac1 ~]$ crsctl query crs administrator
+CRS Administrator List: grid root
+
+#Check the values of the Clusterware automatic resource start.
+[grid@rac1 ~]$ crsctl query crs autostart
+'Autostart delay':       0
+'Autostart servercount': 1
+
+#Displays the configured patch level of the installed Oracle Clusterware
+[grid@rac1 ~]$ crsctl query crs softwarepatch
+grid Clusterware patch level on node rac1 is [3490429237].
+
+#Checks to which site a specific node or disk belongs.
+[grid@rac1 ~]$ crsctl query crs site -n rac1
+Node 'rac1' belongs to site 'racdb-cluster'.
+
+#Checks whether Oracle Clusterware on the local server is configured to use IPMI for failure isolation.
+[grid@rac1 ~]$ crsctl query css ipmiconfig
+CRS-4237: Oracle Clusterware is not fully configured to use IPMI 
+
+#Checks the presence of the Intelligent Platform Management Interface (IPMI) driver on the local system.
+[grid@rac1 ~]$ crsctl query css ipmidevice
+CRS-4218: Unable to access an IPMI device on this system
+
+#Displays the status of the voting files and the location of the disks whether they are stored in Oracle ASM or elsewhere.
+[grid@rac1 ~]$ crsctl query css votedisk
+##  STATE    File Universal Id                File Name Disk group
+--  -----    -----------------                --------- ---------
+ 1. ONLINE   05f23a3474214f61bf75dba45b8fb189 (/dev/dg_OCR_VOTE/OCR_VOTE_0001) [DG_OCR]
+Located 1 voting disk(s).

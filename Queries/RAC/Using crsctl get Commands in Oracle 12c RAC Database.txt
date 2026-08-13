@@ -1,0 +1,345 @@
+#Command to get the hostname of the node
+[grid@rac1 ~]$ crsctl get hostname
+rac1
+
+#Command to get the hostname/nodename of the server.
+[grid@rac1 ~]$ crsctl get nodename
+rac1
+
+#Command to check whether cluster is configured in standard mode or flex mode.
+[grid@rac1 ~]$ crsctl get cluster mode config
+Cluster is configured as type "standard"
+
+#Command to check the status of the cluster.
+[grid@rac1 ~]$ crsctl get cluster mode status
+Cluster is running in "standard" mode
+
+#Command to get the value of Hub Nodes in an Oracle Flex Cluster.
+[grid@rac1 ~]$ crsctl get cluster hubsize
+CRS-4950: Current hubsize parameter value is 32
+
+#Command to get logfilesize for CSS.
+[grid@rac1 ~]$ crsctl get css logfilesize
+CRS-4676: Successful get logfilesize 52428800 for Cluster Synchronization Services.
+
+#Command to get the value of CPU_EQUIVALENCY server configuration attribute.
+[grid@rac1 ~]$ crsctl get cpu equivalency
+CRS-4963: Current cpu equivalency parameter value is 1000
+
+#Get the value of cluster guid.
+[grid@rac1 ~]$ crsctl get css clusterguid
+9efc82a91cc7cfedffcc3cb37ef3b301
+
+#Get the value of diagwait attribute which is used to delay the node reboot to give additional time to the OS to write the traces.
+[grid@rac1 ~]$ crsctl get css diagwait
+CRS-4678: Successful get diagwait 0 for Cluster Synchronization Services.
+
+#Get the value of disktimeout (Default: 200). This is the maximum amount of time allowed for a voting file I/O to complete. If this time is exceeded, the voting disk will be marked as offline.
+[grid@rac1 ~]$ crsctl get css disktimeout
+CRS-4678: Successful get disktimeout 200 for Cluster Synchronization Services.
+
+#Get the value of misscount (Default: 30). The CSS misscount parameter is the maximum time in seconds that a network heartbeat can be missed before entering into a cluster reconfiguration to evict the node.
+[grid@rac1 ~]$ crsctl get css misscount
+CRS-4678: Successful get misscount 30 for Cluster Synchronization Services.
+
+#Get the value of reboottime (Default: 3). The amount of time allowed for a node to complete a reboot after the CSS daemon has been evicted.
+[grid@rac1 ~]$ crsctl get css reboottime
+CRS-4678: Successful get reboottime 3 for Cluster Synchronization Services.
+
+#Command to get the value of css priority. 
+[grid@rac1 ~]$ crsctl get css priority
+CRS-4269: Successful get priority 4 (real-time) for Cluster Synchronization Services.
+
+#Command to get the size limit of cssd log file.
+[grid@rac1 ~]$ crsctl get css logfilesize
+CRS-4676: Successful get logfilesize 52428800 for Cluster Synchronization Services.
+
+#Command to check the current role of the local node. 
+[grid@rac1 ~]$ crsctl get node role config 
+Node 'rac1' configured role is 'hub'
+
+#Command to check the current role of the specified node
+[grid@rac1 ~]$ crsctl get node role config -node rac1
+Node 'rac1' configured role is 'hub'
+
+#Command to check the current role of all cluster nodes.
+[grid@rac1 ~]$ crsctl get node role config -all
+Node 'rac1' configured role is 'hub'
+Node 'rac2' configured role is 'hub'
+
+#Command to check the status of the local node.
+[grid@rac1 ~]$ crsctl get node role status 
+Node 'rac1' active role is 'hub'
+
+#Command to check the status of the specified node.
+[grid@rac1 ~]$ crsctl get node role status -node rac1
+Node 'rac1' active role is 'hub'
+
+#Command to check the status of all the cluster nodes.
+[grid@rac1 ~]$ crsctl get node role status -all
+Node 'rac1' active role is 'hub'
+Node 'rac2' active role is 'hub'
+
+#Checks the current value of the RESOURCE_USE_ENABLED parameter.
+[grid@rac1 ~]$ crsctl get resource use
+CRS-4966: Current resource use parameter value is 1
+
+#Command to check the current trace level of mdns module. (By root user)
+[root@rac1 bin]# ./crsctl get trace mdns all
+Get MDNSD Module: MDNS  Trace Level: 3
+
+#Command to check the current trace level of gpnp module. (By root user)
+[root@rac1 bin]# ./crsctl get trace gpnp all
+Get GPNPD Module: CLSINET  Trace Level: 0
+Get GPNPD Module: CLSNS  Trace Level: 0
+Get GPNPD Module: CLSXSEC  Trace Level: 0
+Get GPNPD Module: CLSXSIG  Trace Level: 0
+Get GPNPD Module: GIPC  Trace Level: 0
+Get GPNPD Module: GPNP  Trace Level: 0
+Get GPNPD Module: OCRAPI  Trace Level: 0
+Get GPNPD Module: OCRCLI  Trace Level: 0
+Get GPNPD Module: OCRMSG  Trace Level: 0
+Get GPNPD Module: RD  Trace Level: 0
+
+#Command to check the current trace level of CSS module. (By root user)
+[root@rac1 bin]# ./crsctl get trace css all
+Get CSSD Module: CLSF  Trace Level: 0
+Get CSSD Module: CLSFA  Trace Level: 0
+Get CSSD Module: CLSINET  Trace Level: 0
+Get CSSD Module: CSSD  Trace Level: 0
+Get CSSD Module: CSSDBCM  Trace Level: 0
+Get CSSD Module: CSSDBCMC  Trace Level: 0
+Get CSSD Module: CSSDGMCC  Trace Level: 0
+Get CSSD Module: CSSDGMPC  Trace Level: 0
+Get CSSD Module: CSSDNMC  Trace Level: 0
+Get CSSD Module: GPNP  Trace Level: 0
+Get CSSD Module: SKGFD  Trace Level: 0
+
+#Check the current trace level of CRF module. (By root user)
+[root@rac1 bin]# ./crsctl get trace crf all
+Get MOND Module: CLSINET  Trace Level: 0
+Get MOND Module: CRFCLI  Trace Level: 0
+Get MOND Module: CRFLDREP  Trace Level: 0
+Get MOND Module: CRFLOGD  Trace Level: 0
+Get MOND Module: CRFM  Trace Level: 0
+Get MOND Module: CRFMOND  Trace Level: 0
+Get MOND Module: CRFPROXY  Trace Level: 0
+Get MOND Module: CSSCLNT  Trace Level: 0
+Get MOND Module: OCLUMON  Trace Level: 0
+Get MOND Module: OCRAPI  Trace Level: 0
+Get MOND Module: OCRCLI  Trace Level: 0
+Get MOND Module: OCRMSG  Trace Level: 0
+
+#Check the current trace level of CRS module. (By root user)
+[root@rac1 bin]# ./crsctl get trace crs all
+Get CRSD Module: AGENT  Trace Level: 0
+Get CRSD Module: AGFW  Trace Level: 0
+Get CRSD Module: CLSCEVT  Trace Level: 0
+Get CRSD Module: CLSFRAME  Trace Level: 0
+Get CRSD Module: CLSINET  Trace Level: 0
+Get CRSD Module: CLSO  Trace Level: 0
+Get CRSD Module: CLSVER  Trace Level: 0
+Get CRSD Module: CLUCLS  Trace Level: 0
+Get CRSD Module: COMMCRS  Trace Level: 0
+Get CRSD Module: COMMNS  Trace Level: 0
+Get CRSD Module: CRSAPP  Trace Level: 0
+Get CRSD Module: CRSCCL  Trace Level: 0
+Get CRSD Module: CRSCEVT  Trace Level: 0
+Get CRSD Module: CRSCOMM  Trace Level: 0
+Get CRSD Module: CRSD  Trace Level: 0
+Get CRSD Module: CRSEVT  Trace Level: 0
+Get CRSD Module: CRSMAIN  Trace Level: 0
+Get CRSD Module: CRSOCR  Trace Level: 0
+Get CRSD Module: CRSPE  Trace Level: 0
+Get CRSD Module: CRSPLACE  Trace Level: 0
+Get CRSD Module: CRSRES  Trace Level: 0
+Get CRSD Module: CRSRPT  Trace Level: 0
+Get CRSD Module: CRSRTI  Trace Level: 0
+Get CRSD Module: CRSSE  Trace Level: 0
+Get CRSD Module: CRSSEC  Trace Level: 0
+Get CRSD Module: CRSTIMER  Trace Level: 0
+Get CRSD Module: CRSUI  Trace Level: 0
+Get CRSD Module: CSSCLNT  Trace Level: 0
+Get CRSD Module: OCRAPI  Trace Level: 1
+Get CRSD Module: OCRASM  Trace Level: 1
+Get CRSD Module: OCRCAC  Trace Level: 1
+Get CRSD Module: OCRCLI  Trace Level: 1
+Get CRSD Module: OCRMAS  Trace Level: 1
+Get CRSD Module: OCRMSG  Trace Level: 1
+Get CRSD Module: OCROSD  Trace Level: 1
+Get CRSD Module: OCRRAW  Trace Level: 1
+Get CRSD Module: OCRSRV  Trace Level: 1
+Get CRSD Module: OCRUTL  Trace Level: 1
+Get CRSD Module: SuiteTes  Trace Level: 0
+Get CRSD Module: UiServer  Trace Level: 0
+
+#Check the current trace level of CTSS module. (By root user)
+[root@rac1 bin]# ./crsctl get trace ctss all
+Get CTSSD Module: CLSINET  Trace Level: 0
+Get CTSSD Module: CLUCLS  Trace Level: 0
+Get CTSSD Module: CRSCCL  Trace Level: 1
+Get CTSSD Module: CSSCLNT  Trace Level: 0
+Get CTSSD Module: CTSS  Trace Level: 3
+Get CTSSD Module: OCRAPI  Trace Level: 1
+Get CTSSD Module: OCRCLI  Trace Level: 1
+Get CTSSD Module: OCRMSG  Trace Level: 1
+
+#Check the current trace level of EVM module. (By root user)
+[root@rac1 bin]# ./crsctl get trace evm all
+Get EVMD Module: CLSVER  Trace Level: 0
+Get EVMD Module: CLUCLS  Trace Level: 0
+Get EVMD Module: COMMCRS  Trace Level: 0
+Get EVMD Module: COMMNS  Trace Level: 0
+Get EVMD Module: CRSCCL  Trace Level: 0
+Get EVMD Module: CRSOCR  Trace Level: 0
+Get EVMD Module: CSSCLNT  Trace Level: 0
+Get EVMD Module: EVMAGENT  Trace Level: 0
+Get EVMD Module: EVMAPP  Trace Level: 0
+Get EVMD Module: EVMCOMM  Trace Level: 0
+Get EVMD Module: EVMD  Trace Level: 0
+Get EVMD Module: EVMEVT  Trace Level: 0
+Get EVMD Module: EVMMAIN  Trace Level: 0
+Get EVMD Module: OCRAPI  Trace Level: 1
+Get EVMD Module: OCRCLI  Trace Level: 1
+Get EVMD Module: OCRMSG  Trace Level: 1
+
+#Check the current trace level of GIPC module. (By root user)
+[root@rac1 bin]# ./crsctl get trace gipc all
+Get GIPCD Module: CLNTCOMM  Trace Level: 2
+Get GIPCD Module: CLSINET  Trace Level: 0
+Get GIPCD Module: GIPCD  Trace Level: 2
+Get GIPCD Module: GIPCDCLT  Trace Level: 2
+Get GIPCD Module: GIPCDMON  Trace Level: 2
+Get GIPCD Module: GIPCDNDE  Trace Level: 2
+Get GIPCD Module: MONTCOMM  Trace Level: 2
+Get GIPCD Module: NODECOMM  Trace Level: 2
+
+#Check the current log level of MDNS module. (By root user)
+[root@rac1 bin]# ./crsctl get log mdns all
+Get MDNSD Module: MDNS  Log Level: 3
+
+#Check the current log level of GPNP module. (By root user)
+[root@rac1 bin]# ./crsctl get log gpnp all
+Get GPNPD Module: CLSINET  Log Level: 1
+Get GPNPD Module: CLSNS  Log Level: 1
+Get GPNPD Module: CLSXSEC  Log Level: 1
+Get GPNPD Module: CLSXSIG  Log Level: 1
+Get GPNPD Module: GIPC  Log Level: 1
+Get GPNPD Module: GPNP  Log Level: 1
+Get GPNPD Module: OCRAPI  Log Level: 1
+Get GPNPD Module: OCRCLI  Log Level: 1
+Get GPNPD Module: OCRMSG  Log Level: 0
+Get GPNPD Module: RD  Log Level: 1
+
+#Check the current log level of CSS module. (By root user)
+[root@rac1 bin]# ./crsctl get log css all
+Get CSSD Module: CLSF  Log Level: 0
+Get CSSD Module: CLSFA  Log Level: 3
+Get CSSD Module: CLSINET  Log Level: 0
+Get CSSD Module: CSSD  Log Level: 2
+Get CSSD Module: CSSDBCM  Log Level: 2
+Get CSSD Module: CSSDBCMC  Log Level: 2
+Get CSSD Module: CSSDGMCC  Log Level: 2
+Get CSSD Module: CSSDGMPC  Log Level: 2
+Get CSSD Module: CSSDNMC  Log Level: 2
+Get CSSD Module: GPNP  Log Level: 1
+Get CSSD Module: SKGFD  Log Level: 0
+
+#Check the current log level of CRF module. (By root user)
+[root@rac1 bin]# ./crsctl get log crf all
+Get MOND Module: CLSINET  Log Level: 0
+Get MOND Module: CRFCLI  Log Level: 0
+Get MOND Module: CRFLDREP  Log Level: 0
+Get MOND Module: CRFLOGD  Log Level: 0
+Get MOND Module: CRFM  Log Level: 0
+Get MOND Module: CRFMOND  Log Level: 0
+Get MOND Module: CRFPROXY  Log Level: 0
+Get MOND Module: CSSCLNT  Log Level: 0
+Get MOND Module: OCLUMON  Log Level: 0
+Get MOND Module: OCRAPI  Log Level: 0
+Get MOND Module: OCRCLI  Log Level: 0
+Get MOND Module: OCRMSG  Log Level: 0
+
+#Check the current log level of CRS module. (By root user)
+[root@rac1 bin]# ./crsctl get log crs all
+Get CRSD Module: AGENT  Log Level: 1
+Get CRSD Module: AGFW  Log Level: 0
+Get CRSD Module: CLSCEVT  Log Level: 0
+Get CRSD Module: CLSFRAME  Log Level: 0
+Get CRSD Module: CLSINET  Log Level: 0
+Get CRSD Module: CLSO  Log Level: 0
+Get CRSD Module: CLSVER  Log Level: 0
+Get CRSD Module: CLUCLS  Log Level: 0
+Get CRSD Module: COMMCRS  Log Level: 0
+Get CRSD Module: COMMNS  Log Level: 0
+Get CRSD Module: CRSAPP  Log Level: 0
+Get CRSD Module: CRSCCL  Log Level: 0
+Get CRSD Module: CRSCEVT  Log Level: 0
+Get CRSD Module: CRSCOMM  Log Level: 0
+Get CRSD Module: CRSD  Log Level: 0
+Get CRSD Module: CRSEVT  Log Level: 0
+Get CRSD Module: CRSMAIN  Log Level: 0
+Get CRSD Module: CRSOCR  Log Level: 0
+Get CRSD Module: CRSPE  Log Level: 0
+Get CRSD Module: CRSPLACE  Log Level: 0
+Get CRSD Module: CRSRES  Log Level: 5
+Get CRSD Module: CRSRPT  Log Level: 0
+Get CRSD Module: CRSRTI  Log Level: 0
+Get CRSD Module: CRSSE  Log Level: 0
+Get CRSD Module: CRSSEC  Log Level: 0
+Get CRSD Module: CRSTIMER  Log Level: 0
+Get CRSD Module: CRSUI  Log Level: 0
+Get CRSD Module: CSSCLNT  Log Level: 0
+Get CRSD Module: OCRAPI  Log Level: 1
+Get CRSD Module: OCRASM  Log Level: 1
+Get CRSD Module: OCRCAC  Log Level: 1
+Get CRSD Module: OCRCLI  Log Level: 1
+Get CRSD Module: OCRMAS  Log Level: 1
+Get CRSD Module: OCRMSG  Log Level: 1
+Get CRSD Module: OCROSD  Log Level: 1
+Get CRSD Module: OCRRAW  Log Level: 1
+Get CRSD Module: OCRSRV  Log Level: 1
+Get CRSD Module: OCRUTL  Log Level: 1
+Get CRSD Module: SuiteTes  Log Level: 1
+Get CRSD Module: UiServer  Log Level: 0
+
+#Check the current log level of CTSS module. (By root user)
+[root@rac1 bin]# ./crsctl get log ctss all
+Get CTSSD Module: CLSINET  Log Level: 0
+Get CTSSD Module: CLUCLS  Log Level: 0
+Get CTSSD Module: CRSCCL  Log Level: 1
+Get CTSSD Module: CSSCLNT  Log Level: 0
+Get CTSSD Module: CTSS  Log Level: 3
+Get CTSSD Module: OCRAPI  Log Level: 1
+Get CTSSD Module: OCRCLI  Log Level: 1
+Get CTSSD Module: OCRMSG  Log Level: 1
+
+#Check the current log level of EVM module. (By root user)
+[root@rac1 bin]# ./crsctl get log evm all
+Get EVMD Module: CLSVER  Log Level: 0
+Get EVMD Module: CLUCLS  Log Level: 0
+Get EVMD Module: COMMCRS  Log Level: 0
+Get EVMD Module: COMMNS  Log Level: 0
+Get EVMD Module: CRSCCL  Log Level: 0
+Get EVMD Module: CRSOCR  Log Level: 0
+Get EVMD Module: CSSCLNT  Log Level: 0
+Get EVMD Module: EVMAGENT  Log Level: 0
+Get EVMD Module: EVMAPP  Log Level: 0
+Get EVMD Module: EVMCOMM  Log Level: 0
+Get EVMD Module: EVMD  Log Level: 0
+Get EVMD Module: EVMEVT  Log Level: 0
+Get EVMD Module: EVMMAIN  Log Level: 0
+Get EVMD Module: OCRAPI  Log Level: 1
+Get EVMD Module: OCRCLI  Log Level: 1
+Get EVMD Module: OCRMSG  Log Level: 1
+
+#Check the current log level of GIPC module. (By root user)
+[root@rac1 bin]# ./crsctl get log gipc  all
+Get GIPCD Module: CLNTCOMM  Log Level: 2
+Get GIPCD Module: CLSINET  Log Level: 0
+Get GIPCD Module: GIPCD  Log Level: 2
+Get GIPCD Module: GIPCDCLT  Log Level: 2
+Get GIPCD Module: GIPCDMON  Log Level: 2
+Get GIPCD Module: GIPCDNDE  Log Level: 2
+Get GIPCD Module: MONTCOMM  Log Level: 2
+Get GIPCD Module: NODECOMM  Log Level: 2

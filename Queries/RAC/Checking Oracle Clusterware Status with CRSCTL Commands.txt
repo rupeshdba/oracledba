@@ -1,0 +1,145 @@
+#Login by Grid Infrastructure user(grid or oracle if common user is used for both Grid Infrastructure and RDBMS).
+
+#Check cluster services status on local node only
+[grid@rac1 ~]$ crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+
+#Check cluster services status on all nodes
+[grid@rac1 ~]$ crsctl check crs -all -----> There is no such command.
+
+
+#Check cluster services status on local node only, except "Oracle High Availability service".
+[grid@rac1 ~]$ crsctl check cluster
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+
+#Check cluster services status on all nodes only, except "Oracle High Availability service".
+[grid@rac1 ~]$ crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+rac2:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+
+#Check Oracle High Available Service status on local node.
+[grid@rac1 ~]$ crsctl check has
+CRS-4638: Oracle High Availability Services is online
+
+#Check status of Cluster Synchronization Services on local node.
+[grid@rac1 ~]$ crsctl check ctss
+CRS-4701: The Cluster Time Synchronization Service is in Active mode.
+CRS-4702: Offset (in msec): 0
+
+#Check status of Cluster Synchronization Services on local node.	 
+[grid@rac1 ~]$ crsctl check css
+CRS-4529: Cluster Synchronization Services is online
+
+#Check status of Event Manager on local node.
+[grid@rac1 ~]$ crsctl check evm
+CRS-4533: Event Manager is online
+
+#Check status of Event Manager on local node.
+[grid@rac1 ~]$ crsctl check evm
+CRS-4533: Event Manager is online
+
+
+#Check Cluster Resources status for all nodes.
+[grid@rac1 ~]$ crsctl stat res -t
+------------------------------------- -----------------------
+Name           Target  State   Server     State details       
+------------------------------------- -----------------------
+Local Resources                       
+------------------------------------- -----------------------
+ora.DG_OCR.dg                         
+               ONLINE  ONLINE  rac1       STABLE
+               ONLINE  ONLINE  rac2       STABLE
+ora.LISTENER.lsnr                     
+               ONLINE  ONLINE  rac1       STABLE
+               ONLINE  ONLINE  rac2       STABLE
+ora.asm                               
+               ONLINE  ONLINE  rac1       Started,STABLE
+               ONLINE  ONLINE  rac2       Started,STABLE
+ora.net1.network                      
+               ONLINE  ONLINE  rac1       STABLE
+               ONLINE  ONLINE  rac2       STABLE
+ora.ons                               
+               ONLINE  ONLINE  rac1       STABLE
+               ONLINE  ONLINE  rac2       STABLE
+------------------------------------- -----------------------
+Cluster Resources                     
+------------------------------------- -----------------------
+ora.LISTENER_SCAN1.lsnr               
+      1        ONLINE  ONLINE  rac2       STABLE
+ora.LISTENER_SCAN2.lsnr               
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.LISTENER_SCAN3.lsnr               
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.MGMTLSNR                          
+      1        ONLINE  ONLINE  rac1       169.254.157.77 192.1
+                                          68.1.11,STABLE
+ora.cvu                               
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.mgmtdb                            
+      1        ONLINE  ONLINE  rac1       Open,STABLE
+ora.oc4j                              
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.rac1.vip                          
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.rac2.vip                          
+      1        ONLINE  ONLINE  rac2       STABLE
+ora.scan1.vip                         
+      1        ONLINE  ONLINE  rac2       STABLE
+ora.scan2.vip                         
+      1        ONLINE  ONLINE  rac1       STABLE
+ora.scan3.vip                         
+      1        ONLINE  ONLINE  rac1       STABLE
+------------------------------------- -----------------------
+
+#Check Cluster Resources status for local node.
+[grid@rac1 ~]$ crsctl stat res -t -init
+--------------------------------------------------------
+Name           Target  State    Server   State details  
+--------------------------------------------------------
+Cluster Resources
+--------------------------------------------------------
+ora.asm
+      1        ONLINE  ONLINE   rac1     Started,STABLE
+ora.cluster_interconnect.haip
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.crf
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.crsd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.cssd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.cssdmonitor
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.ctssd
+      1        ONLINE  ONLINE   rac1     ACTIVE:0,STABLE
+ora.diskmon
+      1        OFFLINE OFFLINE           STABLE
+ora.drivers.acfs
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.evmd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.gipcd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.gpnpd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.mdnsd
+      1        ONLINE  ONLINE   rac1     STABLE
+ora.storage
+      1        ONLINE  ONLINE   rac1     STABLE
+--------------------------------------------------------

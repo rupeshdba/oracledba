@@ -1,0 +1,230 @@
+Environment Configuration Details:
+Operating System: Oracle Linux 8.10 64 Bit
+Oracle and Grid Software version: 26ai
+RAC: YES
+
+
+🎯Summary:
+In Oracle RAC, enabling/disabling redo threads is required during structural changes such as adding or removing instances or converting from single-instance DB to RAC and vice-versa.
+
+🔶 Important Tips for enabling/disabling threads in Oracle RAC:
+1) Do not keep the DB instance up or mounted for which you are going to change the thread. However, the instance can be kept in Nomount state.
+2) Keep the other RAC node instances UP and running in OPEN READ-WRITE mode from which you will execute the DISABLE THREAD or ENABLE THREAD command for the target node.
+3) An instance cannot disable its own thread.
+4) To change a thread from public to private, or vice versa, first disable the thread and then enable it again.
+
+Let's go through the step-by-step process of disabling and enabling threads in Oracle RAC.
+
+1) Let's try to disable/enable the thread when the DB instance is in mount stage.
+
+Node1:
+#Check the DB instances status
+SQL> select inst_id,name,open_mode from gv$database;
+
+   INST_ID NAME      OPEN_MODE
+---------- --------- ------------
+	 1 	    PR	        READ WRITE
+	 2 	    PR	        READ WRITE
+
+#Check the instances thread status
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 OPEN   PUBLIC
+
+Node2:
+#Let's shut down the 2nd instance.
+SQL> select instance_number,instance_name,status from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME	 STATUS
+--------------- ---------------- -------
+	      2 PR2		 OPEN
+
+SQL> shut immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+Node2:
+#Stat the 2nd Node DB instance in mount stage.
+SQL> startup mount
+ORACLE instance started.
+
+Total System Global Area 2379454664 bytes
+Fixed Size		    5011656 bytes
+Variable Size		  905969664 bytes
+Database Buffers	 1459617792 bytes
+Redo Buffers		    8855552 bytes
+Database mounted. 
+
+SQL> select instance_number,instance_name,status from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME	 STATUS
+--------------- ---------------- --------
+	      2 PR2		 MOUNTED
+
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 CLOSED PUBLIC
+
+The 2nd DB instance thread status is closed which is expected as the intstance is not open, it is down and started in mounted state.
+
+Node2:
+# Now let's try to disable the Node2 DB instance thread from it's own node i.e. from Node2.
+SQL> ALTER DATABASE DISABLE THREAD 2;
+ALTER DATABASE DISABLE THREAD 2
+*
+ERROR at line 1:
+ORA-01109: database not open
+Help: https://docs.oracle.com/error-help/db/ora-01109/
+
+The above error message is expected. As mentioned earlier, a database instance cannot disable or enable its own thread.
+
+Node1:
+# Now let's try to disable the Node2 DB instance thread from Node1 which open is in READ-WRITE mode.
+
+SQL> ALTER DATABASE DISABLE THREAD 2;
+ALTER DATABASE DISABLE THREAD 2
+*
+ERROR at line 1:
+ORA-01615: instance PR2 (thread 2) is mounted - cannot disable
+Help: https://docs.oracle.com/error-help/db/ora-01615/
+
+From the above results, you can see that if the database instance for which you are attempting to change the thread status is in the MOUNT state, you cannot disable or enable its thread neither from that node nor from another node.
+
+
+2) Let's try to disable or enable the thread while the database instance is in the nomount stage.
+
+Node2:
+# Stop Node2 DB instance and start it in nomount stage.
+SQL> shut immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup nomount
+ORACLE instance started.
+
+Total System Global Area 2379454664 bytes
+Fixed Size		    5011656 bytes
+Variable Size		  905969664 bytes
+Database Buffers	 1459617792 bytes
+Redo Buffers		    8855552 bytes
+
+Node1:
+# Check the DB instance status.
+SQL> select instance_number,instance_name,status from gv$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME	 STATUS
+--------------- ---------------- ------------
+	      1 PR1		 OPEN
+	      2 PR2		 STARTED
+
+Node1:
+# Check the DB instance thread status.
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 CLOSED PUBLIC
+
+Node1:
+# Let's disable the thread 2.
+SQL> ALTER DATABASE DISABLE THREAD 2;
+
+Database altered.
+
+Node1:
+# Check the DB instance thread status again.
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 CLOSED DISABLED
+
+Node1:
+# Let's enable it again and check the status.
+SQL> ALTER DATABASE ENABLE THREAD 2;
+
+Database altered.
+
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1      OPEN   PUBLIC
+	 2      CLOSED PRIVATE
+
+From the above results, you can see that if the database instance for which you are attempting to change the thread status is in the NOMOUNT state, you can successfully disable or enable its thread from another node that is running in READ-WRITE mode.
+
+If you forget to specify the PUBLIC keyword while enabling the thread, the thread will be created as PRIVATE instead of PUBLIC.
+
+Node1:
+# Let's change "enabled status" of the thread from PRIVATE to PUBLIC.
+
+#Disable the thread first before changing from PRIVATE to PUBLIC.
+SQL> ALTER DATABASE DISABLE THREAD 2;
+
+Database altered.
+
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 CLOSED DISABLED
+
+#Enable thread now with PUBLIC keyword.
+SQL> ALTER DATABASE ENABLE PUBLIC THREAD 2;
+
+Database altered.
+
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 CLOSED PUBLIC
+
+Please note that if you attempt to enable a thread that is already enabled, it will return an error message.
+
+SQL> ALTER DATABASE ENABLE PUBLIC THREAD 2;
+ALTER DATABASE ENABLE PUBLIC THREAD 2
+*
+ERROR at line 1:
+ORA-01612: instance PR2 (thread 2) is already enabled
+Help: https://docs.oracle.com/error-help/db/ora-01612/
+
+Node2:
+#You can open mount and open the Node2 DB instance after disabling/enabling thread.
+SQL> alter database mount;
+
+Database altered.
+
+SQL> alter database open;
+
+Database altered.
+
+SQL> select inst_id,name,open_mode from gv$database;
+
+   INST_ID NAME      OPEN_MODE
+---------- --------- --------------------
+	 1 PR	     READ WRITE
+	 2 PR	     READ WRITE
+
+SQL> select thread#,status,enabled from v$thread;
+
+   THREAD# STATUS ENABLED
+---------- ------ --------
+	 1 OPEN   PUBLIC
+	 2 OPEN   PUBLIC
+
+
+📝 Stay tuned for a detailed blog post on this case !!!

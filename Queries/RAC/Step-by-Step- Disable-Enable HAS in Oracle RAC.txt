@@ -1,0 +1,23 @@
+Disable HAS is required if you don't require to start the HAS services when servers starts-up. Later you can start it manually. The default is enable. By default, HAS will be started when server reboots.
+
+Execute below commands by root user.
+
+#Command to display the automatic startup configuration of Oracle HAS stack on the server.
+[root@rac1 bin]# ./crsctl config has
+CRS-4622: Oracle High Availability Services autostart is enabled.
+
+#Command to disable the automatic startup configuration of the Oracle HAS stack on the server when server starts up.
+[root@rac1 bin]# ./crsctl disable has
+CRS-4621: Oracle High Availability Services autostart is disabled.
+
+#Command to display the automatic startup configuration of the Oracle HAS stack on the server. 
+[root@rac1 bin]# ./crsctl config has
+CRS-4621: Oracle High Availability Services autostart is disabled.
+
+#Command to enable the automatic startup configuration of the Oracle HAS stack on the server when server starts up.
+[root@rac1 bin]# ./crsctl enable has
+CRS-4622: Oracle High Availability Services autostart is enabled.
+
+#Command to display the automatic startup configuration of the Oracle HAS stack on the server.
+[root@rac1 bin]# ./crsctl config has
+CRS-4622: Oracle High Availability Services autostart is enabled.

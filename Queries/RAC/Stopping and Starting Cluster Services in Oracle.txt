@@ -1,0 +1,528 @@
+                                -: Stopping Oracle RAC Services :-
+#Stopping Oracle Cluster Services on local node/all nodes. Login by root user to stop/start crs services. Execute "crsctl stop crs" command on all nodes one by one in rolling fashion to stop CRS on all RAC nodes.
+
+#If you try to execute "crsctl stop crs" command by grid user then, you will face below error.
+[grid@rac1 ~]$ crsctl stop crs
+CRS-4563: Insufficient user privileges.
+
+CRS-4000: Command Stop failed, or completed with errors.
+
+#Execute "crsctl stop crs" on local node or all nodes one by one in rolling fashion.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl stop crs
+CRS-2791: Starting shutdown of Oracle High Availability Services-managed resources on 'rac1'
+CRS-2673: Attempting to stop 'ora.crsd' on 'rac1'
+CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'rac1'
+CRS-2673: Attempting to stop 'ora.mgmtdb' on 'rac1'
+CRS-2673: Attempting to stop 'ora.cvu' on 'rac1'
+CRS-2673: Attempting to stop 'ora.oc4j' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN2.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN3.lsnr' on 'rac1'
+CRS-2677: Stop of 'ora.cvu' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.cvu' on 'rac2'
+CRS-2676: Start of 'ora.cvu' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.LISTENER_SCAN2.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.scan2.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.rac1.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER_SCAN3.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.scan3.vip' on 'rac1'
+CRS-2677: Stop of 'ora.scan2.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.scan2.vip' on 'rac2'
+CRS-2677: Stop of 'ora.scan3.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.scan3.vip' on 'rac2'
+CRS-2677: Stop of 'ora.mgmtdb' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.MGMTLSNR' on 'rac1'
+CRS-2677: Stop of 'ora.MGMTLSNR' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.MGMTLSNR' on 'rac2'
+CRS-2677: Stop of 'ora.rac1.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.rac1.vip' on 'rac2'
+CRS-2676: Start of 'ora.scan2.vip' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.LISTENER_SCAN2.lsnr' on 'rac2'
+CRS-2676: Start of 'ora.scan3.vip' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.LISTENER_SCAN3.lsnr' on 'rac2'
+CRS-2676: Start of 'ora.rac1.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.oc4j' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.oc4j' on 'rac2'
+CRS-2676: Start of 'ora.MGMTLSNR' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.mgmtdb' on 'rac2'
+CRS-2676: Start of 'ora.LISTENER_SCAN3.lsnr' on 'rac2' succeeded
+CRS-2676: Start of 'ora.LISTENER_SCAN2.lsnr' on 'rac2' succeeded
+CRS-2676: Start of 'ora.oc4j' on 'rac2' succeeded
+CRS-2676: Start of 'ora.mgmtdb' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.DG_OCR.dg' on 'rac1'
+CRS-2677: Stop of 'ora.DG_OCR.dg' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.ons' on 'rac1'
+CRS-2677: Stop of 'ora.ons' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.net1.network' on 'rac1'
+CRS-2677: Stop of 'ora.net1.network' on 'rac1' succeeded
+CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'rac1' has completed
+CRS-2677: Stop of 'ora.crsd' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.storage' on 'rac1'
+CRS-2673: Attempting to stop 'ora.mdnsd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.gpnpd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.drivers.acfs' on 'rac1'
+CRS-2677: Stop of 'ora.storage' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.drivers.acfs' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.crf' on 'rac1'
+CRS-2673: Attempting to stop 'ora.ctssd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.evmd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2677: Stop of 'ora.mdnsd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.gpnpd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.crf' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.ctssd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.evmd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'rac1'
+CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'rac1'
+CRS-2677: Stop of 'ora.cssd' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.gipcd' on 'rac1'
+CRS-2677: Stop of 'ora.gipcd' on 'rac1' succeeded
+CRS-2793: Shutdown of Oracle High Availability Services-managed resources on 'rac1' has completed
+CRS-4133: Oracle High Availability Services has been stopped.
+
+#Ensure crs services are not running.
+[root@rac1 ~]# ps -ef | grep d.bin
+root     26317  9447  0 21:12 pts/0    00:00:00 grep d.bin
+
+
+[root@rac2 ~]# /u01/app/12.1.0.2/grid/bin/crsctl stop crs
+CRS-2791: Starting shutdown of Oracle High Availability Services-managed resources on 'rac2'
+CRS-2673: Attempting to stop 'ora.crsd' on 'rac2'
+CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN3.lsnr' on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN2.lsnr' on 'rac2'
+CRS-2673: Attempting to stop 'ora.mgmtdb' on 'rac2'
+CRS-2673: Attempting to stop 'ora.oc4j' on 'rac2'
+CRS-2673: Attempting to stop 'ora.cvu' on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN1.lsnr' on 'rac2'
+CRS-2673: Attempting to stop 'ora.rac2.vip' on 'rac2'
+CRS-2677: Stop of 'ora.cvu' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.rac2.vip' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.rac1.vip' on 'rac2'
+CRS-2677: Stop of 'ora.LISTENER_SCAN1.lsnr' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.scan1.vip' on 'rac2'
+CRS-2677: Stop of 'ora.LISTENER_SCAN3.lsnr' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.LISTENER_SCAN2.lsnr' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.scan3.vip' on 'rac2'
+CRS-2673: Attempting to stop 'ora.scan2.vip' on 'rac2'
+CRS-2677: Stop of 'ora.rac1.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.oc4j' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.mgmtdb' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.MGMTLSNR' on 'rac2'
+CRS-2673: Attempting to stop 'ora.DG_OCR.dg' on 'rac2'
+CRS-2677: Stop of 'ora.MGMTLSNR' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.scan1.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.DG_OCR.dg' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac2'
+CRS-2677: Stop of 'ora.asm' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.scan3.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.scan2.vip' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.ons' on 'rac2'
+CRS-2677: Stop of 'ora.ons' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.net1.network' on 'rac2'
+CRS-2677: Stop of 'ora.net1.network' on 'rac2' succeeded
+CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'rac2' has completed
+CRS-2677: Stop of 'ora.crsd' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.storage' on 'rac2'
+CRS-2673: Attempting to stop 'ora.mdnsd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.gpnpd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.drivers.acfs' on 'rac2'
+CRS-2677: Stop of 'ora.storage' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.drivers.acfs' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.crf' on 'rac2'
+CRS-2673: Attempting to stop 'ora.ctssd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.evmd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.asm' on 'rac2'
+CRS-2677: Stop of 'ora.ctssd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.crf' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.evmd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.mdnsd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.gpnpd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.asm' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'rac2'
+CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'rac2'
+CRS-2677: Stop of 'ora.cssd' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.gipcd' on 'rac2'
+CRS-2677: Stop of 'ora.gipcd' on 'rac2' succeeded
+CRS-2793: Shutdown of Oracle High Availability Services-managed resources on 'rac2' has completed
+CRS-4133: Oracle High Availability Services has been stopped.
+
+#Ensure crs services are not running.
+[root@rac2 ~]# ps -ef | grep d.bin
+root     24278 22367  0 21:14 pts/0    00:00:00 grep d.bin
+
+OR
+
+#Execute below command to stop crs services forcefully on local node or all nodes one by one in rolling fashion.
+#crsctl stop crs -f
+
+
+#Execute below command to stop crs services on local node or all nodes one by one in rolling fashion, except "Oracle High Availability Services".
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl stop cluster
+CRS-2673: Attempting to stop 'ora.crsd' on 'rac1'
+CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'rac1'
+CRS-2673: Attempting to stop 'ora.cvu' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.mgmtdb' on 'rac1'
+CRS-2673: Attempting to stop 'ora.oc4j' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN2.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN3.lsnr' on 'rac1'
+CRS-2677: Stop of 'ora.cvu' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.cvu' on 'rac2'
+CRS-2677: Stop of 'ora.LISTENER.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.rac1.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER_SCAN2.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.scan2.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER_SCAN3.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.scan3.vip' on 'rac1'
+CRS-2677: Stop of 'ora.rac1.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.rac1.vip' on 'rac2'
+CRS-2676: Start of 'ora.cvu' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.scan3.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.scan3.vip' on 'rac2'
+CRS-2677: Stop of 'ora.scan2.vip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.scan2.vip' on 'rac2'
+CRS-2676: Start of 'ora.rac1.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.mgmtdb' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.DG_OCR.dg' on 'rac1'
+CRS-2673: Attempting to stop 'ora.MGMTLSNR' on 'rac1'
+CRS-2677: Stop of 'ora.MGMTLSNR' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.MGMTLSNR' on 'rac2'
+CRS-2676: Start of 'ora.scan3.vip' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.LISTENER_SCAN3.lsnr' on 'rac2'
+CRS-2677: Stop of 'ora.DG_OCR.dg' on 'rac1' succeeded
+CRS-2676: Start of 'ora.scan2.vip' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.LISTENER_SCAN2.lsnr' on 'rac2'
+CRS-2677: Stop of 'ora.oc4j' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.oc4j' on 'rac2'
+CRS-2676: Start of 'ora.MGMTLSNR' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.mgmtdb' on 'rac2'
+CRS-2676: Start of 'ora.LISTENER_SCAN3.lsnr' on 'rac2' succeeded
+CRS-2676: Start of 'ora.LISTENER_SCAN2.lsnr' on 'rac2' succeeded
+CRS-2676: Start of 'ora.oc4j' on 'rac2' succeeded
+CRS-2676: Start of 'ora.mgmtdb' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.ons' on 'rac1'
+CRS-2677: Stop of 'ora.ons' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.net1.network' on 'rac1'
+CRS-2677: Stop of 'ora.net1.network' on 'rac1' succeeded
+CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'rac1' has completed
+CRS-2677: Stop of 'ora.crsd' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.ctssd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.evmd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.storage' on 'rac1'
+CRS-2677: Stop of 'ora.storage' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2677: Stop of 'ora.ctssd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.evmd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'rac1'
+CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'rac1'
+CRS-2677: Stop of 'ora.cssd' on 'rac1' succeeded
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+#Execute below command to stop crs services on all nodes in one command, except "Oracle High Availability Services".
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl stop cluster -all
+CRS-2673: Attempting to stop 'ora.crsd' on 'rac1'
+CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN1.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.LISTENER.lsnr' on 'rac1'
+CRS-2673: Attempting to stop 'ora.DG_OCR.dg' on 'rac1'
+CRS-2677: Stop of 'ora.DG_OCR.dg' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2673: Attempting to stop 'ora.crsd' on 'rac2'
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER.lsnr' on 'rac2'
+CRS-2673: Attempting to stop 'ora.mgmtdb' on 'rac2'
+CRS-2673: Attempting to stop 'ora.oc4j' on 'rac2'
+CRS-2673: Attempting to stop 'ora.cvu' on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN3.lsnr' on 'rac2'
+CRS-2673: Attempting to stop 'ora.LISTENER_SCAN2.lsnr' on 'rac2'
+CRS-2677: Stop of 'ora.cvu' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.LISTENER_SCAN1.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.scan1.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER.lsnr' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.rac1.vip' on 'rac1'
+CRS-2677: Stop of 'ora.LISTENER.lsnr' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.rac2.vip' on 'rac2'
+CRS-2677: Stop of 'ora.LISTENER_SCAN3.lsnr' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.scan3.vip' on 'rac2'
+CRS-2677: Stop of 'ora.LISTENER_SCAN2.lsnr' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.scan2.vip' on 'rac2'
+CRS-2677: Stop of 'ora.scan1.vip' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.rac2.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.rac1.vip' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.ons' on 'rac1'
+CRS-2677: Stop of 'ora.scan3.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.scan2.vip' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.oc4j' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.ons' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.net1.network' on 'rac1'
+CRS-2677: Stop of 'ora.net1.network' on 'rac1' succeeded
+CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'rac1' has completed
+CRS-2677: Stop of 'ora.mgmtdb' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.DG_OCR.dg' on 'rac2'
+CRS-2673: Attempting to stop 'ora.MGMTLSNR' on 'rac2'
+CRS-2677: Stop of 'ora.DG_OCR.dg' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac2'
+CRS-2677: Stop of 'ora.MGMTLSNR' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.asm' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.ons' on 'rac2'
+CRS-2677: Stop of 'ora.ons' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.net1.network' on 'rac2'
+CRS-2677: Stop of 'ora.crsd' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.ctssd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.evmd' on 'rac1'
+CRS-2673: Attempting to stop 'ora.storage' on 'rac1'
+CRS-2677: Stop of 'ora.storage' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac1'
+CRS-2677: Stop of 'ora.net1.network' on 'rac2' succeeded
+CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'rac2' has completed
+CRS-2677: Stop of 'ora.crsd' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.ctssd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.evmd' on 'rac2'
+CRS-2673: Attempting to stop 'ora.storage' on 'rac2'
+CRS-2677: Stop of 'ora.storage' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.ctssd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.evmd' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.asm' on 'rac2'
+CRS-2677: Stop of 'ora.ctssd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.evmd' on 'rac2' succeeded
+CRS-2677: Stop of 'ora.asm' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'rac1'
+CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'rac1' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'rac1'
+CRS-2677: Stop of 'ora.asm' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'rac2'
+CRS-2677: Stop of 'ora.cssd' on 'rac1' succeeded
+CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'rac2' succeeded
+CRS-2673: Attempting to stop 'ora.cssd' on 'rac2'
+CRS-2677: Stop of 'ora.cssd' on 'rac2' succeeded
+
+#Ensure cluster services are not running on all nodes, except "Oracle High Availability Services".
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+**************************************************************
+rac2:
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+**************************************************************
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+[root@rac1 ~]# ssh rac2
+root@rac2's password: 
+Last login: Thu Feb  1 17:25:38 2024 from rac1.localdomain
+
+[root@rac2 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+
+
+                                            -: Starting Oracle RAC Services :-
+#Starting Oracle Cluster Services on local node/all nodes. Login by root user to start crs services. Execute "crsctl start crs" command on all nodes one by one in rolling fashion to start CRS on all RAC nodes.
+
+#If you try to execute "crsctl start crs" command by grid user then, you will face below error.
+[grid@rac1 ~]$ crsctl start crs
+CRS-4563: Insufficient user privileges.
+
+CRS-4000: Command Start failed, or completed with errors.
+
+#Execute below command to start crs by root user.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl start crs
+CRS-4123: Oracle High Availability Services has been started.
+
+#Execute below command to check crs services are up after executing above command. This will take sometime to start the services.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+#Execute below command to check crs services are up after executing above command.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+#Execute below command on 2nd Node as well.
+[root@rac2 ~]# /u01/app/12.1.0.2/grid/bin/crsctl start crs
+CRS-4123: Oracle High Availability Services has been started.
+
+#Check crs services are up after executing "crsctl start crs"  command.
+[root@rac2 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4530: Communications failure contacting Cluster Synchronization Services daemon
+CRS-4534: Cannot communicate with Event Manager
+
+#Check crs services are up on 2nd Node after executing "crsctl start crs" command.
+[root@rac2 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+
+#Start cluster services on local node, except "Oracle High Availability Services". 
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl start cluster
+CRS-2672: Attempting to start 'ora.cssdmonitor' on 'rac1'
+CRS-2672: Attempting to start 'ora.evmd' on 'rac1'
+CRS-2676: Start of 'ora.cssdmonitor' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.cssd' on 'rac1'
+CRS-2672: Attempting to start 'ora.diskmon' on 'rac1'
+CRS-2676: Start of 'ora.diskmon' on 'rac1' succeeded
+CRS-2676: Start of 'ora.evmd' on 'rac1' succeeded
+CRS-2676: Start of 'ora.cssd' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.ctssd' on 'rac1'
+CRS-2672: Attempting to start 'ora.cluster_interconnect.haip' on 'rac1'
+CRS-2676: Start of 'ora.ctssd' on 'rac1' succeeded
+CRS-2676: Start of 'ora.cluster_interconnect.haip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.asm' on 'rac1'
+CRS-2676: Start of 'ora.asm' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.storage' on 'rac1'
+CRS-2676: Start of 'ora.storage' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.crsd' on 'rac1'
+CRS-2676: Start of 'ora.crsd' on 'rac1' succeeded
+
+#Ensure CRS services are up after executing above command.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+rac2:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+
+#You can also verify the CRS services status by executing "crsctl check crs".
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+#Execute the above command after sometime to ensure CRS services are up.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+rac2:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+
+#You can also verify the CRS services status by executing "crsctl check crs".
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check crs
+CRS-4638: Oracle High Availability Services is online
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+
+
+#Start cluster services on all cluster nodes, except "Oracle High Availability Services". 
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl start cluster -all
+CRS-2672: Attempting to start 'ora.cssdmonitor' on 'rac1'
+CRS-2672: Attempting to start 'ora.evmd' on 'rac1'
+CRS-2672: Attempting to start 'ora.cssdmonitor' on 'rac2'
+CRS-2672: Attempting to start 'ora.evmd' on 'rac2'
+CRS-2676: Start of 'ora.cssdmonitor' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.cssd' on 'rac2'
+CRS-2672: Attempting to start 'ora.diskmon' on 'rac2'
+CRS-2676: Start of 'ora.cssdmonitor' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.cssd' on 'rac1'
+CRS-2672: Attempting to start 'ora.diskmon' on 'rac1'
+CRS-2676: Start of 'ora.diskmon' on 'rac1' succeeded
+CRS-2676: Start of 'ora.evmd' on 'rac1' succeeded
+CRS-2676: Start of 'ora.diskmon' on 'rac2' succeeded
+CRS-2676: Start of 'ora.evmd' on 'rac2' succeeded
+CRS-2676: Start of 'ora.cssd' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.ctssd' on 'rac2'
+CRS-2672: Attempting to start 'ora.cluster_interconnect.haip' on 'rac2'
+CRS-2676: Start of 'ora.cssd' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.ctssd' on 'rac1'
+CRS-2672: Attempting to start 'ora.cluster_interconnect.haip' on 'rac1'
+CRS-2676: Start of 'ora.ctssd' on 'rac2' succeeded
+CRS-2676: Start of 'ora.ctssd' on 'rac1' succeeded
+CRS-2676: Start of 'ora.cluster_interconnect.haip' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.asm' on 'rac1'
+CRS-2676: Start of 'ora.cluster_interconnect.haip' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.asm' on 'rac2'
+CRS-2676: Start of 'ora.asm' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.storage' on 'rac1'
+CRS-2676: Start of 'ora.storage' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.crsd' on 'rac1'
+CRS-2676: Start of 'ora.asm' on 'rac2' succeeded
+CRS-2672: Attempting to start 'ora.storage' on 'rac2'
+CRS-2676: Start of 'ora.storage' on 'rac2' succeeded
+CRS-2676: Start of 'ora.crsd' on 'rac1' succeeded
+CRS-2672: Attempting to start 'ora.crsd' on 'rac2'
+CRS-2676: Start of 'ora.crsd' on 'rac2' succeeded
+
+#Ensure CRS services are up on all nodes. It will take some time to start the services.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+rac2:
+CRS-4535: Cannot communicate with Cluster Ready Services
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+
+#Execute same command after sometime to check the CRS services status again.
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl check cluster -all
+**************************************************************
+rac1:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************
+rac2:
+CRS-4537: Cluster Ready Services is online
+CRS-4529: Cluster Synchronization Services is online
+CRS-4533: Event Manager is online
+**************************************************************

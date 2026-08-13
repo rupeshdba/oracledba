@@ -1,0 +1,193 @@
+Execute below commands by oracle or rdbms software installation owner.
+
+Please note that here, mydb is the DB_UNIQUE_NAME used in all srvctl commands.
+rac1 and rac2 are the hostnames of the cluster nodes.
+
+#Command to list the DB_UNIQUE_NAME configured in srvctl. This is required if you don't know the DB_UNIQUE_NAME configured in srvctl.
+[oracle@rac1 ~]$ srvctl config db
+mydb
+
+#Command to check the srvctl configuration for the mentioned DB_UNIQUE_NAME. 
+[oracle@rac1 ~]$ srvctl config db -d mydb
+Database unique name: mydb
+Database name: mydb
+Oracle home: /u01/app/oracle/product/12.1.0.2/dbhome_1
+Oracle user: oracle
+Spfile: +DATA/MYDB/PARAMETERFILE/spfile.268.1162771255
+Password file: +DATA/MYDB/PASSWORD/pwdmydb.256.1162770639
+Domain: 
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools: 
+Disk Groups: DATA,REDO1
+Mount point paths: 
+Services: 
+Type: RAC
+Start concurrency: 
+Stop concurrency: 
+OSDBA group: dba
+OSOPER group: oper
+Database instances: mydb1,mydb2
+Configured nodes: rac1,rac2
+Database is administrator managed
+
+#Command to check the srvctl configuration with verbose modes for the mentioned DB_UNIQUE_NAME. 
+[oracle@rac1 ~]$ srvctl config db -d mydb -v
+Database unique name: mydb
+Database name: mydb
+Oracle home: /u01/app/oracle/product/12.1.0.2/dbhome_1
+Oracle user: oracle
+Spfile: +DATA/MYDB/PARAMETERFILE/spfile.268.1162771255
+Password file: +DATA/MYDB/PASSWORD/pwdmydb.256.1162770639
+Domain: 
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools: 
+Disk Groups: DATA,REDO1
+Mount point paths: 
+Services: 
+Type: RAC
+Start concurrency: 
+Stop concurrency: 
+OSDBA group: dba
+OSOPER group: oper
+Database instances: mydb1,mydb2
+Configured nodes: rac1,rac2
+Database is administrator managed
+
+OR
+
+[oracle@rac1 ~]$ srvctl config db -d mydb -verbose
+Database unique name: mydb
+Database name: mydb
+Oracle home: /u01/app/oracle/product/12.1.0.2/dbhome_1
+Oracle user: oracle
+Spfile: +DATA/MYDB/PARAMETERFILE/spfile.268.1162771255
+Password file: +DATA/MYDB/PASSWORD/pwdmydb.256.1162770639
+Domain: 
+Start options: open
+Stop options: immediate
+Database role: PRIMARY
+Management policy: AUTOMATIC
+Server pools: 
+Disk Groups: DATA,REDO1
+Mount point paths: 
+Services: 
+Type: RAC
+Start concurrency: 
+Stop concurrency: 
+OSDBA group: dba
+OSOPER group: oper
+Database instances: mydb1,mydb2
+Configured nodes: rac1,rac2
+Database is administrator managed
+
+#Check the status of DB instances mentioned DB_UNIQUE_NAME.
+[oracle@rac1 ~]$ srvctl status db -d mydb
+Instance mydb1 is running on node rac1
+Instance mydb2 is running on node rac2
+
+#Check the SCAN configuration
+[oracle@rac1 ~]$ srvctl config scan
+SCAN name: rac-scan, Network: 1
+Subnet IPv4: 192.168.28.0/255.255.255.0/eth3, static
+Subnet IPv6: 
+SCAN 0 IPv4 VIP: 192.168.28.201
+SCAN VIP is enabled.
+SCAN VIP is individually enabled on nodes: 
+SCAN VIP is individually disabled on nodes: 
+SCAN 1 IPv4 VIP: 192.168.28.202
+SCAN VIP is enabled.
+SCAN VIP is individually enabled on nodes: 
+SCAN VIP is individually disabled on nodes: 
+SCAN 2 IPv4 VIP: 192.168.28.203
+SCAN VIP is enabled.
+SCAN VIP is individually enabled on nodes: 
+SCAN VIP is individually disabled on nodes: 
+
+#Check the ASM configuration
+[oracle@rac1 ~]$ srvctl config asm
+ASM home: <CRS home>
+Password file: +DG_OCR/orapwASM
+ASM listener: LISTENER
+
+#Check the ASM configuration in detail.
+[oracle@rac1 ~]$ srvctl config asm -detail
+ASM home: <CRS home>
+Password file: +DG_OCR/orapwASM
+ASM listener: LISTENER
+ASM is enabled.
+ASM is individually enabled on nodes: 
+ASM is individually disabled on nodes: 
+ 
+#Check the status of Oracle SCAN.
+[oracle@rac1 ~]$ srvctl status scan
+SCAN VIP scan1 is enabled
+SCAN VIP scan1 is running on node rac1
+SCAN VIP scan2 is enabled
+SCAN VIP scan2 is running on node rac1
+SCAN VIP scan3 is enabled
+SCAN VIP scan3 is running on node rac1
+
+#Check the SCAN Listener configuration with PORT.
+[oracle@rac1 ~]$ srvctl config scan_listener
+SCAN Listener LISTENER_SCAN1 exists. Port: TCP:1530
+Registration invited nodes: 
+Registration invited subnets: 
+SCAN Listener is enabled.
+SCAN Listener is individually enabled on nodes: 
+SCAN Listener is individually disabled on nodes: 
+SCAN Listener LISTENER_SCAN2 exists. Port: TCP:1530
+Registration invited nodes: 
+Registration invited subnets: 
+SCAN Listener is enabled.
+SCAN Listener is individually enabled on nodes: 
+SCAN Listener is individually disabled on nodes: 
+SCAN Listener LISTENER_SCAN3 exists. Port: TCP:1530
+Registration invited nodes: 
+Registration invited subnets: 
+SCAN Listener is enabled.
+SCAN Listener is individually enabled on nodes: 
+SCAN Listener is individually disabled on nodes: 
+
+#Check the status of Oracle SCAN Listener.
+[oracle@rac1 ~]$ srvctl status scan_listener
+SCAN Listener LISTENER_SCAN1 is enabled
+SCAN listener LISTENER_SCAN1 is running on node rac1
+SCAN Listener LISTENER_SCAN2 is enabled
+SCAN listener LISTENER_SCAN2 is running on node rac1
+SCAN Listener LISTENER_SCAN3 is enabled
+SCAN listener LISTENER_SCAN3 is running on node rac1
+
+#Check the status of Oracle Database
+[oracle@rac1 ~]$ srvctl status db -d mydb
+Instance mydb1 is running on node rac1
+Instance mydb2 is running on node rac2
+
+#Check the status of Oracle Database with verbose mode.
+[oracle@rac1 ~]$ srvctl status db -d mydb -v
+Instance mydb1 is running on node rac1. Instance status: Open.
+Instance mydb2 is running on node rac2. Instance status: Open.
+
+OR
+
+[oracle@rac1 ~]$ srvctl status db -d mydb -verbose
+Instance mydb1 is running on node rac1. Instance status: Open.
+Instance mydb2 is running on node rac2. Instance status: Open.
+ 
+#Check the status of Oracle RAC instances on specific node.
+[oracle@rac1 ~]$ srvctl status instance -d mydb -i mydb2
+Instance mydb2 is running on node rac2
+
+OR
+
+[oracle@rac1 ~]$ srvctl status instance -d mydb -n rac2
+Instance mydb2 is running on node rac2
+
+#Check the status of services configured for the database. Here, no services are configured.
+[oracle@rac1 ~]$ srvctl status service -d mydb
+[oracle@rac1 ~]$ 

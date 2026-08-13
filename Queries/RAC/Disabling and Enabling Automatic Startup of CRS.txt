@@ -1,0 +1,27 @@
+#Check "Oracle High Availability Services" automatic startup configuration is enabled or disabled. Execute this command by root user.
+
+[grid@rac1 ~]$ crsctl config crs
+CRS-4563: Insufficient user privileges.
+
+CRS-4000: Command Config failed, or completed with errors.
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl config crs
+CRS-4622: Oracle High Availability Services autostart is enabled.
+
+
+#Disable"Oracle High Availability Services" automatic startup configuration. Execute this command by root user.
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl disable crs
+CRS-4621: Oracle High Availability Services autostart is disabled.
+ 
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl config crs
+CRS-4621: Oracle High Availability Services autostart is disabled.
+
+
+#Enable"Oracle High Availability Services" automatic startup configuration. Execute this command by root user.
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl enable crs
+CRS-4622: Oracle High Availability Services autostart is enabled.
+
+[root@rac1 ~]# /u01/app/12.1.0.2/grid/bin/crsctl config crs
+CRS-4622: Oracle High Availability Services autostart is enabled.
