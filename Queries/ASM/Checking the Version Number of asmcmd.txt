@@ -1,0 +1,8 @@
+asmcmd -V option displays the asmcmd version number and exits immediately. Here, the asmcmd version number is 12.1.0.2.0.
+
+[grid@rac1 ~]$ . oraenv
+ORACLE_SID = [+ASM1] ? 
+The Oracle base remains unchanged with value /u01/app/grid
+
+[grid@rac1 ~]$ asmcmd -V
+asmcmd version 12.1.0.2.0

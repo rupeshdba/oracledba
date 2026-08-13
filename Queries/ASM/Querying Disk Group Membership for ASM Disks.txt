@@ -1,0 +1,8 @@
+#Query to check disks belong to which disk groups
+col PATH for a70
+select a.NAME,a.STATE,a.TYPE,a.TOTAL_MB/1024,a.FREE_MB/1024,b.NAME,b.PATH,b.MOUNT_STATUS,b.HEADER_STATUS,b.STATE,b.READ_ERRS,b.WRITE_ERRS from v$asm_diskgroup a,v$asm_disk b where a.GROUP_NUMBER=b.GROUP_NUMBER order by 1;
+
+#Query to check disks belong to specific disk group
+col PATH for a70
+select a.NAME,a.STATE,a.TYPE,a.TOTAL_MB/1024,a.FREE_MB/1024,b.NAME,b.PATH,b.MOUNT_STATUS,b.HEADER_STATUS,b.STATE,b.READ_ERRS,b.WRITE_ERRS from v$asm_diskgroup a,v$asm_disk b where a.GROUP_NUMBER=b.GROUP_NUMBER and a.NAME='&DISKGROUP_NAME' order by 1;
+

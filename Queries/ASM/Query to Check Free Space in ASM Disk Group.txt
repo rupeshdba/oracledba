@@ -1,0 +1,144 @@
+#asmcmd lsdg command to check ASM disk group details without logging into ASM instance.
+
+State :- State of the disk group (BROKEN, CONNECTED, DISMOUNTED, MOUNTED, QUIESCING, or UNKNOWN).
+
+Type :- Disk group redundancy (NORMAL, HIGH, FLEX, or EXTERNAL).
+
+Rebal :- N or Y (Y means a rebalance operation is in progress).
+
+Sector :- Sector size in bytes.
+
+Block :- Block size in bytes.
+
+AU :- Allocation unit size in bytes.
+
+Total_MB :- ASM disk group total space in MB.
+
+Free_MB :- ASM disk group free space in MB.
+
+Req_mir_free_MB :- Amount of space that must be available in the disk group to restore full redundancy after the most severe failure that can be tolerated by the disk group. 
+
+Usable_file_MB :- Amount of free space, adjusted for mirroring, that is available for new files. 
+
+Offline_disks :- Number of offline disks in the disk group.
+
+Voting_files :- Y or N (Specifies whether the disk group contains voting files).
+
+Name :- Disk group name.
+
+
+Example:
+
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4899                0            4899              0             N  ARCH/
+MOUNTED  EXTERN  N         512   4096  1048576     20472    18551                0           18551              0             N  DATA/
+MOUNTED  NORMAL  N         512   4096  4194304     30708    21320            10236            5542              0             Y  DG_OCR/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4783                0            4783              0             N  REDO1/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     5018                0            5018              0             N  REDO2/
+
+In the above example,
+
+State :- All disk groups are in mounted state.
+State  
+MOUNTED
+MOUNTED
+MOUNTED
+MOUNTED
+MOUNTED
+
+Type :- Redundancy is NORMAL for only DG_OCR disk group and for all other disk groups, it is EXTERNAL).
+Type  
+EXTERN
+EXTERN
+NORMAL
+EXTERN
+EXTERN
+
+Rebal :- The value is N for all disk groups which means that rebalance operation is not running.
+Rebal
+N    
+N    
+N    
+N    
+N    
+
+Sector :- Sector size is 512 bytes.
+Sector
+   512
+   512
+   512
+   512
+   512
+
+Block :- Block size 4096 bytes.
+Block
+ 4096
+ 4096
+ 4096
+ 4096
+ 4096
+
+AU :- Allocation unit is 419304 bytes i.e. 4 MB for disk group DG_OCR and 1048576 bytes i.e. 1 MB for other disk groups .
+     AU
+1048576
+1048576
+4194304
+1048576
+1048576
+
+Total_MB :-  The total size of the disk group ARCH, REDO1, and REDO2 is 5114 MB. The total size of the disk group DATA is 20472 MB. The total size of the disk group DG_OCR is 30708 MB.
+Total_MB
+    5114
+   20472
+   30708
+    5114
+    5114
+
+Free_MB :- The free size of the disk group ARCH is 4899 MB, 18551 MB of disk group DATA, 21320 MB of disk group DG_OCR, 4783  MB of disk group REDO1, and 5018 MB of disk group REDO2.
+Free_MB
+   4899
+  18551
+  21320
+   4783
+   5018
+
+Req_mir_free_MB :- The required mirror free space is zero for all the disk groups, except DG_OCR since these disk groups are of EXTERNAL redundancy.  The required mirror free space is 10236 of disk group DG_OCR since it is of NORMAL redundancy.
+Req_mir_free_MB
+              0
+              0
+          10236
+              0
+              0
+
+Usable_file_MB :- The usable_file_mb space is same as free_mb space for all the disk groups having EXTERNAL redundancy. For the disk group DG_OCR, the usable_file_mb space is 5542 MB. 
+Usable_file_MB
+          4899
+         18551
+          5542
+          4783
+          5018
+
+Offline_disks :- The value of this parameter is zero which means that none of the disks are  offline.
+Offline_disks
+            0
+            0
+            0
+            0
+            0
+
+Voting_files :- The value is Y only for DG_OCR disk group where voting files are located and for others, it is N which means that voting files are not located in these disk groups.
+Voting_files
+           N
+           N
+           Y
+           N
+           N
+
+Name :- The name of the disk groups is ARCH, DATA, DG_OCR, REDO1, and REDO2.
+Name
+ARCH/
+DATA/
+DG_OCR/
+REDO1/
+REDO2/

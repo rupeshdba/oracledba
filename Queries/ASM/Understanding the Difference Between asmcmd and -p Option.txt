@@ -1,0 +1,50 @@
+asmcmd -p option displays current directory in asmcmd prompt each and every command execution where, asmcmd does not display the current directory in ASM prompt.
+
+Example 1: asmcmd 
+
+#Set the ASM environment variables.
+[grid@rac1 ~]$ . oraenv
+ORACLE_SID = [+ASM1] ? 
+The Oracle base remains unchanged with value /u01/app/grid
+
+#Login to ASM by asmcmd command without -p
+[grid@rac1 ~]$ asmcmd
+ASMCMD> lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4899                0            4899              0             N  ARCH/
+MOUNTED  EXTERN  N         512   4096  1048576     20472    18551                0           18551              0             N  DATA/
+MOUNTED  NORMAL  N         512   4096  4194304     30708    21320            10236            5542              0             Y  DG_OCR/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4783                0            4783              0             N  REDO1/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     5018                0            5018              0             N  REDO2/
+ASMCMD> cd DATA 
+ASMCMD> pwd
++DATA
+ASMCMD> ls -l
+Type  Redund  Striped  Time             Sys  Name                                        Y    MYDB/
+ASMCMD> cd MYDB
+ASMCMD> pwd
++DATA/MYDB
+
+
+Example 2: asmcmd -p
+
+#Login to ASM by asmcmd command with -p option.
+[grid@rac1 ~]$ asmcmd -p
+ASMCMD [+] > lsdg
+State    Type    Rebal  Sector  Block       AU  Total_MB  Free_MB  Req_mir_free_MB  Usable_file_MB  Offline_disks  Voting_files  Name
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4899                0            4899              0             N  ARCH/
+MOUNTED  EXTERN  N         512   4096  1048576     20472    18551                0           18551              0             N  DATA/
+MOUNTED  NORMAL  N         512   4096  4194304     30708    21320            10236            5542              0             Y  DG_OCR/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     4783                0            4783              0             N  REDO1/
+MOUNTED  EXTERN  N         512   4096  1048576      5114     5018                0            5018              0             N  REDO2/
+ASMCMD [+] > cd DATA
+ASMCMD [+DATA] > pwd
++DATA
+ASMCMD [+DATA] > ls -l
+Type  Redund  Striped  Time             Sys  Name
+                                        Y    MYDB/
+ASMCMD [+DATA] > cd MYDB
+ASMCMD [+DATA/MYDB] > pwd
++DATA/MYDB
+
+In 1st example, we have not seen the present working directory(PWD) in ASM, but in 2nd example, you can see the working directory(PWD) in ASM for each and every prompt.

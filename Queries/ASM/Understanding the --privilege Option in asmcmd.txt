@@ -1,0 +1,18 @@
+asmcmd --privilege option is used to choose the type of connection either SYSASM or SYSDBA. The default value of this option is SYSASM. With SYSASM, you can administer an Oracle ASM instance. Connect as SYSDBA when connecting to the database instance.
+
+For disk groups administration, you can run asmcmd from the database home of the database instance that is the owner of the files in the disk group.
+
+You must add the option  --privilege to connect as SYSDBA role. With this connection, there is a limited set of operations that can be run.
+
+Examples:
+[grid@rac1 ~]$ asmcmd --privilege
+ASMCMD>
+
+OR
+
+[grid@rac1 ~]$ asmcmd --privilege sysasm
+ASMCMD>
+
+
+[grid@rac1 ~]$ asmcmd --privilege sysdba
+ASMCMD> 

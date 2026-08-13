@@ -1,0 +1,209 @@
+lsdsk in asmcmd lists the Oracle ASM Disks. Below attributes can be used with lsdsk option.
+
+none :- Prints the PATH column of the V$ASM_DISK_STAT view.
+
+-k :- Prints the TOTAL_MB, FREE_MB, OS_MB,NAME, FAILGROUP, LIBRARY, LABEL, UDID, PRODUCT, REDUNDANCY, and PATH columns of the V$ASM_DISK view.
+
+--statistics :- Prints the READS, WRITES, READ_ERRS, WRITE_ERRS, READ_TIME, WRITE_TIME, BYTES_READ, BYTES_WRITTEN, and the PATH columns of the V$ASM_DISK view.
+
+-p :- Displays the GROUP_NUMBER, DISK_NUMBER, INCARNATION, MOUNT_STATUS, HEADER_STATUS, MODE_STATUS, STATE, and the PATH columns of the V$ASM_DISK view.
+
+-t :- Displays the CREATE_DATE, MOUNT_DATE, REPAIR_TIMER, and the PATH columns of the V$ASM_DISK view.
+
+-g :- Selects from GV$ASM_DISK_STAT, or from GV$ASM_DISK if the --discovery flag is also specified. 
+
+--discovery :- Selects from V$ASM_DISK, or from GV$ASM_DISK if the -g flag is also specified. 
+
+--suppressheader :- Suppresses column headings.
+
+-I :- Scans disk headers for information rather than extracting the information from an Oracle ASM instance. 
+
+-G :- Restricts results to only those disks that belong to the group specified by disk group.
+
+-M :- Displays the disks that are visible to some but not all active instances. These are disks that, if included in a disk group, cause the mount of that disk group to fail on the instances where the disks are not visible.
+
+--candidate :- Prints the disk devices whose status is CANDIDATE.
+
+--member :- Prints the disk devices whose status is MEMBER.
+
+pattern :- Returns only information about the specified disks that match the supplied pattern.
+
+
+Examples:
+
+#Command to lists the PATH column of the V$ASM_DISK_STAT view.
+ASMCMD> lsdsk
+Path
+/dev/oracleasm/disks/ARCH
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+/dev/oracleasm/disks/OCRDISK1
+/dev/oracleasm/disks/OCRDISK2
+/dev/oracleasm/disks/OCRDISK3
+/dev/oracleasm/disks/REDO1
+/dev/oracleasm/disks/REDO2
+
+
+#Command to print the size of disk devices from V$ASM_DISK view.
+ASMCMD> lsdsk -k
+Total_MB  Free_MB  OS_MB  Name         Failgroup    Failgroup_Type  Library  Label  UDID  Product  Redund   Path
+    5114     4859   5114  ARCH_0000    ARCH_0000    REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/ARCH
+   10236     9276  10236  DATA_0000    DATA_0000    REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/DATA1
+   10236     9265  10236  DATA_0001    DATA_0001    REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/DATA2
+   10236     7108  10236  DG_OCR_0000  DG_OCR_0000  REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/OCRDISK1
+   10236     7112  10236  DG_OCR_0001  DG_OCR_0001  REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/OCRDISK2
+   10236     7100  10236  DG_OCR_0002  DG_OCR_0002  REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/OCRDISK3
+    5114     4783   5114  REDO1_0000   REDO1_0000   REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/REDO1
+    5114     5018   5114  REDO2_0000   REDO2_0000   REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/REDO2
+
+
+#Command to print the read, write column details of disk devices from V$ASM_DISK view.
+ASMCMD> lsdsk --statistics
+Reads  Write  Read_Errs  Write_Errs   Read_time  Write_Time  Bytes_Read  Bytes_Written  Voting_File  Path
+  193   2514          0           0     5.38869   79.354963     1613824       10297344            N  /dev/oracleasm/disks/ARCH
+23007   5479          0           0  427.432958  191.721136   343064576       59510784            N  /dev/oracleasm/disks/DATA1
+20646   1088          0           0  265.988697  121.226346   319451648       10450944            N  /dev/oracleasm/disks/DATA2
+ 5495  10609          0           0   272.59461  419.725177    58917376      248606208            Y  /dev/oracleasm/disks/OCRDISK1
+11491  10423          0           0  393.792789  421.688338   180363776      237461504            Y  /dev/oracleasm/disks/OCRDISK2
+24423  10720          0           0  439.555263  405.775542   386262528      246295040            Y  /dev/oracleasm/disks/OCRDISK3
+  286   5520          0           0   63.865245  149.492566     4682752       57326592            N  /dev/oracleasm/disks/REDO1
+  192   2509          0           0   79.241059   49.222147     1957888       10276864            N  /dev/oracleasm/disks/REDO2
+
+
+#Command to print the status of disk devices from V$ASM_DISK view.
+ASMCMD> lsdsk -p
+Group_Num  Disk_Num      Incarn  Mount_Stat  Header_Stat  Mode_Stat  State   Path
+        1         0  3915947138  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/ARCH
+        2         0  3915947140  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/DATA1
+        2         1  3915947139  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/DATA2
+        3         0  3915947143  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/OCRDISK1
+        3         1  3915947142  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/OCRDISK2
+        3         2  3915947141  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/OCRDISK3
+        4         0  3915947144  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/REDO1
+        5         0  3915947145  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/REDO2
+
+
+#Command to print the date columns details of disk devices from V$ASM_DISK view.
+ASMCMD> lsdsk -t
+Create_Date  Mount_Date  Repair_Timer  Path
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/ARCH
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/DATA1
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/DATA2
+01-FEB-24    05-MAY-24   0             /dev/oracleasm/disks/OCRDISK1
+01-FEB-24    05-MAY-24   0             /dev/oracleasm/disks/OCRDISK2
+01-FEB-24    05-MAY-24   0             /dev/oracleasm/disks/OCRDISK3
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/REDO1
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/REDO2
+
+
+#Command to print the data from GV$ASM_DISK_STAT.
+ASMCMD> lsdsk -g
+Inst_ID  Path
+      1  /dev/oracleasm/disks/ARCH
+      2  /dev/oracleasm/disks/ARCH
+      1  /dev/oracleasm/disks/DATA1
+      2  /dev/oracleasm/disks/DATA1
+      1  /dev/oracleasm/disks/DATA2
+      2  /dev/oracleasm/disks/DATA2
+      1  /dev/oracleasm/disks/OCRDISK1
+      2  /dev/oracleasm/disks/OCRDISK1
+      1  /dev/oracleasm/disks/OCRDISK2
+      2  /dev/oracleasm/disks/OCRDISK2
+      1  /dev/oracleasm/disks/OCRDISK3
+      2  /dev/oracleasm/disks/OCRDISK3
+      1  /dev/oracleasm/disks/REDO1
+      2  /dev/oracleasm/disks/REDO1
+      1  /dev/oracleasm/disks/REDO2
+      2  /dev/oracleasm/disks/REDO2
+
+
+#Command to print the discovery path.
+ASMCMD> lsdsk --discovery
+Path
+/dev/oracleasm/disks/ARCH
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+/dev/oracleasm/disks/OCRDISK1
+/dev/oracleasm/disks/OCRDISK2
+/dev/oracleasm/disks/OCRDISK3
+/dev/oracleasm/disks/REDO1
+/dev/oracleasm/disks/REDO2
+
+
+#Command to suppress the column heading.
+ASMCMD> lsdsk --suppressheader
+/dev/oracleasm/disks/ARCH
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+/dev/oracleasm/disks/OCRDISK1
+/dev/oracleasm/disks/OCRDISK2
+/dev/oracleasm/disks/OCRDISK3
+/dev/oracleasm/disks/REDO1
+/dev/oracleasm/disks/REDO2
+
+
+#Command to display the disk devices whose status is MEMBER.
+ASMCMD> lsdsk --member
+Path
+/dev/oracleasm/disks/ARCH
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+/dev/oracleasm/disks/OCRDISK1
+/dev/oracleasm/disks/OCRDISK2
+/dev/oracleasm/disks/OCRDISK3
+/dev/oracleasm/disks/REDO1
+/dev/oracleasm/disks/REDO2
+
+
+#Command to print the date columns details of disk devices from V$ASM_DISK view for the specific disk group.
+ASMCMD> lsdsk -t -G DATA
+Create_Date  Mount_Date  Repair_Timer  Path
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/DATA1
+04-MAR-24    05-MAY-24   0             /dev/oracleasm/disks/DATA2
+
+
+#Command to print the disk devices of specific disk group.
+ASMCMD> lsdsk -G DATA
+Path
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+
+
+#Command to print the size of disk devices of specific disk group.
+ASMCMD> lsdsk -k -G DATA
+Total_MB  Free_MB  OS_MB  Name       Failgroup  Failgroup_Type  Library  Label  UDID  Product  Redund   Path
+   10236     9276  10236  DATA_0000  DATA_0000  REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/DATA1
+   10236     9265  10236  DATA_0001  DATA_0001  REGULAR         System                         UNKNOWN  /dev/oracleasm/disks/DATA2
+
+
+#Command to print read, write column details for specific disk group.
+ASMCMD> lsdsk --statistics -G DATA
+Reads  Write  Read_Errs  Write_Errs   Read_time  Write_Time  Bytes_Read  Bytes_Written  Voting_File  Path
+23899   5711          0           0  429.634868  193.133498   357609472       61886464            N  /dev/oracleasm/disks/DATA1
+21416   1097          0           0  266.936282  121.312429   332042752       10499072            N  /dev/oracleasm/disks/DATA2
+
+
+#Command to print disk device status details for specific disk group.
+ASMCMD> lsdsk -p -G DATA
+Group_Num  Disk_Num      Incarn  Mount_Stat  Header_Stat  Mode_Stat  State   Path
+        2         0  3915947140  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/DATA1
+        2         1  3915947139  CACHED      MEMBER       ONLINE     NORMAL  /dev/oracleasm/disks/DATA2
+
+
+#Command to print details from GV$ASM_DISK_STAT for disk devices for specific disk group.
+ASMCMD> lsdsk -g -G DATA
+Inst_ID  Path
+      2  /dev/oracleasm/disks/DATA1
+      1  /dev/oracleasm/disks/DATA1
+      2  /dev/oracleasm/disks/DATA2
+      1  /dev/oracleasm/disks/DATA2
+
+
+#Command to print discovery path for specific disk group.
+ASMCMD> lsdsk --discovery -G DATA
+Path
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2
+ASMCMD> lsdsk --suppressheader -G DATA
+/dev/oracleasm/disks/DATA1
+/dev/oracleasm/disks/DATA2

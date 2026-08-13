@@ -1,0 +1,8 @@
+#Query to check ASM disk group details 
+set lines 300 pages 3000
+col ASM_COMPA for a18
+col DB_COMPA for a18
+select inst_id,NAME,STATE,TYPE,TOTAL_MB/1024,FREE_MB/1024,OFFLINE_DISKS,COMPATIBILITY ASM_COMPA,DATABASE_COMPATIBILITY DB_COMPA,VOTING_FILES from  gv$asm_diskgroup order by 1;
+
+#Query to check any running or pending ASM Rebalance operation
+select * from gv$asm_operation;

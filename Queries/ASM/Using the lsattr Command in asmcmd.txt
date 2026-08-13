@@ -1,0 +1,229 @@
+lsattr in asmcmd lists the attributes of the ASM Disk group. Below attributes can be used with lsattr option.
+-G diskgroup :- Disk group name.
+--suppressheader :- Suppresses the column headings.
+-l :- Display names with values.
+-m :- Displays additional information, such as the RO and SYS columns.
+pattern :- Display the attributes that contain pattern expression.
+
+If you don't specify anything in lsattr command then, it will list only attribute names for all the disk groups.
+
+ASMCMD> lsattr
+Name                     
+access_control.enabled   
+access_control.umask     
+au_size                  
+cell.smart_scan_capable  
+compatible.asm           
+compatible.rdbms         
+content.check            
+content.type             
+disk_repair_time         
+failgroup_repair_time    
+idp.boundary             
+idp.type                 
+phys_meta_replicated     
+sector_size              
+thin_provisioned         
+access_control.enabled   
+access_control.umask     
+au_size                  
+cell.smart_scan_capable  
+compatible.asm           
+compatible.rdbms         
+content.check            
+content.type             
+disk_repair_time         
+failgroup_repair_time    
+idp.boundary             
+idp.type                 
+phys_meta_replicated     
+sector_size              
+thin_provisioned         
+access_control.enabled   
+access_control.umask     
+au_size                  
+cell.smart_scan_capable  
+compatible.asm           
+compatible.rdbms         
+content.check            
+content.type             
+disk_repair_time         
+failgroup_repair_time    
+idp.boundary             
+idp.type                 
+phys_meta_replicated     
+sector_size              
+thin_provisioned         
+access_control.enabled   
+access_control.umask     
+au_size                  
+cell.smart_scan_capable  
+compatible.asm           
+compatible.rdbms         
+content.check            
+content.type             
+disk_repair_time         
+failgroup_repair_time    
+idp.boundary             
+idp.type                 
+phys_meta_replicated     
+sector_size              
+thin_provisioned         
+access_control.enabled   
+access_control.umask     
+au_size                  
+cell.smart_scan_capable  
+compatible.asm           
+compatible.rdbms         
+content.check            
+content.type             
+disk_repair_time         
+failgroup_repair_time    
+idp.boundary             
+idp.type                 
+phys_meta_replicated     
+sector_size              
+thin_provisioned     
+
+#Command to list attributes with values and RO & SYS column data of all disk groups.
+ASMCMD> lsattr -l -m
+Group_Name  Name                     Value       RO  Sys  
+ARCH        access_control.enabled   FALSE       N   Y    
+ARCH        access_control.umask     066         N   Y    
+ARCH        au_size                  1048576     Y   Y    
+ARCH        cell.smart_scan_capable  FALSE       N   N    
+ARCH        compatible.asm           12.1.0.0.0  N   Y    
+ARCH        compatible.rdbms         10.1.0.0.0  N   Y    
+ARCH        content.check            FALSE       N   Y    
+ARCH        content.type             data        N   Y    
+ARCH        disk_repair_time         3.6h        N   Y    
+ARCH        failgroup_repair_time    24.0h       N   Y    
+ARCH        idp.boundary             auto        N   Y    
+ARCH        idp.type                 dynamic     N   Y    
+ARCH        phys_meta_replicated     true        Y   Y    
+ARCH        sector_size              512         Y   Y    
+ARCH        thin_provisioned         FALSE       N   Y    
+DATA        access_control.enabled   FALSE       N   Y    
+DATA        access_control.umask     066         N   Y    
+DATA        au_size                  1048576     Y   Y    
+DATA        cell.smart_scan_capable  FALSE       N   N    
+DATA        compatible.asm           12.1.0.0.0  N   Y    
+DATA        compatible.rdbms         10.1.0.0.0  N   Y    
+DATA        content.check            FALSE       N   Y    
+DATA        content.type             data        N   Y    
+DATA        disk_repair_time         3.6h        N   Y    
+DATA        failgroup_repair_time    24.0h       N   Y    
+DATA        idp.boundary             auto        N   Y    
+DATA        idp.type                 dynamic     N   Y    
+DATA        phys_meta_replicated     true        Y   Y    
+DATA        sector_size              512         Y   Y    
+DATA        thin_provisioned         FALSE       N   Y    
+DG_OCR      access_control.enabled   FALSE       N   Y    
+DG_OCR      access_control.umask     066         N   Y    
+DG_OCR      au_size                  4194304     Y   Y    
+DG_OCR      cell.smart_scan_capable  FALSE       N   N    
+DG_OCR      compatible.asm           12.1.0.0.0  N   Y    
+DG_OCR      compatible.rdbms         10.1.0.0.0  N   Y    
+DG_OCR      content.check            FALSE       N   Y    
+DG_OCR      content.type             data        N   Y    
+DG_OCR      disk_repair_time         3.6h        N   Y    
+DG_OCR      failgroup_repair_time    24.0h       N   Y    
+DG_OCR      idp.boundary             auto        N   Y    
+DG_OCR      idp.type                 dynamic     N   Y    
+DG_OCR      phys_meta_replicated     true        Y   Y    
+DG_OCR      sector_size              512         Y   Y    
+DG_OCR      thin_provisioned         FALSE       N   Y    
+REDO1       access_control.enabled   FALSE       N   Y    
+REDO1       access_control.umask     066         N   Y    
+REDO1       au_size                  1048576     Y   Y    
+REDO1       cell.smart_scan_capable  FALSE       N   N    
+REDO1       compatible.asm           12.1.0.0.0  N   Y    
+REDO1       compatible.rdbms         10.1.0.0.0  N   Y    
+REDO1       content.check            FALSE       N   Y    
+REDO1       content.type             data        N   Y    
+REDO1       disk_repair_time         3.6h        N   Y    
+REDO1       failgroup_repair_time    24.0h       N   Y    
+REDO1       idp.boundary             auto        N   Y    
+REDO1       idp.type                 dynamic     N   Y    
+REDO1       phys_meta_replicated     true        Y   Y    
+REDO1       sector_size              512         Y   Y    
+REDO1       thin_provisioned         FALSE       N   Y    
+REDO2       access_control.enabled   FALSE       N   Y    
+REDO2       access_control.umask     066         N   Y    
+REDO2       au_size                  1048576     Y   Y    
+REDO2       cell.smart_scan_capable  FALSE       N   N    
+REDO2       compatible.asm           12.1.0.0.0  N   Y    
+REDO2       compatible.rdbms         10.1.0.0.0  N   Y    
+REDO2       content.check            FALSE       N   Y    
+REDO2       content.type             data        N   Y    
+REDO2       disk_repair_time         3.6h        N   Y    
+REDO2       failgroup_repair_time    24.0h       N   Y    
+REDO2       idp.boundary             auto        N   Y    
+REDO2       idp.type                 dynamic     N   Y    
+REDO2       phys_meta_replicated     true        Y   Y    
+REDO2       sector_size              512         Y   Y    
+REDO2       thin_provisioned         FALSE       N   Y   
+
+#Command to list attribute values of specific disk group.
+ASMCMD> lsattr -l -G DATA
+Name                     Value       
+access_control.enabled   FALSE       
+access_control.umask     066         
+au_size                  1048576     
+cell.smart_scan_capable  FALSE       
+compatible.asm           12.1.0.0.0  
+compatible.rdbms         10.1.0.0.0  
+content.check            FALSE       
+content.type             data        
+disk_repair_time         3.6h        
+failgroup_repair_time    24.0h       
+idp.boundary             auto        
+idp.type                 dynamic     
+phys_meta_replicated     true        
+sector_size              512         
+thin_provisioned         FALSE 
+
+#Command to list attributes with values and RO & SYS column data of specific disk group.
+ASMCMD> lsattr -l -m -G DATA
+Group_Name  Name                     Value       RO  Sys  
+DATA        access_control.enabled   FALSE       N   Y    
+DATA        access_control.umask     066         N   Y    
+DATA        au_size                  1048576     Y   Y    
+DATA        cell.smart_scan_capable  FALSE       N   N    
+DATA        compatible.asm           12.1.0.0.0  N   Y    
+DATA        compatible.rdbms         10.1.0.0.0  N   Y    
+DATA        content.check            FALSE       N   Y    
+DATA        content.type             data        N   Y    
+DATA        disk_repair_time         3.6h        N   Y    
+DATA        failgroup_repair_time    24.0h       N   Y    
+DATA        idp.boundary             auto        N   Y    
+DATA        idp.type                 dynamic     N   Y    
+DATA        phys_meta_replicated     true        Y   Y    
+DATA        sector_size              512         Y   Y    
+DATA        thin_provisioned         FALSE       N   Y    
+
+OR
+
+ASMCMD> lsattr -lm -G data
+Group_Name  Name                     Value       RO  Sys  
+DATA        access_control.enabled   FALSE       N   Y    
+DATA        access_control.umask     066         N   Y    
+DATA        au_size                  1048576     Y   Y    
+DATA        cell.smart_scan_capable  FALSE       N   N    
+DATA        compatible.asm           12.1.0.0.0  N   Y    
+DATA        compatible.rdbms         10.1.0.0.0  N   Y    
+DATA        content.check            FALSE       N   Y    
+DATA        content.type             data        N   Y    
+DATA        disk_repair_time         3.6h        N   Y    
+DATA        failgroup_repair_time    24.0h       N   Y    
+DATA        idp.boundary             auto        N   Y    
+DATA        idp.type                 dynamic     N   Y    
+DATA        phys_meta_replicated     true        Y   Y    
+DATA        sector_size              512         Y   Y    
+DATA        thin_provisioned         FALSE       N   Y    
+
+#Command to list the specific attribute by searching pattern.
+ASMCMD> lsattr -G DATA -l %compat*
+Name              Value       
+compatible.asm    12.1.0.0.0  
+compatible.rdbms  10.1.0.0.0  
