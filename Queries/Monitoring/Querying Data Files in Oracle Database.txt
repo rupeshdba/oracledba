@@ -1,0 +1,25 @@
+#Query to check data files in Oracle database. This will work in mount or open mode.
+
+SQL> set lines 300 pages 3000
+SQL> col name for a80
+SQL> select file#,name,status,ts#,bytes/1024/1024/1024 SIZE_GB from v$datafile order by 1;
+
+FILE# NAME                                                             STATUS  TS#    SIZE_GB
+----- ---------------------------------------------------------------- ------- --- ----------
+    1 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_SYSTEM_LKM5KXDW_.DBF   SYSTEM    0  1.1328125
+    3 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_SYSAUX_LKM5M0ML_.DBF   ONLINE    1 .791015625
+    4 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_UNDOTBS1_LKM5MSSQ_.DBF ONLINE    2 .439453125
+    7 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_USERS_LKM5MTX9_.DBF    ONLINE    4 .004882813
+
+#Query to check data files in Oracle database. This will work only if database is in open mode.
+
+SQL> col file_name for a80
+SQL> col  TABLESPACE_NAME for a14
+SQL> select file_id,file_name,status,tablespace_name,bytes/1024/1024/1024 SIZE_GB,AUTOEXTENSIBLE,MAXBYTES/1024/1024/1024 MAX_SIZE_GB from dba_data_files order by 1;
+
+FILE_ID FILE_NAME                                                        STATUS TABLESPACE_NAM    SIZE_GB AUT MAX_SIZE_GB
+---- ---------------------------------------------------------------- --------- -------------- ---------- --- -----------
+   1 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_SYSTEM_LKM5KXDW_.DBF   AVAILABLE SYSTEM          1.1328125 YES  31.9999847
+   3 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_SYSAUX_LKM5M0ML_.DBF   AVAILABLE SYSAUX         .791015625 YES  31.9999847
+   4 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_UNDOTBS1_LKM5MSSQ_.DBF AVAILABLE UNDOTBS1       .439453125 YES  31.9999847
+   7 D:\RUPESH\SETUPS\TEST\TEST\DATAFILE\O1_MF_USERS_LKM5MTX9_.DBF    AVAILABLE USERS          .004882813 YES  31.9999847

@@ -1,0 +1,28 @@
+#How to find if database is CDB or NON-CDB in Oracle
+
+If the database is CDB or container or pluggable, then CDB column of v$database will show YES.
+
+SQL> select name,open_mode,cdb from v$database;
+
+NAME      OPEN_MODE            CDB
+--------- -------------------- ---
+PLUGDB    READ WRITE           YES
+
+
+If the database is NON-CDB or non-pluggable, then CDB column of v$database will show NO.
+
+SQL> select name,open_mode,cdb from v$database;
+
+NAME      OPEN_MODE            CDB
+--------- -------------------- ---
+PLUGDB    READ WRITE           NO
+
+You can execute below query as well to check whether the database is configured as container or CDB or pluggable database or not.
+
+SQL> show pdbs
+
+CON_ID CON_NAME     OPEN MODE  RESTRICTED
+------ ------------ ---------- ----------
+     2 PDB$SEED     READ ONLY  NO
+     3 PDB1         READ WRITE NO
+     4 PDB2         READ WRITE NO

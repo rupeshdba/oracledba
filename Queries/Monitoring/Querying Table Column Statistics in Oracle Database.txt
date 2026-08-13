@@ -1,0 +1,17 @@
+#Execute below query to check the table columns statistics.
+col density for 99999
+col OWNER for a25
+col TABLE_NAME for a34
+col COLUMN_NAME for a34
+select OWNER,TABLE_NAME,COLUMN_NAME,NUM_DISTINCT,NUM_NULLS,DENSITY,LAST_ANALYZED,HISTOGRAM from dba_tab_col_statistics where table_name='&table_name';
+
+OWNER TABLE_NAME COLUMN_NAME NUM_DISTINCT  NUM_NULLS DENSITY LAST_ANAL HISTOGRAM
+----- ---------- ----------- ------------ ---------- ------- --------- ---------
+SYS   EMP        ID                     5          0       0 06-APR-24 NONE
+SYS   EMP        NAME                   5          0       0 06-APR-24 NONE
+SYS   EMP        ADDRESS                4          0       0 06-APR-24 NONE
+SYS   EMP        SALARY                 4          0       0 06-APR-24 NONE
+TEST  EMP        ID                     5          0       0 12-MAR-24 NONE
+TEST  EMP        NAME                   5          0       0 12-MAR-24 NONE
+TEST  EMP        ADDRESS                2          0       1 12-MAR-24 NONE
+TEST  EMP        SALARY                 5          0       0 12-MAR-24 NONE

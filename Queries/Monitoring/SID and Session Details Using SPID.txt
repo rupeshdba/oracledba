@@ -1,0 +1,25 @@
+col STATUS for a14
+col USERNAME for a14
+col OSUSER for a14
+col SERVER for a14
+col MACHINE for a28
+col PROGRAM for a28
+col MODULE for a28
+col EVENT for a30
+set lines 300 pages 3000
+select 
+p.Spid,			
+s.SID,				
+s.SERIAL#,	 		
+s.STATUS,			
+s.USERNAME,		
+s.OSUSER,						
+s.MACHINE,			
+s.PROGRAM,			
+s.MODULE,			
+to_char(s.LOGON_TIME,'DD-MM-YYYY HH24:MI:SS') Logon_Time,		
+s.LAST_CALL_ET/60,		
+s.EVENT,			
+s.SQL_ID,
+s.seq#
+from v$session s,v$process p where s.paddr=p.addr and p.spid=&spid;

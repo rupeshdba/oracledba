@@ -1,0 +1,10 @@
+#Query to check Oracle Database Vault is configured or not in Oracle database.
+
+SQL> set lines 300 pages 3000
+SQL> col parameter for a25
+SQL> col value for a12
+SQL> SELECT PARAMETER, VALUE FROM V$OPTION WHERE PARAMETER='Oracle Database Vault';
+
+PARAMETER                 VALUE
+------------------------- ------------
+Oracle Database Vault     FALSE

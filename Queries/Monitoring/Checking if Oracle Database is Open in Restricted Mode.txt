@@ -1,0 +1,31 @@
+#How to check if database is open in restricted mode. 
+
+SQL> select instance_name,status,logins from v$instance;
+
+INSTANCE_NAME    STATUS       LOGINS
+---------------- ------------ ----------
+pr               OPEN         ALLOWED
+
+If you explicitly started the instance in restricted mode, then logins column will show the value as RESTRICTED.
+
+SQL> shut immediate;
+SQL> startup restrict
+
+SQL> select instance_name,status,logins from v$instance;
+
+INSTANCE_NAME    STATUS       LOGINS
+---------------- ------------ ----------
+pr               OPEN         RESTRICTED
+
+OR
+
+If you explicitly started the database in upgraded mode, then logins column will show the value as RESTRICTED.
+
+SQL> shut immediate
+SQL> startup upgrade
+
+SQL> select instance_name,status,logins from v$instance;
+
+INSTANCE_NAME    STATUS       LOGINS
+---------------- ------------ ----------
+pr               OPEN MIGRATE RESTRICTED

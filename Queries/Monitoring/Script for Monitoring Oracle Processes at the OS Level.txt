@@ -1,0 +1,58 @@
+#Login by oracle user and copy this script in a location other than ORACLE_HOME. Ensure the directory is owned by oracle:oinstall with execute permission. Suppose, the directory name is /backup.
+
+vi /backup/session_count.sh
+while true
+do
+date
+echo "The LOCAL=NO count is: `ps -ef|grep -i LOCAL=NO|wc -l` "
+ps -ef|grep -i LOCAL=NO
+
+echo "The LOCAL=YES count is: `ps -ef|grep -i LOCAL=YES|wc -l` "
+ps -ef|grep -i LOCAL=YES
+
+echo ""
+echo ""
+sleep 5
+done
+
+
+$cd /backup
+
+#Command to run the script.
+$nohup sh session_count.sh > session_count.log &
+
+#The output of the above script will be like:
+
+Thu Jan 25 15:06:34 +03 2024
+The LOCAL=NO count is:      654 
+    grid 11731270        1   0 13:26:48      -  0:00 oracletest1 (LOCAL=NO)
+    grid 12255610        1   0 13:14:59      -  0:00 oracletest1 (LOCAL=NO)
+    grid 14090538        1   0 08:33:36      -  0:00 oracletest1 (LOCAL=NO)
+    grid 14942670        1   0 08:32:36      -  0:00 oracletest1 (LOCAL=NO)
+....	
+The LOCAL=YES count is:       21 
+  oracle  6226326        1   0 07:22:09      -  0:17 oracletest1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))
+    grid 10158392        1   0 07:13:44      -  0:00 oracle+ASM1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))
+    grid 11403550        1   0 07:13:34      -  0:01 oracle+ASM1_asmb_+asm1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))	
+
+
+Thu Jan 25 15:06:40 +03 2024
+The LOCAL=NO count is:      654 
+    grid 11731270        1   0 13:26:48      -  0:00 oracletest1 (LOCAL=NO)
+    grid 12255610        1   0 13:14:59      -  0:00 oracletest1 (LOCAL=NO)
+    grid 14090538        1   0 08:33:36      -  0:00 oracletest1 (LOCAL=NO)
+    grid 14942670        1   0 08:32:36      -  0:00 oracletest1 (LOCAL=NO)
+.....	
+The LOCAL=YES count is:       21 
+  oracle  6226326        1   0 07:22:09      -  0:17 oracletest1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))
+    grid 10158392        1   0 07:13:44      -  0:00 oracle+ASM1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))
+    grid 11403550        1   0 07:13:34      -  0:01 oracle+ASM1_asmb_+asm1 (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))
+    grid 13304136        1   0 07:13:36      -  0:00 oracle+ASM1_ocr (DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))	
+
+#You can further grep the patterns like below. Suppose, you want to grep only the count from the above log file during run time, then just simply execute below command.
+
+$tail -500f session_count.log | grep -i "count is:"
+
+#Suppose, you want to grep only the count of "LOCAL=NO", then execute below command.
+
+$tail -500f session_count.log | grep -i "The LOCAL=NO count is:"

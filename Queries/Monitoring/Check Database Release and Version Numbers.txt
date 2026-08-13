@@ -1,0 +1,16 @@
+#Query to check Component name and version number in Oracle Database.
+
+SQL> select banner from v$version;
+
+BANNER
+----------------------------------------------------------------------
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+
+#Query to check the database release and version number in Oracle Database.
+
+SQL> select banner_full from v$version;
+
+BANNER_FULL
+----------------------------------------------------------------------
+Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Version 19.16.0.0.0

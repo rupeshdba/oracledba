@@ -1,0 +1,26 @@
+#Query to check registry component in Oracle database
+
+SQL> set lines 300 pages 3000
+SQL> col comp_name for a40
+SQL> col comp_id for a16
+SQL> col schema for a14
+SQL> col version for a14
+SQL> select COMP_ID,COMP_NAME,VERSION,STATUS,schema from dba_registry;
+
+COMP_ID  COMP_NAME                          VERSION     STATUS     SCHEMA
+-------- ---------------------------------- ----------- ---------- --------
+CATALOG  Oracle Database Catalog Views      19.0.0.0.0  VALID      SYS
+CATPROC  Oracle Database Packages and Types 19.0.0.0.0  VALID      SYS
+RAC      Oracle Real Application Clusters   19.0.0.0.0  OPTION OFF SYS
+JAVAVM   JServer JAVA Virtual Machine       19.0.0.0.0  VALID      SYS
+XML      Oracle XDK                         19.0.0.0.0  VALID      SYS
+CATJAVA  Oracle Database Java Packages      19.0.0.0.0  VALID      SYS
+APS      OLAP Analytic Workspace            19.0.0.0.0  VALID      SYS
+XDB      Oracle XML Database                19.0.0.0.0  VALID      XDB
+OWM      Oracle Workspace Manager           19.0.0.0.0  VALID      WMSYS
+CONTEXT  Oracle Text                        19.0.0.0.0  VALID      CTXSYS
+ORDIM    Oracle Multimedia                  19.0.0.0.0  VALID      ORDSYS
+SDO      Spatial                            19.0.0.0.0  VALID      MDSYS
+XOQ      Oracle OLAP API                    19.0.0.0.0  VALID      OLAPSYS
+DV       Oracle Database Vault              19.0.0.0.0  VALID      DVSYS
+OLS      Oracle Label Security              19.0.0.0.0  VALID      LBACSYS

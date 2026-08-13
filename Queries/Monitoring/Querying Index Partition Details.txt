@@ -1,0 +1,25 @@
+#Execute below queries to get index partition details.
+
+set lines 300 pages 3000
+col INDEX_OWNER for a16
+col INDEX_NAME for a20
+col PARTITION_NAME for a23
+select INDEX_OWNER,INDEX_NAME,PARTITION_NAME,INI_TRANS,FREELISTS, last_analyzed, num_rows  
+from dba_ind_partitions where INDEX_NAME='&INDEX_NAME' order by partition_position;
+
+INDEX_OWNER INDEX_NAME PARTITION_NAME INI_TRANS FREELISTS LAST_ANAL NUM_ROWS
+----------- ---------- -------------- --------- --------- --------- --------
+SYS         INV_IDX    INV_P1                 2           21-APR-24        0
+SYS         INV_IDX    INV_P2                 2           21-APR-24        0
+SYS         INV_IDX    INV_P3                 2           21-APR-24        0
+SYS         INV_IDX    INV_P4                 2           21-APR-24        0
+
+set lines 200 pages 1000
+col owner for a15
+col index_name for a25
+col table_name for a23
+select owner, table_name,index_name, pct_free, ini_trans, last_analyzed, blevel, clustering_factor clf, partitioned from dba_indexes where table_name='&TABLE_NAME';
+
+OWNER TABLE_NAME INDEX_NAME PCT_FREE INI_TRANS LAST_ANAL BLEVEL CLF PAR
+----- ---------- ---------- -------- --------- --------- ------ --- ---
+SYS   INV        INV_IDX                       21-APR-24      0   0 YES

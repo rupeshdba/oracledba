@@ -1,0 +1,33 @@
+#Query to check Temporary Tablespace Usage:
+col tablespace for a26
+SELECT   s.tablespace_name tablespace, d.total_gb,
+         SUM (s.used_blocks * d.block_size) / 1024 / 1024/1024  USED_GB,
+         d.total_gb - SUM (s.used_blocks * d.block_size) / 1024 / 1024 /1024  Free_GB
+FROM     v$sort_segment s,
+         (
+         SELECT   t.name, p.block_size, SUM (p.bytes) / 1024 / 1024 /1024 TOTAL_GB
+         FROM     v$tablespace t, v$tempfile p
+         WHERE    t.ts#= p.ts#
+         GROUP BY t.name, p.block_size
+         ) d
+WHERE    s.tablespace_name = d.name
+GROUP by s.tablespace_name, d.total_gb;
+
+#Query to check sessions using temporary tablespace:
+set lines 300 pages 3000
+col USERNAME for a17
+col OSUSER for a10
+col SPID for a14
+col MODULE for a25
+col program for a25
+SELECT   s.sid, s.serial#, s.username, s.osuser, p.spid,s.sql_id,
+         s.module, s.program,s.machine,
+         SUM (t.blocks) * tbs.block_size / 1024 / 1024 mb_used, t.tablespace,
+         COUNT(*) sort_ops
+FROM     v$sort_usage t, v$session s, dba_tablespaces tbs, v$process p
+WHERE    t.session_addr = s.saddr
+AND      s.paddr = p.addr
+AND      t.tablespace = tbs.tablespace_name
+GROUP BY s.sid, s.serial#, s.username, s.osuser, p.spid,s.sql_id,s.module,
+         s.program, s.machine,tbs.block_size, t.tablespace
+ORDER BY 1,2;

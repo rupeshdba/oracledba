@@ -1,0 +1,10 @@
+#Query to check control files  in Oracle database. This will work in mount or open mode.
+
+SQL> set lines 300 pages 3000
+SQL> col name for a80
+SQL> select name,status,IS_RECOVERY_DEST_FILE from v$controlfile order by 1;
+
+NAME                                                                           STATUS  IS_
+------------------------------------------------------------------------------ ------- ---
+D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\CONTROLFILE\O1_MF_LKM5RKQY_.CTL         NO
+D:\RUPESH\SETUPS\TEST\TEST\CONTROLFILE\O1_MF_LKM5RKQG_.CTL                             NO

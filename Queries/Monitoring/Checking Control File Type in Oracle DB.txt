@@ -1,0 +1,13 @@
+#How to find if database is Primary or Standby in Oracle
+
+SQL> select name,open_mode,controlfile_type from v$database;
+
+NAME      OPEN_MODE            CONTROL
+--------- -------------------- -------
+PLUGDB    READ WRITE           CURRENT
+
+SQL> select name,open_mode,controlfile_type from v$database;
+
+NAME      OPEN_MODE            CONTROL
+--------- -------------------- -------
+PR        MOUNTED              STANDBY

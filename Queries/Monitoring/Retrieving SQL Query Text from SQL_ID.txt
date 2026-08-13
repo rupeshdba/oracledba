@@ -1,0 +1,19 @@
+#Execute below query to get sql query text from history view.
+set long 99999999
+set lines 300 pages 3000
+select SQL_TEXT from dba_hist_sqltext where SQL_ID='&sql_id';
+
+#Execute below query to get sql query text from current cursor.
+set long 99999999
+set lines 300 pages 3000
+select sql_fulltext from v$sqlarea where SQL_ID='&sql_id';
+
+#Execute below query to get full sql query text from shared SQL Area.
+set long 99999999
+set lines 300 pages 3000
+select sql_fulltext from v$sql where SQL_ID='&sql_id';
+
+#Execute below query to get full sql query text.
+set long 99999999
+set lines 300 pages 3000
+select sql_fulltext from v$sqlstats where SQL_ID='&sql_id';

@@ -1,0 +1,10 @@
+#Query to check if Unified Auditing is configured or not in Oracle database.
+
+SQL> set lines 300 pages 3000
+SQL> col parameter for a25
+SQL> col value for a12
+SQL> SELECT PARAMETER, VALUE FROM V$OPTION WHERE PARAMETER='Unified Auditing';
+
+PARAMETER                 VALUE
+------------------------- ------------
+Unified Auditing          FALSE

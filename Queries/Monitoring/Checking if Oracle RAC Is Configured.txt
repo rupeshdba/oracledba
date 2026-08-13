@@ -1,0 +1,10 @@
+#Query to check if Oracle RAC or Real Application Cluster is configured or not.
+
+SQL> set lines 300 pages 3000
+SQL> col parameter for a25
+SQL> col value for a12
+SQL> SELECT PARAMETER, VALUE FROM V$OPTION WHERE PARAMETER='Real Application Clusters';
+
+PARAMETER                 VALUE
+------------------------- ------------
+Real Application Clusters FALSE

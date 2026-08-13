@@ -1,0 +1,12 @@
+#Query to check applied patches details from database in Oracle
+
+SQL> set line 200 pages 2000
+SQL> col ACTION for a14
+SQL> col STATUS for a10
+SQL> col ACTION_TIME for a30
+SQL> col DESCRIPTION for a70
+SQL> select PATCH_ID,ACTION,ACTION_TIME,DESCRIPTION,STATUS from dba_registry_sqlpatch;
+
+PATCH_ID ACTION ACTION_TIME                  DESCRIPTION                                                 STATUS
+-------- ------ ---------------------------- ----------------------------------------------------------- -------
+34110685 APPLY  01-OCT-23 09.41.55.226000 PM Windows Database Bundle Patch : 19.16.0.0.220719 (34110685) SUCCESS

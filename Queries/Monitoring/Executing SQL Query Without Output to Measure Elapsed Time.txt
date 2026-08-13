@@ -1,0 +1,42 @@
+#Execute below query to list only query statistics including xplan, elapsed time, and stats without giving query output.
+
+set autot traceonly;
+set time on timing on
+set lines 300 pages 3000
+ 
+Example:
+SQL> set autot traceonly;
+SQL> set time on timing on
+03:00:23 SQL> set lines 300 pages 3000
+03:00:24 SQL> select * from test.emp;
+
+Elapsed: 00:00:00.01
+
+Execution Plan
+----------------------------------------------------------
+Plan hash value: 3956160932
+
+--------------------------------------------------------------------------
+| Id  | Operation         | Name | Rows  | Bytes | Cost (%CPU)| Time     |
+--------------------------------------------------------------------------
+|   0 | SELECT STATEMENT  |      |     5 |   110 |     3   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS FULL| EMP  |     5 |   110 |     3   (0)| 00:00:01 |
+--------------------------------------------------------------------------
+
+Statistics
+----------------------------------------------------------
+         66  recursive calls
+          0  db block gets
+         91  consistent gets
+          9  physical reads
+          0  redo size
+        953  bytes sent via SQL*Net to client
+        384  bytes received via SQL*Net from client
+          2  SQL*Net roundtrips to/from client
+          6  sorts (memory)
+          0  sorts (disk)
+          5  rows processed
+
+03:00:37 SQL>
+
+Note, here the query is executed in 01 milliseconds.

@@ -1,0 +1,26 @@
+#Query to check logical directories in Oracle database
+
+SQL> set lines 300 pages 3000
+SQL> col owner for a14
+SQL> col directory_name for a25
+SQL> col directory_path for a60
+SQL> select OWNER,DIRECTORY_NAME,DIRECTORY_PATH from dba_directories;
+
+OWNER  DIRECTORY_NAME            DIRECTORY_PATH                             
+------ ------------------------- -------------------------------------------
+SYS    DBMS_OPTIM_LOGDIR         D:\RUPESH\Setups\db_home/cfgtoollogs     
+SYS    DBMS_OPTIM_ADMINDIR       D:\RUPESH\Setups\db_home/rdbms/admin     
+SYS    ORACLECLRDIR              D:\RUPESH\Setups\db_home\bin\clr         
+SYS    SDO_DIR_WORK                                                       
+SYS    SDO_DIR_ADMIN             D:\RUPESH\Setups\db_home/md/admin        
+SYS    XMLDIR                    D:\RUPESH\Setups\db_home\rdbms\xml       
+SYS    XSDDIR                    D:\RUPESH\Setups\db_home\rdbms\xml\schema
+SYS    OPATCH_INST_DIR           D:\RUPESH\Setups\db_home\OPatch          
+SYS    ORACLE_OCM_CONFIG_DIR2    D:\RUPESH\Setups\db_home\ccr\state       
+SYS    ORACLE_BASE               D:\RUPESH\app\rghubade                     
+SYS    ORACLE_HOME               D:\RUPESH\Setups\db_home                 
+SYS    ORACLE_OCM_CONFIG_DIR     D:\RUPESH\Setups\db_home\ccr\state       
+SYS    DATA_PUMP_DIR             D:\RUPESH\app\rghubade\admin\plugdb\dpdump/
+SYS    OPATCH_SCRIPT_DIR         D:\RUPESH\Setups\db_home\QOpatch         
+SYS    OPATCH_LOG_DIR            D:\RUPESH\Setups\db_home\rdbms\log       
+SYS    JAVA$JOX$CUJS$DIRECTORY$  D:\RUPESH\SETUPS\DB_HOME\JAVAVM\ADMIN\

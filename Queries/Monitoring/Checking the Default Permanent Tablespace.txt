@@ -1,0 +1,10 @@
+#Query to check Default Permanent Tablespace in Oracle
+
+SQL> set lines 300 pages 3000
+SQL> col property_name for a30
+SQL> col property_value for a20
+SQL> select property_name,property_value from database_properties where property_name='DEFAULT_PERMANENT_TABLESPACE';
+
+PROPERTY_NAME                  PROPERTY_VALUE
+------------------------------ --------------------
+DEFAULT_PERMANENT_TABLESPACE   USERS

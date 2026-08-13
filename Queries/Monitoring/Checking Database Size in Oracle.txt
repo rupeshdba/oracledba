@@ -1,0 +1,15 @@
+#Query to check logical size of database in Oracle.
+
+SQL> select sum(bytes/1024/1024/1024) DB_LOGICAL_SIZE_GB from dba_segments;
+
+DB_LOGICAL_SIZE_GB
+------------------
+        1.87200928
+
+#Query to check Physical size of database in Oracle.
+
+SQL> select sum(bytes/1024/1024/1024) DB_PHYSICAL_SIZE_GB from dba_data_files;
+
+DB_PHYSICAL_SIZE_GB
+-------------------
+           2.265625

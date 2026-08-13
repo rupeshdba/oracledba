@@ -1,0 +1,11 @@
+#Query to check when the database was created
+
+SQL> alter session set nls_date_format='DD-MM-YYYY HH24:MI:SS';
+
+Session altered.
+
+SQL> select name,open_mode,created from v$database;
+
+NAME      OPEN_MODE            CREATED
+--------- -------------------- -------------------
+PLUGDB    READ WRITE           25-01-2024 08:29:47

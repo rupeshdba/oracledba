@@ -1,0 +1,7 @@
+#Query to check switchover status in oracle database
+
+SQL> select name,open_mode,switchover_status from v$database;
+
+NAME      OPEN_MODE            SWITCHOVER_STATUS
+--------- -------------------- --------------------
+PR        READ WRITE           TO STANDBY

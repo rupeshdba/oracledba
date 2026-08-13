@@ -1,0 +1,11 @@
+#Query to check database role in Oracle database
+
+SQL> col controlfile_type for a20
+SQL> set lines 300 pages 3000
+SQL> col name for a14
+SQL> col DB_UNIQUE_NAME for a14
+SQL> select name,db_unique_name,open_mode,database_role,protection_mode,controlfile_type from v$database;
+
+NAME DB_UNIQUE_NAME OPEN_MODE  DATABASE_ROLE PROTECTION_MODE     CONTROLFILE_TYPE
+---- -------------- ---------- ------------- ------------------- ----------------
+TEST test           READ WRITE PRIMARY       MAXIMUM PERFORMANCE CURRENT

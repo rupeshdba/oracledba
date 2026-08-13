@@ -1,0 +1,7 @@
+#Query to check DBID of database in Oracle
+
+SQL> select name,open_mode,dbid from v$database;
+
+NAME      OPEN_MODE                  DBID
+--------- -------------------- ----------
+PLUGDB    READ WRITE           2823049723

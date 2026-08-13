@@ -1,0 +1,7 @@
+#How to check if flashback is enabled in Oracle database. If the value of the column "FLASHBACK_ON" in v$database is YES then flashback is enabled.
+
+SQL> select name,open_mode,flashback_on from v$database;
+
+NAME      OPEN_MODE            FLASHBACK_ON
+--------- -------------------- ------------------
+PLUGDB    READ WRITE           NO

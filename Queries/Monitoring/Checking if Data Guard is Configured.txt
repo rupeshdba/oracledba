@@ -1,0 +1,10 @@
+#Query to check Dataguard is configured or not
+
+SQL> set lines 300 pages 3000
+SQL> col parameter for a25
+SQL> col value for a12
+SQL> SELECT PARAMETER, VALUE FROM V$OPTION WHERE PARAMETER='Oracle Data Guard';
+
+PARAMETER                 VALUE
+------------------------- ------------
+Oracle Data Guard         TRUE

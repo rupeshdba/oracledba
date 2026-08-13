@@ -1,0 +1,7 @@
+#How to check if force_logging mode is enabled in Oracle database. 
+
+SQL> select name,open_mode,force_logging from v$database;
+
+NAME      OPEN_MODE            FORCE_LOGGING
+--------- -------------------- --------------------------
+PLUGDB    READ WRITE           NO

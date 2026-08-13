@@ -1,0 +1,43 @@
+#For single instance or standalone Database:
+#Dynamic query to kill ACTIVE sessions of specific username.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='ACTIVE' and username='&username';
+
+#Dynamic query to kill ACTIVE sessions of specific event.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='ACTIVE' and event like '%SQL*Net message from client%';
+
+#Dynamic query to kill ACTIVE sessions of specific username whose last_call_et time in minutes is greater than 5 minutes.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='ACTIVE' and username='&username' and last_call_et/60>5;
+
+#Dynamic query to kill all INACTIVE sessions in database.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='INACTIVE';
+
+#Dynamic query to kill INACTIVE sessions of specific username.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='INACTIVE' and username='&username';
+
+#Dynamic query to kill INACTIVE sessions whose last_call_et time in minutes is greater than 5 minutes.
+select 'alter system kill session '||''''||sid||','||serial#||'''' ||' immediate;'  from v$session where status='INACTIVE' and last_call_et/60>5;
+
+#For RAC Database:
+#Dynamic query to kill ACTIVE sessions of specific username.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='ACTIVE' and username='&username';
+
+#Dynamic query to kill ACTIVE sessions of specific event.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='ACTIVE' and event like '%SQL*Net message from client%';
+
+#Dynamic query to kill ACTIVE sessions of specific username whose last_call_et time in minutes is greater than 5 minutes.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='ACTIVE' and username='&username' and last_call_et/60>5;
+
+#Dynamic query to kill all INACTIVE sessions in database.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='INACTIVE';
+
+#Dynamic query to kill INACTIVE sessions of specific username.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='INACTIVE' and  username='&username';
+
+#Dynamic query to kill INACTIVE sessions whose last_call_et time in minutes is greater than 5 minutes.
+select 'alter system kill session '||''''||sid||','||serial#||',@'||inst_id||'''' ||' immediate;'  from gv$session where status='INACTIVE' and last_call_et/60>5;
+
+#Kill all remote(LOCAL=NO) sessions at OS level by kill -9. Below command will redirect the output in kill_sess.sh script. You have to run "sh kill_sess.sh" script to kill sessions.
+$ps -ef | grep -i LOCAL=NO | grep -i $ORACLE_SID | awk '{print "kill -9 " $2}' > kill_sess.sh
+
+#Kill all local(LOCAL=YES) sessions at OS level by kill -9. Below command will redirect the output in kill_sess.sh script. You have to run "sh kill_sess.sh" script to kill sessions.
+$ps -ef | grep -i LOCAL=YES | grep -i $ORACLE_SID | awk '{print "kill -9 " $2}' > kill_sess.sh

@@ -1,0 +1,10 @@
+#Query to check if ASM or Automatic Storage Management is configured or not in Oracle.
+
+SQL> set lines 300 pages 3000
+SQL> col parameter for a30
+SQL> col value for a12
+SQL> SELECT PARAMETER, VALUE FROM V$OPTION WHERE PARAMETER='Automatic Storage Management';
+
+PARAMETER                      VALUE
+------------------------------ ------------
+Automatic Storage Management   FALSE

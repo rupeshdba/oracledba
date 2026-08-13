@@ -1,0 +1,7 @@
+#Query to check protection mode in oracle database i.e. maximum performance or availability or protection mode.
+
+SQL> select name,open_mode,protection_mode from v$database;
+
+NAME      OPEN_MODE            PROTECTION_MODE
+--------- -------------------- --------------------
+PLUGDB    READ WRITE           MAXIMUM PERFORMANCE

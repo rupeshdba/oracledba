@@ -1,0 +1,29 @@
+#Execute below query to get bind variable values from cursor.
+col NAME for a23
+col VALUE_STRING for a23
+alter session set nls_date_format='dd-mm-yyyy hh24:mi:ss';
+select distinct NAME,VALUE_STRING ,last_captured from v$SQL_BIND_CAPTURE where sql_id='&SQL_ID' order by 3;
+
+#Execute below query to get bind variable values order by last_captured.
+col NAME for a23
+col VALUE_STRING for a23
+alter session set nls_date_format='dd-mm-yyyy hh24:mi:ss';
+select distinct NAME,VALUE_STRING ,last_captured from dba_hist_sqlbind where sql_id='&SQL_ID' order by 3;
+
+#Execute below query to get bind variable values for sql_id.
+col NAME for a23
+col VALUE_STRING for a23
+alter session set nls_date_format='dd-mm-yyyy hh24:mi:ss';
+select distinct NAME,VALUE_STRING from dba_hist_sqlbind where sql_id='&SQL_ID';
+
+#Execute below query to get bind variable values order by last_captured.
+col NAME for a23
+col VALUE_STRING for a23
+alter session set nls_date_format='dd-mm-yyyy hh24:mi:ss';
+select distinct NAME,VALUE_STRING,DATATYPE,DATATYPE_STRING,last_captured from dba_hist_sqlbind where sql_id='&SQL_ID' order by 5;
+
+#Execute below query to get distinct bind variable values for sql_id and specific bind varible.
+col NAME for a23
+col VALUE_STRING for a23
+alter session set nls_date_format='dd-mm-yyyy hh24:mi:ss';
+select distinct NAME,VALUE_STRING from dba_hist_sqlbind where sql_id='&SQL_ID' and NAME='&BIND_VAR_NAME';

@@ -1,0 +1,15 @@
+#How to check if database is running in archivelog mode or noarchivelog mode. 
+
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+PR        READ WRITE           ARCHIVELOG
+
+OR
+
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+PLUGDB    READ WRITE           NOARCHIVELOG

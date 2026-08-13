@@ -1,0 +1,23 @@
+#Execute below query to get table partition details.
+
+set lines 200 pages 1000
+col owner for a15
+col table_name for a20
+col table_owner for a15
+col partition_name for a20
+select owner, table_name, pct_free, ini_trans, last_analyzed, blocks, num_rows, chain_cnt, partitioned from dba_tables where table_name='&TABLE_NAME';
+
+OWNER TABLE_NAME PCT_FREE INI_TRANS LAST_ANAL BLOCKS NUM_ROWS CHAIN_CNT PAR
+----- ---------- -------- --------- --------- ------ -------- --------- ---
+SYS   EMP              10         1 06-APR-24      5        5         0 NO
+TEST  EMP              10         1 12-MAR-24      5        5         0 NO
+
+select TABLE_OWNER,TABLE_NAME,PARTITION_NAME,PCT_FREE,INI_TRANS,TABLESPACE_NAME, last_analyzed, num_rows,CHAIN_CNT  
+from dba_tab_partitions where table_name='&TABLE_NAME' order by partition_position;
+
+TABLE_OWNER TABLE_NAME PARTITION_NAME PCT_FREE INI_TRANS TABLESPACE_NAME LAST_ANAL NUM_ROWS CHAIN_CNT
+----------- ---------- -------------- -------- --------- --------------- --------- -------- ---------
+SYS         INV        INV_P1               10         1 USERS
+SYS         INV        INV_P2               10         1 USERS
+SYS         INV        INV_P3               10         1 USERS
+SYS         INV        INV_P4               10         1 USERS

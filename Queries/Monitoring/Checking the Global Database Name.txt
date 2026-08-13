@@ -1,0 +1,10 @@
+#Query to check Global Database Name of Oracle database
+
+SQL> set lines 300 pages 3000
+SQL> col property_name for a20
+SQL> col property_value for a20
+SQL> select property_name,property_value from database_properties where property_name='GLOBAL_DB_NAME';
+
+PROPERTY_NAME        PROPERTY_VALUE
+-------------------- --------------------
+GLOBAL_DB_NAME       TEST
