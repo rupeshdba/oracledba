@@ -1,0 +1,193 @@
+To stop oracle RAC database (SQL * Plus  commands)
+
+Example:
+Node1: test01.localdomain
+Node2: test02.localdomain
+Node3: test03.localdomain
+Database: ORCL
+DB_UNIQUE_NAME: ORCL_PR 
+
+To stop all RAC instances, login to each RAC node and execute below commands.
+
+On all Nodes:
+SQL> shut immediate;
+
+OR
+
+On all Nodes:
+SQL> shut abort;
+
+OR
+
+On all Nodes:
+SQL> alter database close; 
+SQL> alter database dismount;
+SQL> shut immediate;
+
+OR
+
+On all Nodes:
+SQL> shut normal        OR        SQL> shut      
+
+
+To start oracle RAC database (SQL * Plus  commands)
+
+On all Nodes:
+SQL> startup;
+
+OR
+
+On all Nodes:
+SQL> startup pfile='/pfile_location/pfile.ora';
+
+OR
+
+On all Nodes:
+SQL> startup nomount;
+SQL> alter database mount;
+SQL> alter database open;
+
+OR
+
+On all Nodes:
+SQL> startup pfile='/pfile_location/pfile.ora';
+
+OR
+
+On all Nodes:
+SQL> startup nomount pfile='/pfile_location/pfile.ora';
+SQL> alter database mount;
+SQL> alter database open;
+
+OR
+
+On all Nodes:
+SQL> startup mount;
+SQL> alter database open;
+
+OR
+
+On all Nodes:
+SQL> startup mount pfile='/pfile_location/pfile.ora';
+SQL> alter database open;
+
+
+To stop oracle RAC database (srvctl commands)
+Login as rdbms owner and execute below commands.
+
+#This command gives you the configured DB Unique Name which has to be used in command.
+$srvctl config db
+
+#This command stops all the instances on all RAC nodes in one command. 
+$srvctl stop db -d ORCL_PR
+$srvctl status db -d ORCL_PR
+
+OR
+
+#This command stop any instance on any RAC node.  The command can be executed from any running node.
+$srvctl stop instance -d ORCL_PR -i orcl2
+$srvctl status db -d ORCL_PR
+
+OR
+
+#Execute below command to stop the database/all RAC instances with IMMEDIATE option.
+$srvctl stop db -d ORCL_PR -stopoption IMMEDIATE
+
+OR
+
+#Execute below command to stop the database/all RAC instances with ABORT option.
+$srvctl stop db -d ORCL_PR -stopoption ABORT
+
+OR
+
+#Execute below command to stop the database/all RAC instances with NORMAL option.
+$srvctl stop db -d ORCL_PR -stopoption NORMAL
+
+OR
+
+#Execute below command to stop the database/all RAC instances with TRANSACTIONAL LOCAL option.
+$srvctl stop db -d ORCL_PR -stopoption TRANSACTIONAL LOCAL
+
+#Optionally, you can use "-force" parameter to stop the database, its instances, its services, and any resources that depend on those services.
+$srvctl stop db -d ORCL_PR -force
+
+#Optionally, you can use "-verbose" parameter to stop the database to display detail output.
+$srvctl stop db -d ORCL_PR -verbose
+
+
+To start oracle RAC database (srvctl commands)
+
+Login as rdbms owner and execute below commands.
+
+#This command gives you the configured DB Unique Name which has to be used in command.
+$srvctl config db
+
+#This command starts all the instances on all RAC nodes in one command. 
+$srvctl start db -d ORCL_PR
+$srvctl status db -d ORCL_PR
+
+OR
+
+#This command start any instance on any RAC node.  The command can be executed from any running node.
+$srvctl start instance -d ORCL_PR -i orcl3
+$srvctl status db -d ORCL_PR
+
+OR
+
+#Execute below command to start the database/all RAC instances with NOMOUNT option.
+$srvctl start db -d ORCL_PR -startoption NOMOUNT
+
+OR
+
+#Execute below command to start the database/all RAC instances with MOUNT option.
+$srvctl start db -d ORCL_PR -startoption MOUNT
+
+OR
+
+#Execute below command to start the database/all RAC instances with OPEN option.
+$srvctl start db -d ORCL_PR -startoption OPEN
+
+OR
+
+#Execute below command to start the database/all RAC instances with "READ ONLY" option.
+$srvctl start db -d ORCL_PR -startoption "READ ONLY"
+
+OR
+
+#Optionally, you can use "-verbose" parameter to start the database to display detail output.
+$srvctl start db -d ORCL_PR -verbose
+
+OR
+
+#Optionally, you can use "-verbose" parameter to start the database to display detail output.
+$srvctl start instance -d ORCL_PR -verbose
+
+#Node on which to start the instance
+$srvctl start instance -db db_unique_name -node test02.localdomain -instance orcl2 
+
+#Node on which to start the instance with NOMOUNT option.
+$srvctl start instance -db db_unique_name -node test02.localdomain -instance orcl2 -startoption NOMOUNT
+
+#Node on which to start the instance with MOUNT option.
+$srvctl start instance -db db_unique_name -node test02.localdomain -instance orcl2 -startoption MOUNT
+
+#Node on which to start the instance with OPEN option.
+$srvctl start instance -db db_unique_name -node test02.localdomain -instance orcl2 -startoption OPEN
+
+#Node on which to start the instance with "READ ONLY" option.
+$srvctl start instance -db db_unique_name -node test02.localdomain -instance orcl2 -startoption "READ ONLY"
+
+#Start any one instance or a comma-delimited list of instances.
+$srvctl start instance -db db_unique_name -instance "orcl2,orcl3"  
+
+#Start any one instance or a comma-delimited list of instances with NOMOUNT option.
+$srvctl start instance -db db_unique_name -instance "orcl2,orcl3" -startoption NOMOUNT
+
+#Start any one instance or a comma-delimited list of instances with MOUNT option.
+$srvctl start instance -db db_unique_name -instance "orcl2,orcl3" -startoption MOUNT
+
+#Start any one instance or a comma-delimited list of instances with OPEN option.
+$srvctl start instance -db db_unique_name -instance "orcl2,orcl3" -startoption OPEN
+
+#Start any one instance or a comma-delimited list of instances with "READ ONLY" option.
+$srvctl start instance -db db_unique_name -instance "orcl2,orcl3" -startoption "READ ONLY"

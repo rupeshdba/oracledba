@@ -1,0 +1,153 @@
+First check the redo log details from existing database.
+1) Size of the redo logs
+2) Number of members in each redo log group
+3) Number of redo log groups.
+4) Status of redo log group.
+
+Execute below command to check member details of redo log group.
+
+SQL> set lines 300 pages 3000
+SQL> col member for a56
+SQL> select GROUP#,STATUS,TYPE,MEMBER,IS_RECOVERY_DEST_FILE from v$logfile;
+
+GROUP# STATUS  TYPE    MEMBER                                    IS_
+------ ------- ------- ----------------------------------------- ---
+     3         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO03.LOG NO 
+     2         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO02.LOG NO 
+     1         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO01.LOG NO 
+
+Execute below command to check the size of each redo log member.
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,BLOCKSIZE,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP# THREAD# SEQUENCE# SIZE_MB BLOCKSIZE MEMBERS ARC STATUS
+------ ------- --------- ------- --------- ------- --- --------
+     1       1       358     200       512       1 NO  CURRENT
+     2       1       356     200       512       1 YES INACTIVE
+     3       1       357     200       512       1 YES INACTIVE	 
+
+Here, the current size of the existing redo log member is 200 MB. Support, we want to increase it to 500 MB then use below commands.
+
+The method is to add new redo log groups with 500 MB size of each member. In our case, each redo log group has one member. There can be multiple members in each redo log group. In case of multiple redo log members, you need to add multiple members in new group.
+
+SQL> alter database add logfile group 11 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_11.log' size 500m;
+
+Database altered.
+
+SQL> alter database add logfile group 12 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_12.log' size 500m;
+
+Database altered.
+
+SQL> alter database add logfile group 13 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_13.log' size 500m;
+
+Database altered.
+
+Check the redo log group info:
+
+SQL> set lines 300 pages 3000
+SQL> col member for a56
+SQL>  select GROUP#,STATUS,TYPE,MEMBER,IS_RECOVERY_DEST_FILE from v$logfile;
+
+GROUP# STATUS  TYPE    MEMBER                                     IS_
+------ ------- ------- ------------------------------------------ ---
+     3         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO03.LOG  NO
+     2         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO02.LOG  NO
+     1         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO01.LOG  NO
+    11         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_11.LOG NO
+    12         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_12.LOG NO
+    13         ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_13.LOG NO
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,BLOCKSIZE,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP# THREAD#  SEQUENCE# SIZE_MB  BLOCKSIZE MEMBERS ARC STATUS
+------ ------- ---------- ------- ---------- ------- --- --------
+     1       1        358     200        512       1 NO  CURRENT
+     2       1        356     200        512       1 YES INACTIVE
+     3       1        357     200        512       1 YES INACTIVE
+    11       1          0     500        512       1 YES UNUSED
+    12       1          0     500        512       1 YES UNUSED
+    13       1          0     500        512       1 YES UNUSED
+
+Now old redo logs can be dropped by below commands:
+
+You can not drop current and active redo log group.  The status should be INACTIVE or UNUSED. You will face below error message. You have to switch logs and checkpoint then only the status of the redo log group will get changed and then you will be able to drop the redo log groups which will be in INACTIVE or UNUSED status.
+
+SQL> alter database drop logfile group 1;
+alter database drop logfile group 1
+*
+ERROR at line 1:
+ORA-01623: log 1 is current log for instance pr (thread 1) - cannot drop
+ORA-00312: online log 1 thread 1: 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO01.LOG'
+
+SQL> alter system switch logfile;
+
+System altered.
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,BLOCKSIZE,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP# THREAD#  SEQUENCE# SIZE_MB  BLOCKSIZE MEMBERS ARC STATUS
+------ ------- ---------- ------- ---------- ------- --- --------
+     1       1        358     200        512       1 YES ACTIVE
+     2       1        356     200        512       1 YES INACTIVE
+     3       1        357     200        512       1 YES INACTIVE
+    11       1        359     500        512       1 NO  CURRENT
+    12       1          0     500        512       1 YES UNUSED
+    13       1          0     500        512       1 YES UNUSED
+
+SQL> alter database drop logfile group 1;
+alter database drop logfile group 1
+*
+ERROR at line 1:
+ORA-01624: log 1 needed for crash recovery of instance pr (thread 1)
+ORA-00312: online log 1 thread 1: 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO01.LOG'
+
+SQL> alter system switch logfile;
+
+System altered.
+
+SQL> alter system checkpoint;
+
+System altered.
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,BLOCKSIZE,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP# THREAD#  SEQUENCE# SIZE_MB  BLOCKSIZE MEMBERS ARC STATUS
+------ ------- ---------- ------- ---------- ------- --- --------
+     1       1        364     200        512       1 YES INACTIVE
+     2       1        362     200        512       1 YES INACTIVE
+     3       1        363     200        512       1 YES INACTIVE
+    11       1        365     500        512       1 NO  CURRENT
+    12       1        360     500        512       1 YES INACTIVE
+    13       1        361     500        512       1 YES INACTIVE
+
+Execute drop redo log command now: 
+
+SQL> alter database drop logfile group 1;
+
+Database altered.
+
+SQL> alter database drop logfile group 2;
+
+Database altered.
+
+SQL> alter database drop logfile group 3;
+
+Database altered.
+
+SQL> select GROUP#,THREAD#,SEQUENCE#,BYTES/1024/1024 SIZE_MB,BLOCKSIZE,MEMBERS,ARCHIVED,STATUS from v$log;
+
+GROUP# THREAD#  SEQUENCE# SIZE_MB  BLOCKSIZE MEMBERS ARC STATUS
+------ ------- ---------- ------- ---------- ------- --- --------
+    11       1        365     500        512       1 NO  CURRENT
+    12       1        360     500        512       1 YES INACTIVE
+    13       1        361     500        512       1 YES INACTIVE
+
+SQL> set lines 300 pages 3000
+SQL> col member for a56
+SQL> select GROUP#,STATUS,TYPE,MEMBER,IS_RECOVERY_DEST_FILE from v$logfile;
+
+GROUP# STATUS TYPE    MEMBER                                      IS_
+------ ------ ------- ------------------------------------------- ---
+    11        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_11.LOG  NO
+    12        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_12.LOG  NO
+    13        ONLINE  D:\RUPESH\SETUPS\PRIMARY\DB\PR\REDO_13.LOG  NO

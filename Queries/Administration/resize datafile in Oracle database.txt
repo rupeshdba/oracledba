@@ -1,0 +1,20 @@
+set lines 300 pages 3000
+col file_name for a56
+select file_id,file_name,bytes/1024/1024/1024 SIZE_GB,autoextensible,maxbytes/1024/1024/1024 MAX_GB from dba_data_files where tablespace_name='&TBS_NAME';
+
+You can resize any datafile in the database whose size is less than 31 GB.
+
+alter database datafile &id resize &size_in_GB;
+
+e.g.
+
+alter database datafile 5 resize 10g;
+
+OR
+
+alter database datafile '/u01/app/TEST/oradata/test01.dbf' resize 10g;
+
+
+set lines 300 pages 3000
+col file_name for a56
+select file_id,file_name,bytes/1024/1024/1024 SIZE_GB,autoextensible,maxbytes/1024/1024/1024 MAX_GB from dba_data_files where file_id=&RESIZED_FILE_ID;

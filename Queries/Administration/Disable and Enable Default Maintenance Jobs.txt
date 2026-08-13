@@ -1,0 +1,81 @@
+set lines 300 pages 3000
+col CLIENT_NAME for a40
+col status for a15
+select distinct CLIENT_NAME ,status  from dba_autotask_client;
+
+CLIENT_NAME                          STATUS
+------------------------------------ --------
+sql tuning advisor                   ENABLED
+auto space advisor                   ENABLED
+auto optimizer stats collection      ENABLED
+
+#To disable default maintenance tasks
+BEGIN
+	dbms_auto_task_admin.disable(
+		client_name => 'sql tuning advisor',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+BEGIN
+	dbms_auto_task_admin.disable(
+		client_name => 'auto space advisor',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+BEGIN
+	dbms_auto_task_admin.disable(
+		client_name => 'auto optimizer stats collection',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+set lines 300 pages 3000
+col CLIENT_NAME for a40
+col status for a15
+select distinct CLIENT_NAME ,status  from dba_autotask_client;
+
+CLIENT_NAME                              STATUS
+---------------------------------------- ---------------
+sql tuning advisor                       DISABLED
+auto space advisor                       DISABLED
+auto optimizer stats collection          DISABLED
+
+#To enable default maintenance tasks
+BEGIN
+	dbms_auto_task_admin.enable(
+		client_name => 'sql tuning advisor',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+BEGIN
+	dbms_auto_task_admin.enable(
+		client_name => 'auto space advisor',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+BEGIN
+	dbms_auto_task_admin.enable(
+		client_name => 'auto optimizer stats collection',
+		operation  => NULL,
+		window_name => NULL);
+END;
+/
+
+set lines 300 pages 3000
+col CLIENT_NAME for a40
+col status for a15
+select distinct CLIENT_NAME ,status  from dba_autotask_client;
+CLIENT_NAME                          STATUS
+------------------------------------ --------
+sql tuning advisor                   ENABLED
+auto space advisor                   ENABLED
+auto optimizer stats collection      ENABLED

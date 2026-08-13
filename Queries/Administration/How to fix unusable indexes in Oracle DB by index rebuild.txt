@@ -1,0 +1,21 @@
+#Execute below query check unusable indexes in the database.
+
+SQL> select owner,index_name,status from dba_indexes where status='UNUSABLE';
+
+OWNER           INDEX_NAME                STATUS
+--------------- ------------------------- --------
+SYS             IDX_TEST                  UNUSABLE
+
+The unusable indexes can be rebuilt online to mark the indexes as usable.
+
+SQL> alter index IDX_TEST rebuild online;
+
+Index altered.
+
+SQL> select owner,index_name,status from dba_indexes where status='UNUSABLE';
+
+no rows selected
+
+If there are many indexes in unusable state, then simply execute below dynamic script to list the unusable indexes and give actual commands to execute the index rebuild command.
+
+SQL> select 'alter index '||owner||'.'||index_name||' rebuild online; ' from  dba_indexes where status='UNUSABLE';

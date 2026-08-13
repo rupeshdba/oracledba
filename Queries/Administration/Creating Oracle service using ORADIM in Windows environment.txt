@@ -1,0 +1,20 @@
+# Open the windows command prompt by "run as administrator" and execute below command to create an Oracle Instance in Windows Operating System. 
+
+Note: The below command will create an Oracle service or Instance "OracleServiceTEST" in services.msc and start the instance by PFILE.
+
+C:\Windows\System32>oradim -NEW -SID TEST -SYSPWD m0n1tor#1234 -STARTMODE auto -PFILE D:\oracle\app\oracle\product\19.0.0\dbhome_1\database\INITTEST.ORA
+
+
+
+
+Here, 
+oradim: Its an Oracle binary file.
+-NEW : This will create new service.
+-SID : This is for creating SID or Instance.
+TEST : This is name of the SID or Instance.
+-SYSPWD : This is for setting the SYS user password for the SID or Instance.
+m0n1tor#1234 : This is the value for the SYS user password.
+-STARTMODE : This is mode of the instance startup(Manual or AUTO).
+auto : Value of the Instance startup mode startup(Manual or AUTO).
+-PFILE : This is the instance startup option to start the instance using PFILE.
+D:\oracle\app\oracle\product\19.0.0\dbhome_1\database\INITTEST.ORA : This is the value of pfile with location to start the Instance.

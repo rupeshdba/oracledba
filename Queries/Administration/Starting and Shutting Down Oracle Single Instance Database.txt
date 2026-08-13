@@ -1,0 +1,52 @@
+To stop oracle single instance database
+
+SQL> shut immediate;
+
+OR
+
+SQL> shut abort;
+
+OR
+
+SQL> alter database close; 
+SQL> alter database dismount;
+SQL> shut immediate;
+
+OR
+
+SQL> shut normal        OR        SQL> shut      
+
+
+To start oracle single instance database
+
+SQL> startup;
+
+OR
+
+SQL> startup pfile='/pfile_location/pfile.ora';
+
+OR
+
+SQL> startup nomount;
+SQL> alter database mount;
+SQL> alter database open;
+
+OR
+
+SQL> startup pfile='/pfile_location/pfile.ora';
+
+OR
+
+SQL> startup nomount pfile='/pfile_location/pfile.ora';
+SQL> alter database mount;
+SQL> alter database open;
+
+OR
+
+SQL> startup mount;
+SQL> alter database open;
+
+OR
+
+SQL> startup mount pfile='/pfile_location/pfile.ora';
+SQL> alter database open;

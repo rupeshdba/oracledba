@@ -1,0 +1,36 @@
+Invisible Indexes are ignored by Oracle Optimizer unless we explicitly set "optimizer_use_invisible_indexes = true" at session or system level. We can create new indexes as invisible to check the query performance or mark existing index as invisible as well. Unlike unusable indexes, an invisible index is maintained during DML statements. Though we can make a partitioned index invisible, we cannot make an individual index partition invisible while leaving the other partitions visible.
+
+Creating Invisible Index:
+
+SQL>  create index IDX_TEST on TEST.EMP(to_number(ID)) INVISIBLE;
+
+Index created.
+
+SQL> select visibility from dba_indexes where index_name='IDX_TEST';
+
+VISIBILIT
+---------
+INVISIBLE
+
+SQL> alter session set optimizer_use_invisible_indexes = true;
+
+Session altered.
+
+SQL> explain plan for SELECT /*+ INDEX (EMP IDX_TEST) */ * from test.emp;
+
+Explained.
+
+SQL> select * from table(dbms_xplan.display());
+
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------
+Plan hash value: 2649829232
+------------------------------------------------------------------------------------------------
+| Id  | Operation                           | Name     | Rows  | Bytes | Cost (%CPU)| Time     |
+------------------------------------------------------------------------------------------------
+|   0 | SELECT STATEMENT                    |          |     5 |   110 |     2   (0)| 00:00:01 |
+|   1 |  TABLE ACCESS BY INDEX ROWID BATCHED| EMP      |     5 |   110 |     2   (0)| 00:00:01 |
+|   2 |   INDEX FULL SCAN                   | IDX_TEST |     5 |       |     1   (0)| 00:00:01 |
+------------------------------------------------------------------------------------------------
+
+9 rows selected.

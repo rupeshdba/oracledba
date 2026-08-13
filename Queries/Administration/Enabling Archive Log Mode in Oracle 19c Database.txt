@@ -1,0 +1,409 @@
+Environment:
+Oracle database: 19.16.0.0 EE
+Operating System: Windows 11 Pro 64 Bit
+
+-: Converting NOARCHIVELOG mode into ARCHIVELOG mode :-
+
+First check whether database is in archivelog mode or noarchivelog mode. 
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+TEST      READ WRITE           NOARCHIVELOG
+
+Here, the database is in noarchivelog mode. Now if you want to convert it into archive log mode then use below commands.
+
+You need to take care of below archive log related parameters before changing the location.
+
+SQL> show parameter log_archive_max_processes
+
+NAME                          TYPE        VALUE
+----------------------------- ----------- -----
+log_archive_max_processes     integer     4
+
+SQL> show parameter log_archive_format
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------
+log_archive_format                   string      ARC%S_%R.%T
+
+SQL> show parameter archive_dest_1
+
+NAME                                 TYPE        VALUE
+------------------------------------ ----------- ------------
+log_archive_dest_1                   string
+
+SQL> archive log list
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            USE_DB_RECOVERY_FILE_DEST
+Oldest online log sequence     4
+Current log sequence           6
+
+Here, we can use below variables in log_archive_format parameter.
+
+
+
+Execute below commands to change log_archive_format parameter value. I have used below format, you can add above any format variable. Ensure that archive log file names must contain each of the elements %s , %t , and %r to ensure that all archive log file names are unique. 
+
+SQL> alter system set log_archive_format='TEST_log_%t_%s_%r.arc';
+alter system set log_archive_format='TEST_log_%t_%s_%r.arc'
+                 *
+ERROR at line 1:
+ORA-02095: specified initialization parameter cannot be modified
+
+SQL> alter system set log_archive_format='TEST_log_%t_%s_%r.arc' scope=spfile;
+
+System altered.
+
+Also, set the archivelog location if required to keep the archive logs separately in a customized location.
+
+SQL> alter system set log_archive_dest_1='LOCATION=D:\RUPESH\Setups\TEST\TEST\ARCH';
+
+System altered.
+
+If you try to convert the database mode from archivelog mode to noarchivelog mode and vice-versa while your database is open in read-write mode then it won't allow you to do so. To convert the archivelog or noarchivelog mode, your database must be in mounted state otherwise you will face below error message.
+
+SQL> alter database archivelog;
+alter database archivelog
+*
+ERROR at line 1:
+ORA-01126: database must be mounted in this instance and not open in any
+instance
+
+First, shutdown the database and start it in mount stage.
+
+SQL> shut immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup mount
+ORACLE instance started.
+
+Total System Global Area 5066718192 bytes
+Fixed Size                  9038832 bytes
+Variable Size             922746880 bytes
+Database Buffers         4127195136 bytes
+Redo Buffers                7737344 bytes
+Database mounted.
+
+SQL> show parameter  log_archive_dest_1
+
+NAME                TYPE   VALUE
+------------------- ------ -----------------------------------------
+log_archive_dest_1  string LOCATION=D:\RUPESH\Setups\TEST\TEST\ARCH
+
+SQL> show parameter log_archive_format
+
+NAME                   TYPE    VALUE
+---------------------- ------- ---------------------
+log_archive_format     string  TEST_log_%t_%s_%r.arc
+
+SQL> archive log list
+Database log mode              Archive Mode
+Automatic archival             Enabled
+Archive destination            D:\RUPESH\Setups\TEST\TEST\ARCH
+Oldest online log sequence     9
+Next log sequence to archive   11
+Current log sequence           11
+
+Now you can enable archivelog mode or convert noarchivelog mode into archivelog mode.
+
+SQL> alter database archivelog;
+
+Database altered.
+
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+TEST      MOUNTED              ARCHIVELOG
+
+SQL> alter database open;
+
+Database altered.
+
+Now check the alert log file where you can see archive processes are started after enabling archivelog mode.
+
+Alert Logfile:
+2023-10-02T15:44:17.099336+05:30
+alter database archivelog
+Completed: alter database archivelog
+2023-10-02T15:44:32.779463+05:30
+TMON (PID:17956): STARTING ARCH PROCESSES
+Starting background process ARC0
+2023-10-02T15:44:32.810560+05:30
+ARC0 started with pid=34, OS id=12236
+2023-10-02T15:44:33.830612+05:30
+Starting background process ARC1
+2023-10-02T15:44:33.847078+05:30
+ARC1 started with pid=35, OS id=12028
+2023-10-02T15:44:34.866219+05:30
+Starting background process ARC2
+2023-10-02T15:44:34.897434+05:30
+ARC2 started with pid=36, OS id=10528
+2023-10-02T15:44:35.821366+05:30
+ARC0 (PID:12236): Becoming a 'no FAL' ARCH
+ARC0 (PID:12236): Becoming the 'no SRL' ARCH
+2023-10-02T15:44:35.899459+05:30
+Starting background process ARC3
+2023-10-02T15:44:35.931507+05:30
+ARC3 started with pid=37, OS id=12128
+2023-10-02T15:44:36.949692+05:30
+TMON (PID:17956): ARC0: Archival started
+TMON (PID:17956): ARC1: Archival started
+TMON (PID:17956): ARC2: Archival started
+TMON (PID:17956): ARC3: Archival started
+TMON (PID:17956): STARTING ARCH PROCESSES COMPLETE
+2023-10-02T15:44:37.012072+05:30
+......
+.......
+2023-10-02T15:47:29.513849+05:30
+alter database open
+2023-10-02T15:47:29.560683+05:30
+Smart fusion block transfer is disabled:
+  instance mounted in exclusive mode.
+Buffer Cache Full DB Caching mode changing from FULL CACHING DISABLED to FULL CACHING ENABLED
+Endian type of dictionary set to little
+2023-10-02T15:47:29.623096+05:30
+Redo log for group 2, sequence 11 is not located on DAX storage
+Thread 1 opened at log sequence 11
+  Current log# 2 seq# 11 mem# 0: D:\RUPESH\SETUPS\TEST\TEST\ONLINELOG\O1_MF_2_LKM5RQ57_.LOG
+  Current log# 2 seq# 11 mem# 1: D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\ONLINELOG\O1_MF_2_LKM5RQLX_.LOG
+Successful open of redo thread 1
+2023-10-02T15:47:29.686415+05:30
+MTTR advisory is disabled because FAST_START_MTTR_TARGET is not set
+Stopping change tracking
+Undo initialization recovery: Parallel FPTR complete: start:492927937 end:492927937 diff:0 ms (0.0 seconds)
+Undo initialization recovery: err:0 start: 492927937 end: 492927953 diff: 16 ms (0.0 seconds)
+[20732] Successfully onlined Undo Tablespace 2.
+Undo initialization online undo segments: err:0 start: 492927953 end: 492928015 diff: 62 ms (0.1 seconds)
+Undo initialization finished serial:0 start:492927937 end:492928015 diff:78 ms (0.1 seconds)
+Database Characterset is AL32UTF8
+No Resource Manager plan active
+joxcsys_required_dirobj_exists: directory object exists with required path D:\RUPESH\SETUPS\WINDOWS.X64_193000_DB_HOME\JAVAVM\ADMIN\, pid 20328 cid 0
+replication_dependency_tracking turned off (no async multimaster replication found)
+Starting background process AQPC
+2023-10-02T15:47:30.531159+05:30
+AQPC started with pid=41, OS id=14664
+2023-10-02T15:47:30.703063+05:30
+Starting background process CJQ0
+Completed: alter database open
+2023-10-02T15:47:31.583332+05:30
+
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+TEST      READ WRITE           ARCHIVELOG
+
+Switch 2-3 logs to generate archive logs in specified location and check the alert log and the archive log location.
+
+SQL> alter system switch logfile;
+
+System altered.
+
+SQL> /
+
+System altered.
+
+SQL> /
+
+System altered.
+
+Now check the alert logfile after switching redo log groups.
+
+Alert Log File:
+2023-10-02T15:49:04.407407+05:30
+ARC3 (PID:12128): Archived Log entry 6 added for T-1.S-11 ID 0x91de7ee9 LAD:1
+2023-10-02T15:49:08.640449+05:30
+Thread 1 advanced to log sequence 13 (LGWR switch),  current SCN: 2299957
+  Current log# 1 seq# 13 mem# 0: D:\RUPESH\SETUPS\TEST\TEST\ONLINELOG\O1_MF_1_LKM5RQ4R_.LOG
+  Current log# 1 seq# 13 mem# 1: D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\ONLINELOG\O1_MF_1_LKM5RQLF_.LOG
+2023-10-02T15:49:08.703115+05:30
+ARC0 (PID:12236): Archived Log entry 7 added for T-1.S-12 ID 0x91de7ee9 LAD:1
+2023-10-02T15:49:09.439140+05:30
+Thread 1 cannot allocate new log, sequence 14
+Checkpoint not complete
+  Current log# 1 seq# 13 mem# 0: D:\RUPESH\SETUPS\TEST\TEST\ONLINELOG\O1_MF_1_LKM5RQ4R_.LOG
+  Current log# 1 seq# 13 mem# 1: D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\ONLINELOG\O1_MF_1_LKM5RQLF_.LOG
+2023-10-02T15:49:12.166877+05:30
+Thread 1 advanced to log sequence 14 (LGWR switch),  current SCN: 2299963
+  Current log# 2 seq# 14 mem# 0: D:\RUPESH\SETUPS\TEST\TEST\ONLINELOG\O1_MF_2_LKM5RQ57_.LOG
+  Current log# 2 seq# 14 mem# 1: D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\ONLINELOG\O1_MF_2_LKM5RQLX_.LOG
+2023-10-02T15:49:12.245305+05:30
+ARC1 (PID:12028): Archived Log entry 8 added for T-1.S-13 ID 0x91de7ee9 LAD:1
+
+
+Suppose you want to convert the ARCHIVELOG mode into NOARCHIVELOG mode then refer below commands.
+
+
+-: Converting ARCHIVELOG mode into NOARCHIVELOG mode :-
+
+First check whether database is in archivelog mode or noarchivelog mode. 
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+TEST      READ WRITE           ARCHIVELOG
+
+Here, the database is in archivelog mode. Now if you want to convert it into noarchivelog mode then use below commands.
+
+As mentioned earlier, to convert the archivelog or noarchivelog mode, your database must be in mounted state otherwise you will face below error message.
+
+SQL> alter database noarchivelog;
+alter database noarchivelog
+*
+ERROR at line 1:
+ORA-01126: database must be mounted in this instance and not open in any
+instance
+
+SQL> shut immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> startup mount
+ORACLE instance started.
+
+Total System Global Area 5066718192 bytes
+Fixed Size                  9038832 bytes
+Variable Size             922746880 bytes
+Database Buffers         4127195136 bytes
+Redo Buffers                7737344 bytes
+Database mounted.
+
+SQL> alter database noarchivelog;
+
+Database altered.
+
+SQL> archive log list
+Database log mode              No Archive Mode
+Automatic archival             Disabled
+Archive destination            D:\RUPESH\Setups\TEST\TEST\ARCH
+Oldest online log sequence     14
+Current log sequence           16
+
+SQL> alter database open;
+
+Database altered.
+SQL> select name,open_mode,log_mode from v$database;
+
+NAME      OPEN_MODE            LOG_MODE
+--------- -------------------- ------------
+TEST      READ WRITE           NOARCHIVELOG
+
+From the alert log file, you can see that if you convert back the database log mode from archivelog mode into noarchivelog mode then archive processes(ARCH0/ARCH1/ARCH2/ARCH3) will not stop automatically. These processes will be stopped after shutting down the database.
+
+Alert Log File:
+2023-10-02T20:26:20.536933+05:30
+alter database noarchivelog
+Completed: alter database noarchivelog
+2023-10-02T20:26:40.873588+05:30
+alter database open
+2023-10-02T20:26:40.952075+05:30
+Smart fusion block transfer is disabled:
+  instance mounted in exclusive mode.
+Buffer Cache Full DB Caching mode changing from FULL CACHING DISABLED to FULL CACHING ENABLED
+Endian type of dictionary set to little
+2023-10-02T20:26:41.063374+05:30
+Redo log for group 1, sequence 16 is not located on DAX storage
+Thread 1 opened at log sequence 16
+  Current log# 1 seq# 16 mem# 0: D:\RUPESH\SETUPS\TEST\TEST\ONLINELOG\O1_MF_1_LKM5RQ4R_.LOG
+  Current log# 1 seq# 16 mem# 1: D:\RUPESH\APP\RGHUBADE\FAST_RECOVERY_AREA\TEST\ONLINELOG\O1_MF_1_LKM5RQLF_.LOG
+Successful open of redo thread 1
+2023-10-02T20:26:41.174825+05:30
+MTTR advisory is disabled because FAST_START_MTTR_TARGET is not set
+Stopping change tracking
+Undo initialization recovery: Parallel FPTR complete: start:509679500 end:509679500 diff:0 ms (0.0 seconds)
+Undo initialization recovery: err:0 start: 509679500 end: 509679515 diff: 15 ms (0.0 seconds)
+[14640] Successfully onlined Undo Tablespace 2.
+Undo initialization online undo segments: err:0 start: 509679531 end: 509679625 diff: 94 ms (0.1 seconds)
+Undo initialization finished serial:0 start:509679500 end:509679640 diff:140 ms (0.1 seconds)
+Database Characterset is AL32UTF8
+No Resource Manager plan active
+2023-10-02T20:26:42.246840+05:30
+joxcsys_required_dirobj_exists: directory object exists with required path D:\RUPESH\SETUPS\WINDOWS.X64_193000_DB_HOME\JAVAVM\ADMIN\, pid 20328 cid 0
+replication_dependency_tracking turned off (no async multimaster replication found)
+Starting background process AQPC
+2023-10-02T20:26:42.660703+05:30
+AQPC started with pid=41, OS id=18484
+Starting background process CJQ0
+Completed: alter database open
+2023-10-02T20:26:44.082525+05:30
+..........
+..........
+2023-10-02T20:30:23.549249+05:30
+Shutting down ORACLE instance (immediate) (OS id: 14640)
+2023-10-02T20:30:23.565546+05:30
+Shutdown is initiated by sqlplus.exe.
+Stopping background process SMCO
+2023-10-02T20:30:24.581861+05:30
+Shutting down instance: further logons disabled
+2023-10-02T20:30:24.628731+05:30
+Stopping background process CJQ0
+Stopping background process MMNL
+2023-10-02T20:30:26.145053+05:30
+Stopping background process MMON
+2023-10-02T20:30:28.198285+05:30
+License high water mark = 1
+2023-10-02T20:30:28.404003+05:30
+Dispatchers and shared servers shutdown
+Data Pump shutdown on PDB: 0 in progress
+ALTER DATABASE CLOSE NORMAL
+Stopping Emon pool
+2023-10-02T20:30:29.521061+05:30
+IM on ADG: Start of Empty Journal
+IM on ADG: End of Empty Journal 
+
+Stopping Emon pool
+Closing sequence subsystem (509927891708).
+Stopping change tracking
+2023-10-02T20:30:29.647766+05:30
+Shutting down archive processes
+2023-10-02T20:30:29.660770+05:30
+TT00 (PID:4100): Gap Manager exiting
+2023-10-02T20:30:30.661582+05:30
+Archiving is disabled
+2023-10-02T20:30:30.677758+05:30
+ARC2 (PID:18688): ARCH shutting down
+2023-10-02T20:30:30.692769+05:30
+ARC2 (PID:18688): Archival stopped
+2023-10-02T20:30:31.691648+05:30
+ARC0 (PID:22352): ARCH shutting down
+2023-10-02T20:30:31.705662+05:30
+ARC0 (PID:22352): Archival stopped
+2023-10-02T20:30:32.702757+05:30
+ARC3 (PID:21068): ARCH shutting down
+2023-10-02T20:30:32.717766+05:30
+ARC3 (PID:21068): Archival stopped
+2023-10-02T20:30:33.715733+05:30
+ARC1 (PID:17000): ARCH shutting down
+2023-10-02T20:30:33.731332+05:30
+ARC1 (PID:17000): Archival stopped
+2023-10-02T20:30:34.772435+05:30
+Thread 1 closed at log sequence 18
+Successful close of redo thread 1
+2023-10-02T20:30:34.850540+05:30
+Completed: ALTER DATABASE CLOSE NORMAL
+ALTER DATABASE DISMOUNT
+Shutting down archive processes
+Archiving is disabled
+Completed: ALTER DATABASE DISMOUNT
+2023-10-02T20:30:35.924058+05:30
+.... (PID:14640): Archival disabled due to shutdown: 1089
+Shutting down archive processes
+Archiving is disabled
+2023-10-02T20:30:36.969178+05:30
+JIT: pid 20328 requesting stop
+.... (PID:14640): Archival disabled due to shutdown: 1089
+Shutting down archive processes
+Archiving is disabled
+2023-10-02T20:30:37.032813+05:30
+JIT: pid 20328 requesting stop
+2023-10-02T20:30:37.998766+05:30
+Stopping background process VKTM
+2023-10-02T20:30:44.323265+05:30
+Instance shutdown complete (OS id: 14640)
+2023-10-02T20:31:11.846242+05:30

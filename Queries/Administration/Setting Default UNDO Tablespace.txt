@@ -1,0 +1,110 @@
+This guide provides step-by-step instructions for setting the default UNDO tablespace in an Oracle Database.  This process ensures efficient transaction management and optimal performance by configuring the UNDO space according to your database requirements.
+
+Step1: Check existing UNDO configuration. Here, you can see that the existing default UNDO tablespace is UNDOTBS1.
+
+SQL> show parameter undo
+
+NAME                   TYPE        VALUE
+---------------------- ----------- ---------
+temp_undo_enabled      boolean     FALSE
+undo_management        string      AUTO
+undo_retention         integer     900
+undo_tablespace        string      UNDOTBS1
+
+
+SQL>  select file_id,file_name,tablespace_name,bytes/1024/1024/1024 GB from dba_data_files where tablespace_name like '%UNDOTBS%' order by 1;
+
+FILE_ID FILE_NAME                                    TABLESPACE_NAME   GB
+------- -------------------------------------------- --------------- ----
+      5 D:\RUPESH\SETUPS\PRIMARY\DB\PR\UNDOTBS01.DBF UNDOTBS1           3
+
+Step2: Let's create a new UNDO Tablespace UNDOTBS2 first before setting the default one.
+
+SQL> CREATE UNDO TABLESPACE UNDOTBS2 DATAFILE 'D:\RUPESH\SETUPS\PRIMARY\DB\PR\UNDOTBS02.dbf' size 5g;
+
+Tablespace created.
+
+SQL> select file_id,file_name,tablespace_name,bytes/1024/1024/1024 GB from dba_data_files where tablespace_name like '%UNDOTBS%' order by 1;
+
+FILE_ID FILE_NAME                                    TABLESPACE_NAME GB
+------- -------------------------------------------- --------------- --
+      2 D:\RUPESH\SETUPS\PRIMARY\DB\PR\UNDOTBS01.DBF UNDOTBS1         3
+      5 D:\RUPESH\SETUPS\PRIMARY\DB\PR\UNDOTBS02.DBF UNDOTBS2         5
+
+Step3: Let's set the new default UNDO tablespace UNDOTBS2 by executing below command.
+
+SQL> ALTER SYSTEM SET UNDO_TABLESPACE=UNDOTBS2;
+
+System altered.
+
+
+Step4: Once the new default UNDO tablespace is set then you can drop the old UNDO tablespace.
+
+SQL> DROP TABLESPACE UNDOTBS1 INCLUDING CONTENTS AND DATAFILES;
+DROP TABLESPACE undotbs1 INCLUDING CONTENTS AND DATAFILES
+*
+ERROR at line 1:
+ORA-30013: undo tablespace 'UNDOTBS1' is currently in use
+
+Sometimes, it won't allow you to drop the old UNDO tablespace. This is because application sessions might be using your old UNDO tablespace still. You have to clear these sessions first before dropping the old UNDO tablespace.
+
+#Execute below query to check the objects using old UNDO tablespace.
+
+SQL> set lines 300 pages 3000
+SQL> col name for a16
+SQL> SELECT r.name,b.status FROM v$rollname r,v$rollstat s  WHERE r.usn = s.usn AND r.name IN ( SELECT segment_name FROM dba_segments WHERE tablespace_name = 'UNDOTBS1'
+ );
+
+NAME       			STATUS
+----------------- 	---------------
+_SYSSMU8_115127830$	PENDING OFFLINE
+
+
+#Execute below query to check the sessions using old UNDO tablespace.
+
+SQL> col username for a10
+SQL> SELECT r.name,s.status , n.username , n.sid , n.serial# FROM   v$rollname r,v$rollstat s, v$transaction t , v$session n WHERE  r.usn = s.usn AND    r.usn = t.xidusn
+AND    t.ses_addr = n.saddr AND    r.name IN ( SELECT segment_name FROM dba_segments WHERE tablespace_name = 'UNDOTBS1' );
+
+NAME       	    STATUS          USERNA SID SERIAL#
+------------------- --------------- ------ --- -------
+_SYSSMU8_115127830$ PENDING OFFLINE  TEST  126   51551
+
+
+#Execute below command to clear the session.
+ 
+SQL> alter system kill session '126,51551' immediate;
+
+System altered.
+
+#Again check the object and sessions using old UNDO tablespace.
+SQL> set lines 300 pages 3000
+SQL> col name for a16
+SQL> SELECT r.name,b.status FROM v$rollname r,v$rollstat s  WHERE r.usn = s.usn AND r.name IN ( SELECT segment_name FROM dba_segments WHERE tablespace_name = 'UNDOTBS1'
+ );
+
+no rows selected
+
+SQL> col username for a16
+SQL> SELECT r.name,s.status , n.username , n.sid , n.serial# FROM   v$rollname r,v$rollstat s, v$transaction t , v$session n WHERE  r.usn = s.usn AND    r.usn = t.xidusn
+AND    t.ses_addr = n.saddr AND    r.name IN ( SELECT segment_name FROM dba_segments WHERE tablespace_name = 'UNDOTBS1' );
+
+no rows selected
+
+#Now you can drop the old UNDO tablespace.
+
+SQL> DROP TABLESPACE UNDOTBS1 INCLUDING CONTENTS AND DATAFILES;
+
+Tablespace dropped.
+
+
+Step5: Now check the new UNDO tablespace. Here, you can see that the new default UNDO tablespace is UNDOTBS2.
+
+SQL> show parameter undo
+
+NAME                   TYPE        VALUE
+---------------------- ----------- ---------
+temp_undo_enabled      boolean     FALSE
+undo_management        string      AUTO
+undo_retention         integer     900
+undo_tablespace        string      UNDOTBS2

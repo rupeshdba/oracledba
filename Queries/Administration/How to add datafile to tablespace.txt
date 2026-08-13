@@ -1,0 +1,24 @@
+set lines 300 pages 3000
+col file_name for a56
+select file_id,file_name,bytes/1024/1024/1024 SIZE_GB,autoextensible,maxbytes/1024/1024/1024 MAX_GB from dba_data_files where tablespace_name='&TBS_NAME';
+
+You can resize any datafile in the database whose size is less than 31 GB. If no datafile found to be resized or all datafiles are reached to 31 GB then you need to  add datafile to the tablespace instead of resizing.
+
+alter tablespace &TBS_NAME add datafile &dbf_path_name size  &size_in_GB;
+
+OR
+
+alter tablespace &TBS_NAME add datafile &dbf_path_name size  &size_in_GB autoextend on next &NEXT_EXTENT_MB maxsize &MAX_SIZE_GB;
+
+e.g.
+alter tablespace TEST add datafile '/u01/app/TEST/oradata/test02.dbf' size 10g;
+
+OR
+
+alter tablespace TEST add datafile '/u01/app/TEST/oradata/test02.dbf' size 1g autoextend on next 5m maxsize 31g;
+
+You can check added datafile by using below command:
+
+set lines 300 pages 3000
+col file_name for a56
+select file_id,file_name,bytes/1024/1024/1024 SIZE_GB,autoextensible,maxbytes/1024/1024/1024 MAX_GB from dba_data_files where tablespace_name='&TBS_NAME';
