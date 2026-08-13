@@ -1,0 +1,130 @@
+🖥️ Environment Details :
+Current Database Version: Oracle Database 19.26
+Operating System: HP-UX 11.31 Bit
+
+🔷 Problem Statement:
+The customer requirement was that any application connection hitting the database through JDBC should not be tracked. However, connections established through client tools such as:
+✅ SQL Developer
+✅ TOAD
+✅ SQL*Plus
+must be tracked and monitored so that such sessions can later be:
+🔹 Excluded through exception handling.
+🔹 Identified for administrative review.
+🔹 Aborted or restricted in future if required.
+
+Current requirement is only to track the above connections, except JDBC connections. This policy will be applicable only to specific application users. This blog post demonstrates only how to track the details; it will not terminate any session or raise an exception.
+
+🔷 Available Approaches in Oracle Database:
+This requirement can be achieved in Oracle Database using the following methods:
+🔸 LOGON Trigger
+🔸 Unified Auditing
+
+For critical OLTP Production Systems, implementing a LOGON Trigger is generally not considered a feasible solution because the trigger fires for each and every database session and also, it's execution occurs before the session establishment completes.
+
+Let's simulate the requirement using Conditional Based Unified Audit Technique. In the current database environment, Mixed Mode Unified Auditing is already enabled.
+
+🔷 Objective of the Configuration:
+The purpose of this implementation is to:
+✔ Reduce unnecessary unified auditing overhead.
+✔ Avoid performance impact on OLTP systems.
+✔ Track only privileged/manual client access.
+✔ Maintain better administrative and security control.
+✔ Implement scalable and policy-based auditing in Oracle Database.
+
+
+-: Steps to configure conditional Based Unified Audit Policy :-
+
+Step 1: Check which Unified Audit Policy Mode enabled in Database(Mixed Mode or Pure Mode).
+
+SQL> col parameter for a30
+SQL> col value for a30
+SQL> select parameter, value from v$option where parameter = 'Unified Auditing';
+
+PARAMETER                 VALUE
+------------------------- -------
+Unified Auditing          FALSE
+
+"Unified Auditing=FALSE" means the database is currently operating in Mixed Mode Auditing. Mixed mode auditing means both traditional auditing and unified auditing are present.
+
+Step 2: Create a customized LOGON audit policy to track connections originating from SQL*Plus, TOAD, and SQL Developer client tools while excluding JDBC-based application sessions.
+
+SQL> CREATE AUDIT POLICY LOGON_MODULE_POLICY
+ACTIONS LOGON
+WHEN 'SYS_CONTEXT(''USERENV'', ''SESSION_USER'') in ( ''APPUSER1'', ''APPUSER2'', ''APPUSER3'', ''APPUSER4'' )
+      AND SYS_CONTEXT(''USERENV'', ''MODULE'') like ''%sqlplus%'' or  SYS_CONTEXT(''USERENV'', ''MODULE'') like ''%velop%'' or  SYS_CONTEXT(''USERENV'', ''MODULE'') like ''%TOAD%'''
+EVALUATE PER SESSION;
+
+Audit policy created.
+
+The above statement creates the LOGON_MODULE_POLICY audit policy in the database and applies specifically to LOGON actions. Whenever any of the specified application users connect to the database using client modules such as SQL*Plus, TOAD, or SQL Developer, the corresponding sessions will be captured in the Unified Audit Trail.
+
+Step 3: Now assign above policy for the mentioned users.
+
+SQL> AUDIT POLICY LOGON_MODULE_POLICY BY APPUSER1, APPUSER2, APPUSER3, APPUSER4;
+
+Audit succeeded.
+
+SQL> col POLICY_NAME for a26
+SQL> col ENTITY_NAME for a18
+SQL> SELECT policy_name, enabled_option, entity_name FROM audit_unified_enabled_policies WHERE policy_name='LOGON_MODULE_POLICY';
+
+POLICY_NAME                ENABLED_OPTION  ENTITY_NAME
+-------------------------- --------------- ------------
+LOGON_MODULE_POLICY        BY USER         APPUSER1
+LOGON_MODULE_POLICY        BY USER         APPUSER2
+LOGON_MODULE_POLICY        BY USER         APPUSER3
+LOGON_MODULE_POLICY        BY USER         APPUSER4
+
+Step 4: Invoke sqlplus connections either from local DB server or from any remote server.
+
+sqlplus APPUSER1/password@tns_entry
+sqlplus APPUSER2/password@tns_entry
+sqlplus APPUSER3/password@tns_entry
+sqlplus APPUSER4/password@tns_entry
+
+You can invoke above sqlplus connections multiple times also.
+
+Please note that the application can remain up and running while performing this activity, as you are excluding JDBC connections. Tracking JDBC connections in an OLTP production database may cause significant impact because it monitors each and every jdbc connection in the database.
+
+Step 5: Now check whether the sqlplus logon details have been captured in the Unified Auditing Trail.
+
+SQL> col OS_USERNAME for a18
+SQL> col USERHOST for a18
+SQL> col ACTION_NAME for a15
+SQL> col CLIENT_PROGRAM_NAME for a30
+SQL> col DBUSERNAME for a17
+SQL> col EVENT_TIMESTAMP for a38
+SQL> select EVENT_TIMESTAMP,INSTANCE_ID,OS_USERNAME,DBUSERNAME,USERHOST,CLIENT_PROGRAM_NAME,ACTION_NAME FROM unified_audit_trail WHERE DBUSERNAME in ('APPUSER1','APPUSER2','APPUSER3','APPUSER4') and action_name = 'LOGON';
+
+
+
+From the above output, you can see that the LOGON details have been captured in the Unified Audit Trail table. 
+
+Execute below query to check whether JDBC application connections have also been tracked or not.
+
+SQL> col UNIFIED_AUDIT_POLICIES for a25
+SQL> COL OLDEST_EVENT FOR A35
+SQL> COL LATEST_EVENT FOR A35
+SQL> COL SYSTEM_PRIVILEGE_USED FOR A35
+SQL> SELECT dbusername,client_program_name,action_name,COUNT(*) AS audit_count,MIN(EVENT_TIMESTAMP) AS oldest_event,MAX(EVENT_TIMESTAMP) AS latest_event,unified_audit_policies,SYSTEM_PRIVILEGE_USED
+FROM  unified_audit_trail WHERE UNIFIED_AUDIT_POLICIES like '%LOGON%' and client_program_name LIKE '%jdbc%' OR  client_program_name LIKE '%JDBC%'
+GROUP BY dbusername, client_program_name,action_name,unified_audit_policies,SYSTEM_PRIVILEGE_USED ORDER BY 6;
+    
+no rows selected.
+
+From the above output, you can see that the JDBC LOGON details have not been captured in the Unified Audit Trail table. 
+
+
+Note: I observed an issue on one of the database servers running Oracle Database 19.19. Even though similar conditional-based Unified Auditing was enabled, JDBC LOGON connections were still being captured in the Unified Audit Trail table. However, this issue was not observed in Oracle Database 19.26.
+
+To resolve the issue, multiple options such as client_program, module, and others were tried in the CREATE AUDIT POLICY statement, but the same behavior continued to occur in 19.19. The issue has not been reproduced in the 19.26 release. Therefore, JDBC connection tracking must be verified; otherwise, this issue could have a significant impact on your production OLTP database.
+
+
+🏁 Final Conclusion:
+The Conditional-Based Unified Audit policy was successfully implemented and validated. The auditing configuration was able to capture the required SQLPLUS LOGON activities while excluding JDBC connections, thereby minimizing performance impact on the OLTP production database. 
+
+Testing confirmed that the application remained operational during the activity, and the expected audit records were successfully generated in the Unified Audit Trail table.
+
+
+
+📝 Stay tuned for a detailed blog post on this case !!!
